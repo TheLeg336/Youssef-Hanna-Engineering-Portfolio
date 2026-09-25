@@ -8,6 +8,7 @@ interface EzerCadViewerProps {
   isPaused?: boolean;
   onUserInteractionChange?: (interacting: boolean) => void;
   filletProgress?: number; // 0 = sharp cube, 1 = filleted with R0.2 in
+  showBadges?: boolean;
 }
 
 function createCadGeometry(filletProgress: number) {
@@ -57,6 +58,7 @@ export function EzerCadViewer({
   isPaused = false,
   onUserInteractionChange,
   filletProgress = 0,
+  showBadges = false,
 }: EzerCadViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(isPaused);
@@ -299,17 +301,19 @@ export function EzerCadViewer({
     >
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-      {/* Floating Viewport Badges */}
-      <div className="absolute top-3 left-3 pointer-events-none flex flex-col gap-1 z-10">
-        <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur border border-[#178BFF]/25 text-[10px] font-mono text-[#0864C7] font-semibold flex items-center gap-1.5 shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
-          SOLID CAD SYNTHESIS · 2&quot; × 2&quot; × 2&quot;
-          {hasFillet && <span className="text-[#059669] font-bold">· FILLETED (R0.200&quot;)</span>}
-        </span>
-        <span className="px-2.5 py-0.5 rounded-md bg-white/80 backdrop-blur text-[10px] font-mono text-[#647184] border border-black/5">
-          Ø 1.000&quot; Centered Through-Hole {hasFillet && '· R0.200" Hole Edge Fillets'}
-        </span>
-      </div>
+      {/* Floating Viewport Badges (hidden by default when parent renders HUD) */}
+      {showBadges && (
+        <div className="absolute top-3 left-3 pointer-events-none flex flex-col gap-1 z-10">
+          <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur border border-[#178BFF]/25 text-[10px] font-mono text-[#0864C7] font-semibold flex items-center gap-1.5 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
+            SOLID CAD SYNTHESIS · 2&quot; × 2&quot; × 2&quot;
+            {hasFillet && <span className="text-[#059669] font-bold">· FILLETED (R0.200&quot;)</span>}
+          </span>
+          <span className="px-2.5 py-0.5 rounded-md bg-white/80 backdrop-blur text-[10px] font-mono text-[#647184] border border-black/5">
+            Ø 1.000&quot; Centered Through-Hole {hasFillet && '· R0.200" Hole Edge Fillets'}
+          </span>
+        </div>
+      )}
 
       <div className="absolute bottom-3 right-3 pointer-events-none z-10 hidden sm:block">
         <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur border border-black/5 text-[10px] font-mono text-[#647184] shadow-xs">
