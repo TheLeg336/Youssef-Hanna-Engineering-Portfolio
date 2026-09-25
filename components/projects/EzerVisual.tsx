@@ -75,50 +75,55 @@ const ENDLESS_WORDS = [
 
 // TIMELINE SCHEDULE (in milliseconds)
 const TIMING = {
-  // STAGE 1 (0 - 7500ms)
+  // STAGE 1: VOICE COMMAND & INTENT (0 - 8000ms)
+  // At start, Ezer is closed for 1.5 seconds before expanding horizontally!
   DESKTOP_START: 0,
-  CAMERA_ZOOM_DOWN_START: 400,
-  SPEAKING_START: 1600,
-  SPEAKING_END: 4800,
-  CAMERA_ZOOM_OUT_START: 4800,
-  BORDER_BEAM_START: 5200,
-  BORDER_BEAM_END: 7200,
-  STAGE_1_END: 7400,
+  PILL_CLOSED_HOLD: 1500, // Ezer stays closed for 1.5 seconds
+  PILL_EXPAND_START: 1500, // Ezer expands horizontally
+  CAMERA_ZOOM_DOWN_START: 1800,
+  SPEAKING_START: 2200,
+  SPEAKING_END: 5400,
+  CAMERA_ZOOM_OUT_START: 5400,
+  BORDER_BEAM_START: 5800,
+  BORDER_BEAM_END: 7800,
+  STAGE_1_END: 8000,
 
-  // STAGE 2 (7400 - 11000ms)
-  SOLVING_START: 7400,
-  STAGE_2_END: 11000,
+  // STAGE 2: CONSTRAINT SOLVING (8000 - 11600ms)
+  SOLVING_START: 8000,
+  STAGE_2_END: 11600,
 
-  // STAGE 3 (11000 - 14400ms)
-  CAD_STAGE_START: 11000,
-  STAGE_3_END: 14400,
+  // STAGE 3: 3D CAD MODEL (11600 - 15000ms)
+  CAD_STAGE_START: 11600,
+  STAGE_3_END: 15000,
 
-  // STAGE 4 (14400 - 30400ms)
-  ITERATION_PILL_EXPAND: 14400,
-  ITERATION_ZOOM_IN_START: 14800,
-  ITERATION_SPEAKING_START: 15400,
-  ITERATION_SPEAKING_END: 18400,
-  ITERATION_ZOOM_OUT_START: 18400,
-  ITERATION_BORDER_BEAM_START: 19000,
-  ITERATION_BORDER_BEAM_END: 21400,
-  FILLET_START: 19000,
-  FILLET_END: 21400,
-  ITERATION_DONE_START: 21400,
+  // STAGE 4: LIVE FILLET MODIFICATION & CLIMAX (15000 - 30600ms)
+  ITERATION_PILL_EXPAND: 15000,
+  ITERATION_ZOOM_IN_START: 15400,
+  ITERATION_SPEAKING_START: 16000,
+  ITERATION_SPEAKING_END: 19000,
+  ITERATION_ZOOM_OUT_START: 19000,
+  ITERATION_BORDER_BEAM_START: 19600,
+  ITERATION_BORDER_BEAM_END: 22000,
+  FILLET_START: 19600,
+  FILLET_END: 22000,
+  ITERATION_DONE_START: 22000,
   
-  // FINAL CLIMAX: ZOOM DOWN AGAIN & STREAM "the possibilities are endless"
-  FINAL_ZOOM_DOWN_START: 22600,
-  ENDLESS_STREAM_START: 23100,
-  ENDLESS_STREAM_END: 24900,
-  FINAL_COLLAPSE_START: 25400,
+  // FINAL CLIMAX: ZOOM DOWN & STREAM "the possibilities are endless"
+  FINAL_ZOOM_DOWN_START: 22800,
+  ENDLESS_STREAM_START: 23300,
+  ENDLESS_STREAM_END: 25100,
 
-  // OUTRO: FADE TO BLACK -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
+  // CAMERA DIVE INTO PILL: Zooms all the way into the pill so it becomes a black screen!
+  DIVE_INTO_PILL_START: 25400,
+
+  // OUTRO: BLACK SCREEN -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
   BLACKOUT_START: 26000,
-  ZER_APPEAR_START: 26400,
-  E_HIT_START: 27100,
-  IMPACT_MOMENT: 27380,
-  SHOCKWAVE_END: 28300,
-  OUTRO_FADE_TO_RESTART: 29700,
-  TOTAL_CYCLE: 30400,
+  ZER_APPEAR_START: 26350,
+  E_HIT_START: 27050,
+  IMPACT_MOMENT: 27330,
+  SHOCKWAVE_END: 28250,
+  OUTRO_FADE_TO_RESTART: 29800,
+  TOTAL_CYCLE: 30600,
 };
 
 const STAGES = [
@@ -135,7 +140,7 @@ const STAGES = [
     id: 'solving_orb',
     name: 'Constraint Solving',
     shortLabel: '2. Solving Engine',
-    timeLabel: '0:07',
+    timeLabel: '0:08',
     startMs: TIMING.SOLVING_START,
     endMs: TIMING.STAGE_2_END,
     icon: Cpu,
@@ -238,10 +243,12 @@ export function EzerVisual() {
   }, [isVisible, prefersReduced]);
 
   // Stage 1 variables
+  const isPillExpanded = elapsedMs >= TIMING.PILL_EXPAND_START;
   const isStage1Zoomed =
     elapsedMs >= TIMING.CAMERA_ZOOM_DOWN_START && elapsedMs < TIMING.CAMERA_ZOOM_OUT_START;
   const isSpeaking = elapsedMs >= TIMING.SPEAKING_START && elapsedMs < TIMING.SPEAKING_END;
-  const isListeningInitial = elapsedMs >= 800 && elapsedMs < TIMING.SPEAKING_START;
+  const isListeningInitial =
+    elapsedMs >= TIMING.PILL_EXPAND_START + 400 && elapsedMs < TIMING.SPEAKING_START;
 
   const speechProgress = useMemo(() => {
     if (elapsedMs < TIMING.SPEAKING_START) return 0;
@@ -266,7 +273,7 @@ export function EzerVisual() {
   // Stage 4 In-Viewport Ezer Pill Calculations
   const isStage4Zoomed =
     (elapsedMs >= TIMING.ITERATION_ZOOM_IN_START && elapsedMs < TIMING.ITERATION_ZOOM_OUT_START) ||
-    (elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START && elapsedMs < TIMING.BLACKOUT_START);
+    (elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START && elapsedMs < TIMING.DIVE_INTO_PILL_START);
 
   const isIterationSpeaking =
     elapsedMs >= TIMING.ITERATION_SPEAKING_START && elapsedMs < TIMING.ITERATION_SPEAKING_END;
@@ -325,9 +332,11 @@ export function EzerVisual() {
     );
   }, [elapsedMs, endlessProgress]);
 
-  const isFinalCollapsed = elapsedMs >= TIMING.FINAL_COLLAPSE_START;
+  // CAMERA DIVE: Zooms all the way into the pill so it fills the screen into black!
+  const isDivingIntoPill =
+    elapsedMs >= TIMING.DIVE_INTO_PILL_START && elapsedMs < TIMING.OUTRO_FADE_TO_RESTART;
 
-  // OUTRO: Blackout & "zer" + "e" collision animation states
+  // OUTRO: Black screen inside the pill -> "zer" + "e" collision animation states
   const isBlackoutActive = elapsedMs >= TIMING.BLACKOUT_START;
   const isZerVisible = elapsedMs >= TIMING.ZER_APPEAR_START;
   const isEIncoming = elapsedMs >= TIMING.E_HIT_START;
@@ -479,90 +488,107 @@ export function EzerVisual() {
 
                 {/* COMPACT SLEEK EZER PILL */}
                 <div className="absolute bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-3">
-                  <motion.div
-                    initial={{ scaleX: 0, opacity: 0 }}
-                    animate={{ scaleX: 1, opacity: 1 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ transformOrigin: 'bottom center' }}
-                    className="relative w-[280px] sm:w-[330px] max-w-[92vw] flex flex-col items-center"
-                  >
-                    <AppBorderBeam
-                      size="sm"
-                      colorVariant="ocean"
-                      strength={1.0}
-                      active={isBorderBeamActive}
-                      theme="dark"
-                      borderRadius={9999}
-                      duration={2.0}
-                      className="w-full rounded-full shadow-2xl"
-                    >
-                      <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12]/95 border border-white/20 px-4 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
-                        {/* Voice Glow Liquid Waveform Simulation (Active during speaking) */}
-                        {isSpeaking && (
-                          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl sm:rounded-full z-10 opacity-70">
-                            <div
-                              className="absolute -bottom-2 inset-x-0 h-5"
-                              style={{
-                                background:
-                                  'radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.5) 0%, rgba(34, 199, 242, 0.25) 45%, transparent 75%)',
-                                filter: 'blur(3px)',
-                              }}
-                            />
-                            {/* Animated Fluctuating Wave Band */}
-                            <div
-                              className="absolute -bottom-1 inset-x-2 h-3.5 bg-gradient-to-r from-transparent via-[#22C7F2]/40 to-transparent animate-pulse"
-                              style={{
-                                filter: 'blur(2px)',
-                                animationDuration: '1.2s',
-                              }}
-                            />
-                          </div>
-                        )}
+                  <AnimatePresence mode="wait">
+                    {!isPillExpanded ? (
+                      <motion.div
+                        key="pill-closed-state"
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.85 }}
+                        transition={{ duration: 0.25 }}
+                        className="h-[42px] px-3.5 rounded-full bg-[#070B12]/95 border border-white/20 flex items-center gap-2 shadow-xl select-none"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_8px_#00F0FF]" />
+                        <span className="text-[11px] font-mono text-white/60 tracking-wider">ezer</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="pill-expanded-state"
+                        initial={{ scaleX: 0, opacity: 0 }}
+                        animate={{ scaleX: 1, opacity: 1 }}
+                        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ transformOrigin: 'center center' }}
+                        className="relative w-[280px] sm:w-[330px] max-w-[92vw] flex flex-col items-center"
+                      >
+                        <AppBorderBeam
+                          size="sm"
+                          colorVariant="ocean"
+                          strength={1.0}
+                          active={isBorderBeamActive}
+                          theme="dark"
+                          borderRadius={9999}
+                          duration={2.0}
+                          className="w-full rounded-full shadow-2xl"
+                        >
+                          <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12]/95 border border-white/20 px-4 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
+                            {/* Voice Glow Liquid Waveform Simulation (Active during speaking) */}
+                            {isSpeaking && (
+                              <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl sm:rounded-full z-10 opacity-70">
+                                <div
+                                  className="absolute -bottom-2 inset-x-0 h-5"
+                                  style={{
+                                    background:
+                                      'radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.5) 0%, rgba(34, 199, 242, 0.25) 45%, transparent 75%)',
+                                    filter: 'blur(3px)',
+                                  }}
+                                />
+                                {/* Animated Fluctuating Wave Band */}
+                                <div
+                                  className="absolute -bottom-1 inset-x-2 h-3.5 bg-gradient-to-r from-transparent via-[#22C7F2]/40 to-transparent animate-pulse"
+                                  style={{
+                                    filter: 'blur(2px)',
+                                    animationDuration: '1.2s',
+                                  }}
+                                />
+                              </div>
+                            )}
 
-                        {isListeningInitial && (
-                          <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-medium text-white/90 select-none">
-                            <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
-                            <span>Listening...</span>
-                          </div>
-                        )}
+                            {isListeningInitial && (
+                              <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-medium text-white/90 select-none">
+                                <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
+                                <span>Listening...</span>
+                              </div>
+                            )}
 
-                        {!isListeningInitial && !isBorderBeamActive && (
-                          <div className="relative z-20 w-full text-center leading-snug px-1">
-                            <span className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold leading-relaxed break-words">
-                              {WORDS.map((word, i) => {
-                                const isSpoken =
-                                  elapsedMs >= TIMING.SPEAKING_END || i <= activeWordIndex;
-                                const isCurrent =
-                                  i === activeWordIndex && elapsedMs < TIMING.SPEAKING_END;
+                            {!isListeningInitial && !isBorderBeamActive && (
+                              <div className="relative z-20 w-full text-center leading-snug px-1">
+                                <span className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold leading-relaxed break-words">
+                                  {WORDS.map((word, i) => {
+                                    const isSpoken =
+                                      elapsedMs >= TIMING.SPEAKING_END || i <= activeWordIndex;
+                                    const isCurrent =
+                                      i === activeWordIndex && elapsedMs < TIMING.SPEAKING_END;
 
-                                return (
-                                  <span
-                                    key={`${word}-${i}`}
-                                    className={`inline-block mr-1 transition-all duration-120 ${
-                                      isCurrent
-                                        ? 'text-[#00F0FF] font-bold scale-[1.06] drop-shadow-[0_0_8px_rgba(0,240,255,0.85)] -translate-y-[0.5px]'
-                                        : isSpoken
-                                        ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] opacity-100'
-                                        : 'opacity-0'
-                                    }`}
-                                  >
-                                    {word}
-                                  </span>
-                                );
-                              })}
-                            </span>
-                          </div>
-                        )}
+                                    return (
+                                      <span
+                                        key={`${word}-${i}`}
+                                        className={`inline-block mr-1 transition-all duration-120 ${
+                                          isCurrent
+                                            ? 'text-[#00F0FF] font-bold scale-[1.06] drop-shadow-[0_0_8px_rgba(0,240,255,0.85)] -translate-y-[0.5px]'
+                                            : isSpoken
+                                            ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] opacity-100'
+                                            : 'opacity-0'
+                                        }`}
+                                      >
+                                        {word}
+                                      </span>
+                                    );
+                                  })}
+                                </span>
+                              </div>
+                            )}
 
-                        {isBorderBeamActive && (
-                          <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8]">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
-                            <span>Submitting to solver…</span>
+                            {isBorderBeamActive && (
+                              <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
+                                <span>Submitting to solver…</span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </AppBorderBeam>
-                  </motion.div>
+                        </AppBorderBeam>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
 
@@ -582,7 +608,9 @@ export function EzerVisual() {
                     </div>
                   </button>
 
-                  <span className="text-[10px] font-mono text-[#94A3B8]">Ezer Agent · Ready</span>
+                  <span className="text-[10px] font-mono text-[#94A3B8]">
+                    {isPillExpanded ? 'Ezer Agent · Ready' : 'Ezer Agent · Standby'}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-[9.5px] font-mono text-[#94A3B8]">
@@ -675,7 +703,11 @@ export function EzerVisual() {
                 onClick={() => handleModelInteraction(false)}
               >
                 {/* HUD Header Bar: Flex row guarantees zero badge overlap */}
-                <div className="absolute top-2.5 inset-x-2.5 z-20 pointer-events-none flex items-start justify-between gap-2 text-[9.5px] font-mono select-none">
+                <div
+                  className={`absolute top-2.5 inset-x-2.5 z-20 pointer-events-none flex items-start justify-between gap-2 text-[9.5px] font-mono select-none transition-opacity duration-300 ${
+                    isDivingIntoPill ? 'opacity-0' : 'opacity-100'
+                  }`}
+                >
                   {/* Left Status Badge */}
                   <div className="flex flex-col gap-0.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#CBD5E1] shadow-2xs max-w-[64%] min-w-0">
                     <span className="text-[#0864C7] font-bold truncate">
@@ -703,10 +735,15 @@ export function EzerVisual() {
                   className="w-full h-full"
                   style={{ transformOrigin: '50% 88%' }}
                   animate={{
-                    scale: isStage4Zoomed ? 1.85 : 1,
-                    y: isStage4Zoomed ? -36 : 0,
+                    scale: isDivingIntoPill ? 3.5 : isStage4Zoomed ? 1.85 : 1,
+                    y: isDivingIntoPill ? -80 : isStage4Zoomed ? -36 : 0,
+                    opacity: isDivingIntoPill ? 0.2 : 1,
+                    filter: isDivingIntoPill ? 'blur(10px)' : 'blur(0px)',
                   }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{
+                    duration: isDivingIntoPill ? 0.65 : 0.6,
+                    ease: isDivingIntoPill ? [0.45, 0, 0.2, 1] : [0.16, 1, 0.3, 1],
+                  }}
                 >
                   <DynamicEzerCadViewer
                     filletProgress={liveFilletProgress}
@@ -714,26 +751,22 @@ export function EzerVisual() {
                   />
                 </motion.div>
 
-                {/* IN-VIEWPORT COMPACT PILL (WITH MORPHING TO CLIMAX "the possibilities are endless") */}
+                {/* IN-VIEWPORT COMPACT PILL (WITH MORPHING TO CLIMAX & DIVE-INTO-PILL CAMERA ZOOM) */}
                 {currentStage === 'fillet_edit' && (
                   <motion.div
                     className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
-                    style={{ transformOrigin: 'bottom center' }}
+                    style={{ transformOrigin: 'center center' }}
                     animate={{
-                      scale: isStage4Zoomed ? 1.16 : 1,
-                      y: isStage4Zoomed ? -8 : 0,
+                      scale: isDivingIntoPill ? 36 : isStage4Zoomed ? 1.16 : 1,
+                      y: isDivingIntoPill ? -110 : isStage4Zoomed ? -8 : 0,
                     }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{
+                      duration: isDivingIntoPill ? 0.65 : 0.6,
+                      ease: isDivingIntoPill ? [0.45, 0, 0.2, 1] : [0.16, 1, 0.3, 1],
+                    }}
                   >
                     <motion.div
                       key="iter-pill-motion-container"
-                      initial={{ scaleX: 0, opacity: 0 }}
-                      animate={{
-                        scaleX: isFinalCollapsed ? 0 : 1,
-                        opacity: isFinalCollapsed ? 0 : 1,
-                      }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ transformOrigin: 'bottom center' }}
                       className={`flex flex-col items-center transition-all duration-300 ${
                         isEndlessClimax
                           ? 'w-[250px] sm:w-[275px] max-w-[88vw]'
@@ -746,13 +779,13 @@ export function EzerVisual() {
                         size="sm"
                         colorVariant="ocean"
                         strength={1.0}
-                        active={isIterationBorderBeamActive || isEndlessStreaming}
+                        active={isIterationBorderBeamActive || isEndlessStreaming || isDivingIntoPill}
                         theme="dark"
                         borderRadius={9999}
                         duration={2.0}
                         className="w-full rounded-full shadow-2xl"
                       >
-                        <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 sm:px-4 py-2 text-white flex items-center justify-center min-h-[38px] shadow-2xl overflow-hidden">
+                        <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12] border border-white/20 px-3.5 sm:px-4 py-2 text-white flex items-center justify-center min-h-[38px] shadow-2xl overflow-hidden">
                           {/* Voice Glow Liquid Waveform Simulation (Active during iteration speaking) */}
                           {isIterationSpeaking && (
                             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
@@ -840,8 +873,15 @@ export function EzerVisual() {
                           )}
 
                           {/* 4. FINAL CLIMAX: "the possibilities are endless" streamed word-by-word */}
-                          {isEndlessClimax && !isFinalCollapsed && (
-                            <div className="relative z-20 w-full text-center leading-snug px-1">
+                          {isEndlessClimax && (
+                            <motion.div
+                              animate={{
+                                opacity: isDivingIntoPill ? 0 : 1,
+                                scale: isDivingIntoPill ? 2.5 : 1,
+                              }}
+                              transition={{ duration: 0.35, ease: 'easeIn' }}
+                              className="relative z-20 w-full text-center leading-snug px-1"
+                            >
                               <span className="font-mono text-[11px] sm:text-xs font-semibold tracking-normal sm:tracking-wide break-words">
                                 {ENDLESS_WORDS.map((word, i) => {
                                   const isSpoken =
@@ -867,7 +907,7 @@ export function EzerVisual() {
                                   );
                                 })}
                               </span>
-                            </div>
+                            </motion.div>
                           )}
                         </div>
                       </AppBorderBeam>
@@ -877,7 +917,11 @@ export function EzerVisual() {
               </div>
 
               {/* Status Bar */}
-              <div className="flex items-center justify-between gap-2 px-1 text-[10.5px] sm:text-[11px] font-mono text-[#647184] min-w-0">
+              <div
+                className={`flex items-center justify-between gap-2 px-1 text-[10.5px] sm:text-[11px] font-mono text-[#647184] min-w-0 transition-opacity duration-300 ${
+                  isDivingIntoPill ? 'opacity-0' : 'opacity-100'
+                }`}
+              >
                 <span className="flex items-center gap-1.5 text-[#059669] font-semibold truncate min-w-0">
                   <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate">Cube (2″×2″×2″) + Hole (Ø 1″) + Fillets</span>
@@ -891,17 +935,17 @@ export function EzerVisual() {
         </AnimatePresence>
 
         {/* =========================================================================
-            ACT 5 / BRAND OUTRO: FADE TO BLACK -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
+            ACT 5 / BRAND OUTRO: ZOOM INTO PILL -> BLACK SCREEN -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
            ========================================================================= */}
         <AnimatePresence>
           {isBlackoutActive && (
             <motion.div
               key="ezer-blackout-outro"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: isOutroFadingOut ? 0 : 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: isOutroFadingOut ? 0.6 : 0.45, ease: 'easeInOut' }}
-              className="absolute inset-0 z-50 rounded-xl overflow-hidden bg-[#040711] flex flex-col items-center justify-center pointer-events-none select-none"
+              transition={{ duration: isOutroFadingOut ? 0.6 : 0.3, ease: 'easeInOut' }}
+              className="absolute inset-0 z-50 rounded-xl overflow-hidden bg-[#070B12] flex flex-col items-center justify-center pointer-events-none select-none"
             >
               {/* Subtle ambient aerospace radial background light */}
               <div
