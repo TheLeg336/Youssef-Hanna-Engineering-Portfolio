@@ -1,103 +1,202 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
 import {
+  Loader2,
+  CheckCircle2,
   Mic,
   Cpu,
   Box,
   Sparkles,
-  Check,
-  CheckCircle2,
-  Loader2,
-  Terminal,
-  Activity,
-  Layers,
+  Folder,
+  Search,
+  Wifi,
+  Volume2,
+  Monitor,
 } from 'lucide-react';
-import { AppBorderBeam } from '@/components/ui/LibrariesDevWrapper';
+import { AppBorderBeam, AppThinkingOrb, AppVoiceBeam } from '@/components/ui/LibrariesDevWrapper';
 import { useElementVisibility } from '@/lib/useVisibility';
 import { useReducedMotion } from '@/components/motion/Reveal';
 
 const DynamicEzerCadViewer = dynamic(() => import('./EzerCadViewer'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center text-xs font-mono text-[#8FDFFF] bg-[#0B1220]">
-      <Loader2 className="w-6 h-6 text-[#22C7F2] animate-spin mb-2" />
-      <span className="tracking-wide">Initializing SolidWorks CAD Kernel…</span>
+    <div className="w-full h-[340px] sm:h-[380px] bg-[#F1F5F9] rounded-xl flex items-center justify-center text-xs font-mono text-[#647184] border border-[#CBD5E1]">
+      <Loader2 className="w-5 h-5 text-[#178BFF] animate-spin mr-2" />
+      <span>Loading 3D CAD Synthesis Viewport…</span>
     </div>
   ),
 });
 
-// Phase definitions with exact millisecond bounds
-export const PHASES = [
+// Initial creation prompt
+const WORDS = [
+  'Open',
+  'SolidWorks',
+  'and',
+  'build',
+  'me',
+  'a',
+  '2 in',
+  '×',
+  '2 in',
+  '×',
+  '2 in',
+  'cube',
+  'with',
+  'a',
+  'centered',
+  '1 in',
+  'through-hole.',
+];
+
+// Secondary in-context modification prompt
+const FILLET_WORDS = [
+  'Add',
+  '0.2 in',
+  'fillets',
+  'to',
+  'all',
+  'cube',
+  'corners',
+  'and',
+  'hole',
+  'edges.',
+];
+
+// Climax final statement
+const ENDLESS_WORDS = [
+  'the',
+  'possibilities',
+  'are',
+  'endless',
+];
+
+// TIMELINE SCHEDULE (in milliseconds)
+const TIMING = {
+  // STAGE 1 (0 - 7500ms)
+  DESKTOP_START: 0,
+  CAMERA_ZOOM_DOWN_START: 400,
+  SPEAKING_START: 1600,
+  SPEAKING_END: 4800,
+  CAMERA_ZOOM_OUT_START: 4800,
+  BORDER_BEAM_START: 5200,
+  BORDER_BEAM_END: 7200,
+  STAGE_1_END: 7400,
+
+  // STAGE 2 (7400 - 11000ms)
+  SOLVING_START: 7400,
+  STAGE_2_END: 11000,
+
+  // STAGE 3 (11000 - 14400ms)
+  CAD_STAGE_START: 11000,
+  STAGE_3_END: 14400,
+
+  // STAGE 4 (14400 - 27000ms)
+  ITERATION_PILL_EXPAND: 14400,
+  ITERATION_ZOOM_IN_START: 14800,
+  ITERATION_SPEAKING_START: 15400,
+  ITERATION_SPEAKING_END: 18400,
+  ITERATION_ZOOM_OUT_START: 18400,
+  ITERATION_BORDER_BEAM_START: 19000,
+  ITERATION_BORDER_BEAM_END: 21400,
+  FILLET_START: 19000,
+  FILLET_END: 21400,
+  ITERATION_DONE_START: 21400,
+  
+  // FINAL CLIMAX: ZOOM DOWN AGAIN & STREAM "the possibilities are endless"
+  FINAL_ZOOM_DOWN_START: 22600,
+  ENDLESS_STREAM_START: 23100,
+  ENDLESS_STREAM_END: 25100,
+  FINAL_COLLAPSE_START: 25700,
+  FINAL_LOOP_TRANSITION: 26500,
+  TOTAL_CYCLE: 27000,
+};
+
+const STAGES = [
   {
-    id: 1,
-    name: 'Voice Input',
-    shortLabel: '1. Voice Input',
+    id: 'pill_input',
+    name: 'Voice Command',
+    shortLabel: '1. Voice Command',
+    timeLabel: '0:00',
     startMs: 0,
-    endMs: 3200,
-    durationMs: 3200,
+    endMs: TIMING.STAGE_1_END,
     icon: Mic,
   },
   {
-    id: 2,
-    name: 'Solving',
-    shortLabel: '2. Solving',
-    startMs: 3200,
-    endMs: 7000,
-    durationMs: 3800,
+    id: 'solving_orb',
+    name: 'Constraint Solving',
+    shortLabel: '2. Solving Engine',
+    timeLabel: '0:07',
+    startMs: TIMING.SOLVING_START,
+    endMs: TIMING.STAGE_2_END,
     icon: Cpu,
   },
   {
-    id: 3,
-    name: '3D CAD Output',
-    shortLabel: '3. 3D CAD Output',
-    startMs: 7000,
-    endMs: 11800,
-    durationMs: 4800,
+    id: 'initial_cad',
+    name: '3D CAD Model',
+    shortLabel: '3. 3D Geometry',
+    timeLabel: '0:11',
+    startMs: TIMING.CAD_STAGE_START,
+    endMs: TIMING.STAGE_3_END,
     icon: Box,
   },
   {
-    id: 4,
-    name: 'Refinement',
-    shortLabel: '4. Refinement',
-    startMs: 11800,
-    endMs: 15000,
-    durationMs: 3200,
+    id: 'fillet_edit',
+    name: 'Live Iteration Loop',
+    shortLabel: '4. Live Modification',
+    timeLabel: '0:15',
+    startMs: TIMING.ITERATION_PILL_EXPAND,
+    endMs: TIMING.TOTAL_CYCLE,
     icon: Sparkles,
   },
 ] as const;
 
-const TOTAL_CYCLE = 16800; // Phase 5 resolution runs from 15000ms to 16800ms
-
-// First Command: "Build me a 2 in × 2 in cube and put a 1 in diameter hole through the center."
-const FIRST_COMMAND_TEXT = 'Build me a 2 in × 2 in cube and put a 1 in diameter hole through the center.';
-
-// Second Command: "Add 0.200 in fillets to all vertical corners."
-const SECOND_COMMAND_TEXT = 'Add 0.200 in fillets to all vertical corners.';
-
-// Solve stack items for Phase 2
-const SOLVE_STACK = [
-  'Parse geometry intent',
-  'Determine base solid',
-  'Locate feature center',
-  'Generate through-hole',
-  'Validate topology',
-];
+type StageId = typeof STAGES[number]['id'];
 
 export function EzerVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisible = useElementVisibility(containerRef, 0.25);
   const prefersReduced = useReducedMotion();
 
-  // Elapsed timeline counter (in milliseconds)
-  const [elapsedMs, setElapsedMs] = useState(0);
   const elapsedRef = useRef(0);
   const lastTimeRef = useRef<number | null>(null);
-  const isUserInteractingWith3DRef = useRef(false);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
-  // RAF Ticker: Pauses when out of view without resetting; resumes seamlessly!
+  const [isStageFading, setIsStageFading] = useState(false);
+  const isActivelyDraggingRef = useRef(false);
+
+  let currentStage: StageId = 'pill_input';
+  if (elapsedMs < TIMING.STAGE_1_END) {
+    currentStage = 'pill_input';
+  } else if (elapsedMs < TIMING.STAGE_2_END) {
+    currentStage = 'solving_orb';
+  } else if (elapsedMs < TIMING.STAGE_3_END) {
+    currentStage = 'initial_cad';
+  } else {
+    currentStage = 'fillet_edit';
+  }
+
+  const handleModelInteraction = useCallback((interacting: boolean) => {
+    isActivelyDraggingRef.current = interacting;
+  }, []);
+
+  const handleStageClick = useCallback((stageId: StageId) => {
+    const targetStage = STAGES.find((s) => s.id === stageId);
+    if (!targetStage) return;
+
+    isActivelyDraggingRef.current = false;
+    setIsStageFading(true);
+
+    setTimeout(() => {
+      elapsedRef.current = targetStage.startMs;
+      setElapsedMs(targetStage.startMs);
+      setIsStageFading(false);
+    }, 120);
+  }, []);
+
+  // Continuous animation ticker that pauses offscreen without resetting!
   useEffect(() => {
     if (prefersReduced) return;
 
@@ -112,10 +211,14 @@ export function EzerVisual() {
     const tick = (now: number) => {
       if (lastTimeRef.current !== null) {
         const delta = Math.min(100, now - lastTimeRef.current);
+        const isTouching = isActivelyDraggingRef.current;
+        const isAtEnd = elapsedRef.current >= TIMING.TOTAL_CYCLE - 300;
 
-        // Slow down or pause progression only during manual user 3D drag
-        if (!isUserInteractingWith3DRef.current) {
-          elapsedRef.current = (elapsedRef.current + delta) % TOTAL_CYCLE;
+        if (isAtEnd && isTouching) {
+          elapsedRef.current = TIMING.TOTAL_CYCLE - 50;
+          setElapsedMs(TIMING.TOTAL_CYCLE - 50);
+        } else {
+          elapsedRef.current = (elapsedRef.current + delta) % TIMING.TOTAL_CYCLE;
           setElapsedMs(elapsedRef.current);
         }
       }
@@ -127,447 +230,674 @@ export function EzerVisual() {
     return () => cancelAnimationFrame(animId);
   }, [isVisible, prefersReduced]);
 
-  // Jump directly to a phase when user clicks a timeline pill
-  const handleJumpToPhase = useCallback((phaseId: number) => {
-    const target = PHASES.find((p) => p.id === phaseId);
-    if (target) {
-      elapsedRef.current = target.startMs;
-      setElapsedMs(target.startMs);
-    }
-  }, []);
+  // Stage 1 variables
+  const isStage1Zoomed =
+    elapsedMs >= TIMING.CAMERA_ZOOM_DOWN_START && elapsedMs < TIMING.CAMERA_ZOOM_OUT_START;
+  const isSpeaking = elapsedMs >= TIMING.SPEAKING_START && elapsedMs < TIMING.SPEAKING_END;
+  const isListeningInitial = elapsedMs >= 800 && elapsedMs < TIMING.SPEAKING_START;
 
-  // Determine active phase
-  let currentPhaseId: 1 | 2 | 3 | 4 | 5 = 1;
-  if (elapsedMs < 3200) currentPhaseId = 1;
-  else if (elapsedMs < 7000) currentPhaseId = 2;
-  else if (elapsedMs < 11800) currentPhaseId = 3;
-  else if (elapsedMs < 15000) currentPhaseId = 4;
-  else currentPhaseId = 5;
+  const speechProgress = useMemo(() => {
+    if (elapsedMs < TIMING.SPEAKING_START) return 0;
+    if (elapsedMs >= TIMING.SPEAKING_END) return 1;
+    return (elapsedMs - TIMING.SPEAKING_START) / (TIMING.SPEAKING_END - TIMING.SPEAKING_START);
+  }, [elapsedMs]);
 
-  // ---------------------------------------------------------------------------
-  // Phase 1 Calculations: Voice Pill Typing & Waveform
-  // ---------------------------------------------------------------------------
-  const isPhase1 = currentPhaseId === 1;
-  // Typing from 400ms to 2600ms (2200ms duration for 74 chars = ~30ms per char)
-  const p1TypeProgress = Math.max(0, Math.min(1, (elapsedMs - 400) / 2200));
-  const p1CharCount = Math.floor(p1TypeProgress * FIRST_COMMAND_TEXT.length);
-  const p1TypedText = FIRST_COMMAND_TEXT.slice(0, p1CharCount);
-  const p1IsListening = elapsedMs < 400;
-  const p1IsConfirming = elapsedMs >= 2600 && elapsedMs < 3000;
-  const p1IsGliding = elapsedMs >= 3000;
+  const activeWordIndex = useMemo(() => {
+    if (elapsedMs < TIMING.SPEAKING_START) return -1;
+    if (elapsedMs >= TIMING.SPEAKING_END) return WORDS.length;
+    return Math.min(WORDS.length - 1, Math.floor(speechProgress * WORDS.length));
+  }, [elapsedMs, speechProgress]);
 
-  // ---------------------------------------------------------------------------
-  // Phase 2 Calculations: Solving Orb & Solve Stack
-  // ---------------------------------------------------------------------------
-  const isPhase2 = currentPhaseId === 2;
-  const p2Time = elapsedMs - 3200; // 0 to 3800ms
-  // Stack items enter every 600ms starting at 400ms
-  const activeSolveItemIndex = Math.min(4, Math.floor((p2Time - 400) / 600));
+  const isBorderBeamActive =
+    elapsedMs >= TIMING.BORDER_BEAM_START && elapsedMs < TIMING.BORDER_BEAM_END;
 
-  // ---------------------------------------------------------------------------
-  // Phase 3 Calculations: 3D CAD Output Generation
-  // ---------------------------------------------------------------------------
-  const isPhase3 = currentPhaseId === 3;
-  const p3Time = elapsedMs - 7000;
-  const isP3Wireframe = p3Time < 600; // initial wireframe appearance
+  // Stage 2 solver steps
+  const solveStep1 = elapsedMs >= TIMING.SOLVING_START + 800;
+  const solveStep2 = elapsedMs >= TIMING.SOLVING_START + 1800;
+  const solveStep3 = elapsedMs >= TIMING.SOLVING_START + 2800;
 
-  // ---------------------------------------------------------------------------
-  // Phase 4 Calculations: Refinement Second Command & Fillet Morph
-  // ---------------------------------------------------------------------------
-  const isPhase4 = currentPhaseId === 4;
-  const p4Time = elapsedMs - 11800; // 0 to 3200ms
-  // Second command typing: 0 to 1200ms
-  const p4TypeProgress = Math.max(0, Math.min(1, p4Time / 1200));
-  const p4CharCount = Math.floor(p4TypeProgress * SECOND_COMMAND_TEXT.length);
-  const p4TypedText = SECOND_COMMAND_TEXT.slice(0, p4CharCount);
+  // Stage 4 In-Viewport Ezer Pill Calculations
+  const isStage4Zoomed =
+    (elapsedMs >= TIMING.ITERATION_ZOOM_IN_START && elapsedMs < TIMING.ITERATION_ZOOM_OUT_START) ||
+    elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START;
 
-  // Fillet progress: 0.0 to 1.0 between 1200ms and 2400ms
-  const filletProgress = isPhase4
-    ? Math.max(0, Math.min(1, (p4Time - 1200) / 1000))
-    : currentPhaseId === 5
-    ? 1.0
-    : 0.0;
+  const isIterationSpeaking =
+    elapsedMs >= TIMING.ITERATION_SPEAKING_START && elapsedMs < TIMING.ITERATION_SPEAKING_END;
 
-  const highlightVerticalEdges = isPhase4 && p4Time >= 1000 && p4Time < 2400;
-  const showFilletSuccessChip = isPhase4 && p4Time >= 2000;
+  const iterationSpeechProgress = useMemo(() => {
+    if (elapsedMs < TIMING.ITERATION_SPEAKING_START) return 0;
+    if (elapsedMs >= TIMING.ITERATION_SPEAKING_END) return 1;
+    return (
+      (elapsedMs - TIMING.ITERATION_SPEAKING_START) /
+      (TIMING.ITERATION_SPEAKING_END - TIMING.ITERATION_SPEAKING_START)
+    );
+  }, [elapsedMs]);
 
-  // ---------------------------------------------------------------------------
-  // Phase 5 Calculations: Resolution & Hold
-  // ---------------------------------------------------------------------------
-  const isPhase5 = currentPhaseId === 5;
-  const p5Time = elapsedMs - 15000;
-  const isP5Fading = p5Time > 1200;
+  const activeIterationWordIndex = useMemo(() => {
+    if (elapsedMs < TIMING.ITERATION_SPEAKING_START) return -1;
+    if (elapsedMs >= TIMING.ITERATION_SPEAKING_END) return FILLET_WORDS.length;
+    return Math.min(
+      FILLET_WORDS.length - 1,
+      Math.floor(iterationSpeechProgress * FILLET_WORDS.length)
+    );
+  }, [elapsedMs, iterationSpeechProgress]);
+
+  const isIterationBorderBeamActive =
+    elapsedMs >= TIMING.ITERATION_BORDER_BEAM_START && elapsedMs < TIMING.ITERATION_BORDER_BEAM_END;
+
+  const isIterationDone = elapsedMs >= TIMING.ITERATION_DONE_START;
+
+  // Real-time Fillet Progress (0 to 1)
+  const liveFilletProgress = useMemo(() => {
+    if (elapsedMs < TIMING.FILLET_START) return 0;
+    if (elapsedMs >= TIMING.FILLET_END) return 1;
+    const p = (elapsedMs - TIMING.FILLET_START) / (TIMING.FILLET_END - TIMING.FILLET_START);
+    return p * p * (3 - 2 * p);
+  }, [elapsedMs]);
+
+  // FINAL CLIMAX: "the possibilities are endless" streaming progress
+  const isEndlessClimax = elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START;
+  const isEndlessStreaming =
+    elapsedMs >= TIMING.ENDLESS_STREAM_START && elapsedMs < TIMING.ENDLESS_STREAM_END;
+
+  const endlessProgress = useMemo(() => {
+    if (elapsedMs < TIMING.ENDLESS_STREAM_START) return 0;
+    if (elapsedMs >= TIMING.ENDLESS_STREAM_END) return 1;
+    return (
+      (elapsedMs - TIMING.ENDLESS_STREAM_START) /
+      (TIMING.ENDLESS_STREAM_END - TIMING.ENDLESS_STREAM_START)
+    );
+  }, [elapsedMs]);
+
+  const activeEndlessWordIndex = useMemo(() => {
+    if (elapsedMs < TIMING.ENDLESS_STREAM_START) return -1;
+    if (elapsedMs >= TIMING.ENDLESS_STREAM_END) return ENDLESS_WORDS.length;
+    return Math.min(
+      ENDLESS_WORDS.length - 1,
+      Math.floor(endlessProgress * ENDLESS_WORDS.length)
+    );
+  }, [elapsedMs, endlessProgress]);
+
+  const isFinalCollapsed = elapsedMs >= TIMING.FINAL_COLLAPSE_START;
+  const isLoopTransition = elapsedMs >= TIMING.FINAL_LOOP_TRANSITION;
+
+  const cycleProgress = (elapsedMs / TIMING.TOTAL_CYCLE) * 100;
+
+  if (prefersReduced) {
+    return (
+      <div ref={containerRef} className="w-full glass-panel rounded-2xl p-6 sm:p-8 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-black/5 pb-3 mb-4">
+          <div>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#178BFF]/10 text-[#0864C7] font-semibold">
+              CONCEPT DEMO · EZER IN DEVELOPMENT
+            </span>
+            <h3 className="text-base sm:text-lg font-bold text-[#17202A] mt-1">
+              Natural Language CAD Synthesis Workflow
+            </h3>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="glass-card-solid p-4 rounded-xl space-y-2">
+            <div className="text-xs font-mono text-[#0864C7] font-semibold">Voice Command:</div>
+            <p className="text-sm text-[#17202A] italic">
+              &ldquo;Build me a 2 in × 2 in × 2 in cube with a centered 1 in diameter through-hole.&rdquo;
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <DynamicEzerCadViewer isPaused={true} filletProgress={1} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       ref={containerRef}
-      className="w-full bg-[rgba(255,255,255,0.82)] backdrop-blur-[18px] rounded-[24px] sm:rounded-[28px] border border-[rgba(255,255,255,0.78)] shadow-[0_24px_56px_rgba(15,23,42,0.12)] p-4 sm:p-6 flex flex-col justify-between select-none relative overflow-hidden"
-      style={{
-        boxShadow: '0 24px 56px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
-      }}
+      className="w-full glass-panel rounded-2xl p-4 sm:p-5 md:p-6 overflow-hidden flex flex-col justify-between min-h-[500px]"
     >
-      {/* =======================================================================
-          1. TOP UTILITY / HEADER STRIP (Height: 48px)
-      ======================================================================= */}
-      <div className="h-12 w-full flex items-center justify-between border-b border-[rgba(15,23,42,0.08)] pb-3 px-1 text-xs font-mono">
-        {/* Left Micro Label Pill */}
-        <div className="px-2.5 py-1 rounded-full bg-white border border-[rgba(15,23,42,0.08)] text-[10px] sm:text-[11px] font-semibold text-[#0F172A] flex items-center gap-1.5 shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#22C7F2]" />
-          <span>CONCEPT DEMO · LOCAL CAD WORKFLOW</span>
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-3 mb-3">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#178BFF]/10 text-[#0864C7] font-semibold border border-[#178BFF]/20">
+              CONCEPT DEMO · EZER IN DEVELOPMENT
+            </span>
+            <span className="text-[11px] font-mono text-[#647184]">
+              Local AI / CAD Automation
+            </span>
+          </div>
+          <h3 className="text-base sm:text-lg font-bold text-[#17202A] mt-1">
+            Autonomous CAD Synthesis &amp; Modification Loop
+          </h3>
         </div>
 
-        {/* Centered/Right Title */}
-        <div className="hidden md:block text-[12px] font-semibold text-[#475569] tracking-tight">
-          Voice-to-CAD Geometry Synthesis
-        </div>
-
-        {/* Right System Status */}
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#64748B]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-          <span className="hidden sm:inline">Interactive loop ·</span>
-          <span>In view only</span>
+        <div className="text-xs font-mono text-[#647184] hidden sm:block">
+          Interactive Act Navigation
         </div>
       </div>
 
-      {/* =======================================================================
-          2. MAIN ANIMATED STAGE (~500px Desktop / ~420px Tablet / ~360px Mobile)
-             Inset Dark Viewport #0B1220 with Fine CAD Grid and Bloom
-      ======================================================================= */}
-      <div className="relative w-full h-[370px] sm:h-[430px] lg:h-[480px] my-4 rounded-[20px] sm:rounded-[22px] bg-[#0B1220] border border-[rgba(143,223,255,0.14)] overflow-hidden shadow-inner flex items-center justify-center">
-        {/* Subtle Background CAD Grid */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-20"
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, rgba(34, 199, 242, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 199, 242, 0.15) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }}
-        />
-
-        {/* Faint Center Ambient Bloom */}
-        <div
-          className="absolute w-[360px] h-[360px] rounded-full pointer-events-none blur-[90px] opacity-25"
-          style={{
-            background: 'radial-gradient(circle, #22C7F2 0%, #2F80FF 45%, transparent 70%)',
-          }}
-        />
-
-        {/* Soft Vignette Overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(11, 18, 32, 0.85) 100%)',
-          }}
-        />
-
-        {/* -------------------------------------------------------------------
-            CORNER LIVE STATUS BEACON (Phases 2, 3, 4, 5)
-            Glided up smoothly from Phase 1 Voice Pill
-        ------------------------------------------------------------------- */}
-        {(currentPhaseId >= 2 || p1IsGliding) && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: isP5Fading ? 0 : 1, y: 0 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="absolute top-4 left-4 z-30 pointer-events-none"
-          >
-            <div className="w-[190px] sm:w-[230px] h-[44px] rounded-full bg-[rgba(13,18,32,0.92)] backdrop-blur-md border border-[rgba(143,223,255,0.22)] px-3.5 flex items-center justify-between shadow-lg">
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="w-2 h-2 rounded-full bg-[#22C7F2] animate-pulse shrink-0" />
-                <div className="flex flex-col overflow-hidden text-left">
-                  <span className="text-[11px] font-mono font-semibold text-[#E5F0FF] truncate">
-                    {isPhase4 ? 'Refinement active' : 'Command received'}
-                  </span>
-                  <span className="text-[9px] font-mono text-[rgba(229,240,255,0.72)] truncate">
-                    {isPhase4 ? '0.200" fillet request' : 'Geometry intent parsed'}
-                  </span>
-                </div>
-              </div>
-              <Terminal className="w-3.5 h-3.5 text-[#22C7F2]/70 shrink-0" />
-            </div>
-          </motion.div>
-        )}
-
-        {/* -------------------------------------------------------------------
-            PHASE 1: VOICE PILL & WAVEFORM (Duration: ~3.2s)
-        ------------------------------------------------------------------- */}
-        {isPhase1 && !p1IsGliding && (
-          <div className="relative z-20 flex flex-col items-center justify-center px-4 w-full">
-            {/* The Ezer Voice Pill */}
-            <AppBorderBeam
-              colorVariant="ocean"
-              borderRadius={9999}
-              duration={2.0}
-              active={true}
-              className="w-full max-w-[460px] shadow-2xl rounded-full"
-            >
-              <div
-                className={`relative w-full rounded-full bg-[#0B1220]/95 backdrop-blur-xl border border-[rgba(143,223,255,0.28)] px-5 py-4 flex flex-col justify-center min-h-[96px] sm:min-h-[104px] overflow-hidden transition-transform duration-200 ${
-                  p1IsConfirming ? 'scale-[0.96]' : 'scale-100'
-                }`}
-                style={{
-                  boxShadow:
-                    'inset 0 1px 1px rgba(255,255,255,0.15), 0 16px 36px -4px rgba(34,199,242,0.25)',
-                }}
-              >
-                {/* Top-Left Listening Indicator Dot & Status */}
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#22C7F2] animate-pulse shadow-[0_0_8px_#22C7F2]" />
-                  <span className="text-[12px] font-mono font-medium text-[rgba(229,240,255,0.78)]">
-                    {p1IsListening ? 'Listening…' : 'Transcribing voice…'}
-                  </span>
-                </div>
-
-                {/* Main Transcribed Command Text (Large, readable, beautiful line-wrap) */}
-                <div className="relative z-20 min-h-[46px] flex items-center">
-                  <p className="text-[15px] sm:text-[18px] md:text-[20px] font-semibold text-[#F8FBFF] leading-[1.25] tracking-tight">
-                    {p1TypedText}
-                    {p1TypeProgress < 1 && (
-                      <span className="inline-block w-1.5 h-4 ml-1 bg-[#22C7F2] animate-pulse align-middle" />
-                    )}
-                  </p>
-                </div>
-
-                {/* Restrained Liquid Voice Glow Waveform under text */}
-                <div className="absolute bottom-0 inset-x-0 h-[18px] pointer-events-none overflow-hidden opacity-60">
-                  <div
-                    className="w-full h-full"
-                    style={{
-                      background:
-                        'radial-gradient(ellipse at 50% 100%, rgba(103, 232, 249, 0.45) 0%, rgba(34, 199, 242, 0.24) 40%, transparent 80%)',
-                      filter: 'blur(3px)',
-                    }}
-                  />
-                </div>
-              </div>
-            </AppBorderBeam>
-
-            {/* Micro Caption Below Pill */}
-            <p className="mt-3 text-[11px] font-mono text-[rgba(229,240,255,0.65)] tracking-wide">
-              Local voice command stream
-            </p>
-          </div>
-        )}
-
-        {/* -------------------------------------------------------------------
-            PHASE 2: SOLVING ORB & SOLVE STACK (Duration: ~3.8s)
-        ------------------------------------------------------------------- */}
-        {isPhase2 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="relative z-20 flex flex-col items-center justify-center gap-6 px-4"
-          >
-            {/* Computational Solving Orb with Dual Counter-Rotating Rings */}
-            <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center">
-              {/* Outer Counter-Rotating Ring */}
-              <div
-                className="absolute inset-0 rounded-full border border-dashed border-[#22C7F2]/50 animate-[spin_10s_linear_infinite]"
-                style={{ transform: 'rotateX(68deg)' }}
-              />
-
-              {/* Inner Fast Ring with Travelling Highlight */}
-              <div
-                className="absolute inset-2 rounded-full border border-[#8FDFFF]/70 animate-[spin_5s_linear_infinite_reverse]"
-                style={{ transform: 'rotateY(65deg)' }}
-              />
-
-              {/* Core Glowing Sphere */}
-              <div
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-full relative shadow-[0_0_32px_rgba(34,199,242,0.65)]"
-                style={{
-                  background:
-                    'radial-gradient(circle at 35% 35%, #8FDFFF 0%, #22C7F2 45%, #2F80FF 85%, #0B1220 100%)',
-                }}
-              >
-                {/* Subtle amber computation flicker */}
-                <div
-                  className="absolute inset-0 rounded-full bg-[#F59E0B] opacity-15 animate-ping"
-                  style={{ animationDuration: '2.4s' }}
-                />
-              </div>
-
-              {/* Surrounding Halo */}
-              <div className="absolute -inset-4 rounded-full bg-[#2F80FF]/15 blur-xl pointer-events-none" />
-            </div>
-
-            {/* Vertical Solve Stack / Task List */}
-            <div className="flex flex-col gap-1.5 w-full max-w-[280px]">
-              {SOLVE_STACK.map((task, idx) => {
-                const isCompleted = idx < activeSolveItemIndex;
-                const isActive = idx === activeSolveItemIndex;
-                const isPending = idx > activeSolveItemIndex;
-
-                return (
-                  <div
-                    key={task}
-                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg border transition-all duration-200 text-xs font-mono ${
-                      isActive
-                        ? 'bg-[rgba(13,18,32,0.95)] border-[#22C7F2]/50 text-[#F8FBFF] shadow-sm translate-x-1'
-                        : isCompleted
-                        ? 'bg-[rgba(13,18,32,0.65)] border-white/5 text-[#9FE8D0]'
-                        : 'bg-transparent border-transparent text-white/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {isCompleted ? (
-                        <Check className="w-3.5 h-3.5 text-[#10B981]" />
-                      ) : isActive ? (
-                        <span className="w-2 h-2 rounded-full bg-[#22C7F2] animate-ping" />
-                      ) : (
-                        <span className="w-2 h-2 rounded-full bg-white/20" />
-                      )}
-                      <span>{task}</span>
-                    </div>
-                    {isCompleted && (
-                      <span className="text-[10px] text-[#10B981] font-semibold">DONE</span>
-                    )}
-                    {isActive && (
-                      <span className="text-[10px] text-[#22C7F2] font-semibold animate-pulse">
-                        SOLVING
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-
-        {/* -------------------------------------------------------------------
-            PHASES 3, 4, 5: 3D CAD STAGE (Three.js Extruded Cube + Fillet)
-        ------------------------------------------------------------------- */}
-        {currentPhaseId >= 3 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isP5Fading ? 0 : 1 }}
-            transition={{ duration: 0.45 }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <DynamicEzerCadViewer
-              isPaused={!isVisible}
-              filletProgress={filletProgress}
-              highlightEdges={highlightVerticalEdges}
-              isWireframeOnly={isP3Wireframe}
-              showCallouts={!isP3Wireframe}
-              onUserInteractionChange={(interacting) => {
-                isUserInteractingWith3DRef.current = interacting;
-              }}
-            />
-          </motion.div>
-        )}
-
-        {/* -------------------------------------------------------------------
-            PHASE 4 OVERLAYS: Second Command Prompt & Fillet Success Chip
-        ------------------------------------------------------------------- */}
-        {isPhase4 && (
-          <>
-            {/* Top-Right Refinement Command Card */}
+      {/* Main Dynamic Viewport */}
+      <div
+        className={`relative flex-1 flex flex-col justify-center items-center py-1 min-h-[350px] transition-opacity duration-200 ease-out ${
+          isStageFading || isLoopTransition ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <AnimatePresence mode="wait">
+          {/* ACT 1: DESKTOP WORKSTATION */}
+          {currentStage === 'pill_input' && (
             <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-4 right-4 z-30 max-w-[270px] pointer-events-none"
+              key="stage-desktop-workstation"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full h-full min-h-[350px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
             >
-              <div className="p-3 rounded-2xl bg-[#0B1220]/90 backdrop-blur-md border border-[#22C7F2]/40 text-white shadow-xl flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#22C7F2] font-semibold">
-                  <Sparkles className="w-3 h-3" />
-                  <span>PARAMETRIC REFINEMENT</span>
+              {/* Camera Zoom Wrapper */}
+              <motion.div
+                className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none"
+                style={{ transformOrigin: '50% 86%' }}
+                animate={{
+                  scale: isStage1Zoomed ? 1.25 : 1,
+                  y: isStage1Zoomed ? -18 : 0,
+                }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Wallpaper grid */}
+                <div
+                  className="absolute inset-0 opacity-20 pointer-events-none"
+                  style={{
+                    backgroundImage: `radial-gradient(circle at 1px 1px, rgba(56, 189, 248, 0.35) 1px, transparent 0)`,
+                    backgroundSize: '24px 24px',
+                  }}
+                />
+
+                {/* HUD Overlay */}
+                <div className="absolute top-3 inset-x-4 flex items-center justify-between text-[10px] font-mono select-none z-20">
+                  <div className="text-[#64748B] flex items-center gap-2">
+                    <Monitor className="w-3.5 h-3.5 text-[#38BDF8]" />
+                    <span className="text-white/80 font-medium">Workstation Environment</span>
+                  </div>
+
+                  <div className="px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9.5px] font-mono text-[#38BDF8] flex items-center gap-1.5 shadow-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
+                    <span>ACT I // VOICE COMMAND INTENT</span>
+                  </div>
                 </div>
-                <p className="text-[12px] font-mono text-[#F8FBFF] leading-snug font-medium">
-                  &ldquo;{p4TypedText}&rdquo;
-                </p>
+
+                {/* Desktop Shortcuts */}
+                <div className="absolute top-11 left-4 flex flex-col gap-3 select-none pointer-events-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleStageClick('initial_cad')}
+                    title="Jump to 3D CAD Model (Stage 3)"
+                    className="flex flex-col items-center gap-1 w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-900 border border-white/20 shadow-md flex items-center justify-center text-white font-bold text-xs group-hover:border-[#38BDF8] transition-all">
+                      SW
+                    </div>
+                    <span className="text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                      CAD Solid
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleStageClick('fillet_edit')}
+                    title="Jump to Live Fillet Modification (Stage 4)"
+                    className="flex flex-col items-center gap-1 w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-[#1E293B] border border-white/10 shadow-md flex items-center justify-center text-[#94A3B8] group-hover:border-[#38BDF8] transition-all">
+                      <Folder className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <span className="text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                      Fillets
+                    </span>
+                  </button>
+                </div>
+
+                {/* COMPACT SLEEK EZER PILL */}
+                <div className="absolute bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-3">
+                  <motion.div
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ transformOrigin: 'bottom center' }}
+                    className="relative w-[245px] sm:w-[265px] max-w-[88vw] flex flex-col items-center"
+                  >
+                    <AppBorderBeam
+                      size="sm"
+                      colorVariant="ocean"
+                      strength={1.0}
+                      active={isBorderBeamActive}
+                      theme="dark"
+                      borderRadius={9999}
+                      duration={2.0}
+                      className="w-full rounded-full shadow-2xl"
+                    >
+                      <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-1.5 sm:py-2 text-white flex items-center justify-center min-h-[38px] overflow-hidden shadow-2xl">
+                        {/* Voice Glow Liquid Waveform Simulation (Active during speaking) */}
+                        {isSpeaking && (
+                          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
+                            <div
+                              className="absolute -bottom-2 inset-x-0 h-5"
+                              style={{
+                                background:
+                                  'radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.5) 0%, rgba(34, 199, 242, 0.25) 45%, transparent 75%)',
+                                filter: 'blur(3px)',
+                              }}
+                            />
+                            {/* Animated Fluctuating Wave Band */}
+                            <div
+                              className="absolute -bottom-1 inset-x-2 h-3.5 bg-gradient-to-r from-transparent via-[#22C7F2]/40 to-transparent animate-pulse"
+                              style={{
+                                filter: 'blur(2px)',
+                                animationDuration: '1.2s',
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {isListeningInitial && (
+                          <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-medium text-white/90 select-none">
+                            <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
+                            <span>Listening...</span>
+                          </div>
+                        )}
+
+                        {!isListeningInitial && !isBorderBeamActive && (
+                          <div className="relative z-20 w-full text-center leading-snug">
+                            <span className="font-mono text-[11px] sm:text-[11.5px] font-semibold">
+                              {WORDS.map((word, i) => {
+                                const isSpoken =
+                                  elapsedMs >= TIMING.SPEAKING_END || i <= activeWordIndex;
+                                const isCurrent =
+                                  i === activeWordIndex && elapsedMs < TIMING.SPEAKING_END;
+
+                                return (
+                                  <span
+                                    key={`${word}-${i}`}
+                                    className={`inline-block mr-1 transition-all duration-120 ${
+                                      isCurrent
+                                        ? 'text-[#00F0FF] font-bold scale-[1.06] drop-shadow-[0_0_8px_rgba(0,240,255,0.85)] -translate-y-[0.5px]'
+                                        : isSpoken
+                                        ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] opacity-100'
+                                        : 'opacity-0'
+                                    }`}
+                                  >
+                                    {word}
+                                  </span>
+                                );
+                              })}
+                            </span>
+                          </div>
+                        )}
+
+                        {isBorderBeamActive && (
+                          <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
+                            <span>Submitting to solver…</span>
+                          </div>
+                        )}
+                      </div>
+                    </AppBorderBeam>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Taskbar */}
+              <div className="absolute bottom-0 inset-x-0 h-9 bg-[#0F172A]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-between px-3 select-none z-40">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleStageClick('pill_input')}
+                    className="w-6 h-6 rounded flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <div className="grid grid-cols-2 gap-0.5">
+                      <div className="w-1 h-1 bg-[#00F0FF] rounded-xs" />
+                      <div className="w-1 h-1 bg-[#178BFF] rounded-xs" />
+                      <div className="w-1 h-1 bg-[#38BDF8] rounded-xs" />
+                      <div className="w-1 h-1 bg-[#0284C7] rounded-xs" />
+                    </div>
+                  </button>
+
+                  <span className="text-[10px] font-mono text-[#94A3B8]">Ezer Agent · Ready</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-[9.5px] font-mono text-[#94A3B8]">
+                  <Wifi className="w-3 h-3" />
+                  <span>11:42 AM</span>
+                </div>
               </div>
             </motion.div>
+          )}
 
-            {/* Center Success Badge after Filleting */}
-            <AnimatePresence>
-              {showFilletSuccessChip && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.85, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ type: 'spring', damping: 18, stiffness: 220 }}
-                  className="absolute bottom-16 z-30 pointer-events-none flex flex-col items-center gap-1"
-                >
-                  <div className="px-4 py-2 rounded-full bg-[rgba(16,185,129,0.14)] backdrop-blur-md border border-[rgba(16,185,129,0.38)] text-[#10B981] font-mono text-xs font-bold shadow-lg flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                    <span>Fillet complete · 4 edges · R0.200 in</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-white/50 tracking-wider">
-                    No topology errors
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-        )}
-      </div>
-
-      {/* =======================================================================
-          3. TIMELINE / STATE STRIP (Height: ~76px)
-             Segmented interactive pills with active blue/cyan glow
-      ======================================================================= */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 py-1">
-        {PHASES.map((phase) => {
-          const isActive = currentPhaseId === phase.id;
-          const isDone = currentPhaseId > phase.id || currentPhaseId === 5;
-          const Icon = phase.icon;
-
-          return (
-            <button
-              key={phase.id}
-              onClick={() => handleJumpToPhase(phase.id)}
-              className={`relative px-3 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between group active:scale-[0.98] ${
-                isActive
-                  ? 'bg-white border-[#22C7F2] shadow-[0_4px_16px_rgba(34,199,242,0.22)]'
-                  : isDone
-                  ? 'bg-white/80 border-[#10B981]/30 text-[#0F172A] hover:border-[#10B981]/50'
-                  : 'bg-white/50 border-[rgba(15,23,42,0.06)] text-[#64748B] hover:bg-white hover:text-[#0F172A]'
-              }`}
+          {/* ACT 2: SOLVING ORB */}
+          {currentStage === 'solving_orb' && (
+            <motion.div
+              key="stage-solving-orb"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full relative flex flex-col items-center justify-center py-4 space-y-4"
             >
-              <div className="flex items-center justify-between w-full mb-1">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#64748B]">
-                  Phase 0{phase.id}
-                </span>
-                {isDone ? (
-                  <Check className="w-3.5 h-3.5 text-[#10B981]" />
-                ) : (
-                  <Icon
-                    className={`w-3.5 h-3.5 ${
-                      isActive ? 'text-[#22C7F2] animate-pulse' : 'text-[#64748B]'
-                    }`}
+              <div className="absolute top-2 right-2 px-2.5 py-0.5 rounded-md bg-white/80 border border-[#CBD5E1] text-[9.5px] font-mono text-[#0864C7] flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF] animate-pulse" />
+                <span>ACT II // CONSTRAINT SOLVER</span>
+              </div>
+
+              {/* Sphere */}
+              <div className="relative flex items-center justify-center">
+                <div
+                  className="absolute -inset-3 border border-[#178BFF]/30 border-dashed rounded-full pointer-events-none animate-spin"
+                  style={{ animationDuration: '14s' }}
+                />
+                <motion.div
+                  initial={{ width: 260, height: 38, borderRadius: 19 }}
+                  animate={{ width: 88, height: 88, borderRadius: 44 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative bg-black border border-[#178BFF]/50 shadow-xl flex items-center justify-center overflow-hidden"
+                >
+                  <AppThinkingOrb state="solving" size={64} scale={1.3} dots={2.5} theme="dark" />
+                </motion.div>
+              </div>
+
+              <div className="text-center space-y-2 max-w-sm w-full">
+                <div className="text-xs font-mono font-bold text-[#0864C7] tracking-wider uppercase">
+                  SOLVING CAD CONSTRAINTS
+                </div>
+
+                <div className="space-y-1.5 text-left text-[11px] font-mono bg-white/85 p-3 rounded-xl border border-black/5 shadow-xs">
+                  <div className={`flex items-center justify-between ${solveStep1 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2">
+                      {solveStep1 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
+                      <span>Base: 2″ × 2″ centered square</span>
+                    </div>
+                    <span className="text-[9.5px] opacity-70">{solveStep1 ? 'Solved' : '...'}</span>
+                  </div>
+
+                  <div className={`flex items-center justify-between ${solveStep2 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2">
+                      {solveStep2 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
+                      <span>Extrude Boss: 2.000″ depth</span>
+                    </div>
+                    <span className="text-[9.5px] opacity-70">{solveStep2 ? 'Solved' : '...'}</span>
+                  </div>
+
+                  <div className={`flex items-center justify-between ${solveStep3 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2">
+                      {solveStep3 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
+                      <span>Cut-Extrude: Ø 1.000″ through-hole</span>
+                    </div>
+                    <span className="text-[9.5px] opacity-70">{solveStep3 ? 'Solved' : '...'}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ACT 3 & 4: 3D CAD MODEL VIEWPORT WITH LIVE FILLET & ENDLESS CLIMAX */}
+          {(currentStage === 'initial_cad' || currentStage === 'fillet_edit') && (
+            <motion.div
+              key="stage-cad-interactive-viewport"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full flex flex-col space-y-2"
+            >
+              <div
+                className="relative w-full rounded-xl overflow-hidden border border-[#CBD5E1] shadow-inner bg-[#EEF2F6]"
+                onPointerDown={() => handleModelInteraction(true)}
+                onPointerUp={() => handleModelInteraction(false)}
+                onClick={() => handleModelInteraction(false)}
+              >
+                {/* HUD Badges */}
+                <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none px-2.5 py-0.5 rounded-md bg-white/85 backdrop-blur-md border border-[#CBD5E1] text-[9.5px] font-mono text-[#0864C7] shadow-2xs">
+                  <span>{currentStage === 'initial_cad' ? 'ACT III // 3D SOLID' : 'ACT IV // MODIFICATION'}</span>
+                </div>
+
+                <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none flex flex-col gap-0.5 text-[9.5px] font-mono text-[#64748B] bg-white/85 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#CBD5E1] shadow-2xs">
+                  <span className="text-[#0864C7] font-bold">
+                    {currentStage === 'initial_cad'
+                      ? 'PARAMETRIC SOLID'
+                      : isIterationDone
+                      ? 'FILLETS COMPLETE'
+                      : 'APPLYING FILLETS'}
+                  </span>
+                  <span>
+                    {currentStage === 'initial_cad'
+                      ? 'CUBE: 2.000″ × 2.000″ // HOLE: Ø 1.000″'
+                      : `FILLET: R 0.200″ (${Math.round(liveFilletProgress * 100)}%)`}
+                  </span>
+                </div>
+
+                {/* Camera Swoosh Wrapper */}
+                <motion.div
+                  className="w-full h-full"
+                  style={{ transformOrigin: '50% 86%' }}
+                  animate={{
+                    scale: isStage4Zoomed ? 1.24 : 1,
+                    y: isStage4Zoomed ? -20 : 0,
+                  }}
+                  transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <DynamicEzerCadViewer
+                    filletProgress={liveFilletProgress}
+                    onUserInteractionChange={handleModelInteraction}
                   />
+                </motion.div>
+
+                {/* IN-VIEWPORT COMPACT PILL (WITH MORPHING TO CLIMAX "the possibilities are endless") */}
+                {currentStage === 'fillet_edit' && (
+                  <div className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2">
+                    <motion.div
+                      key="iter-pill-motion-container"
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      animate={{
+                        scaleX: isFinalCollapsed ? 0 : 1,
+                        opacity: isFinalCollapsed ? 0 : 1,
+                      }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ transformOrigin: 'bottom center' }}
+                      className={`flex flex-col items-center transition-all duration-300 ${
+                        isEndlessClimax
+                          ? 'w-[255px] max-w-[85vw]'
+                          : isIterationDone
+                          ? 'w-auto max-w-[90vw]'
+                          : 'w-[225px] sm:w-[245px] max-w-[88vw]'
+                      }`}
+                    >
+                      <AppBorderBeam
+                        size="sm"
+                        colorVariant="ocean"
+                        strength={1.0}
+                        active={isIterationBorderBeamActive || isEndlessStreaming}
+                        theme="dark"
+                        borderRadius={9999}
+                        duration={2.0}
+                        className="w-full rounded-full shadow-2xl"
+                      >
+                        <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-1.5 text-white flex items-center justify-center min-h-[36px] shadow-2xl overflow-hidden">
+                          {/* Voice Glow Liquid Waveform Simulation (Active during iteration speaking) */}
+                          {isIterationSpeaking && (
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
+                              <div
+                                className="absolute -bottom-2 inset-x-0 h-5"
+                                style={{
+                                  background:
+                                    'radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.45) 0%, rgba(34, 199, 242, 0.25) 45%, transparent 75%)',
+                                  filter: 'blur(3px)',
+                                }}
+                              />
+                              <div
+                                className="absolute -bottom-1 inset-x-2 h-3.5 bg-gradient-to-r from-transparent via-[#22C7F2]/40 to-transparent animate-pulse"
+                                style={{
+                                  filter: 'blur(2px)',
+                                  animationDuration: '1.2s',
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Climax Voice Resonance (Active during "the possibilities are endless") */}
+                          {isEndlessStreaming && (
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-80">
+                              <div
+                                className="absolute -bottom-2 inset-x-0 h-6"
+                                style={{
+                                  background:
+                                    'radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.6) 0%, rgba(14, 165, 233, 0.3) 50%, transparent 80%)',
+                                  filter: 'blur(4px)',
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* 1. Fillet command streaming */}
+                          {!isIterationBorderBeamActive && !isIterationDone && (
+                            <div className="relative z-20 w-full text-center leading-snug">
+                              <span className="font-mono text-[11px] font-semibold">
+                                {FILLET_WORDS.map((word, i) => {
+                                  const isSpoken =
+                                    elapsedMs >= TIMING.ITERATION_SPEAKING_END ||
+                                    i <= activeIterationWordIndex;
+                                  const isCurrent =
+                                    i === activeIterationWordIndex &&
+                                    elapsedMs < TIMING.ITERATION_SPEAKING_END;
+
+                                  return (
+                                    <span
+                                      key={`${word}-${i}`}
+                                      className={`inline-block mr-1 transition-all duration-120 ${
+                                        isCurrent
+                                          ? 'text-[#00F0FF] font-bold scale-[1.06] drop-shadow-[0_0_8px_rgba(0,240,255,0.85)] -translate-y-[0.5px]'
+                                          : isSpoken
+                                          ? 'text-white opacity-100'
+                                          : 'opacity-0'
+                                      }`}
+                                    >
+                                      {word}
+                                    </span>
+                                  );
+                                })}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* 2. Fillet border beam working feedback */}
+                          {isIterationBorderBeamActive && !isIterationDone && (
+                            <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
+                              <span>Applying 0.200″ Fillets…</span>
+                            </div>
+                          )}
+
+                          {/* 3. Fillet Done pill state */}
+                          {isIterationDone && !isEndlessClimax && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#10B981] whitespace-nowrap"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
+                              <span>Done · 0.200″ Fillets Applied</span>
+                            </motion.div>
+                          )}
+
+                          {/* 4. FINAL CLIMAX: "the possibilities are endless" streamed word-by-word */}
+                          {isEndlessClimax && !isFinalCollapsed && (
+                            <div className="relative z-20 w-full text-center leading-snug">
+                              <span className="font-mono text-xs sm:text-[12.5px] font-semibold tracking-wide">
+                                {ENDLESS_WORDS.map((word, i) => {
+                                  const isSpoken =
+                                    elapsedMs >= TIMING.ENDLESS_STREAM_END ||
+                                    i <= activeEndlessWordIndex;
+                                  const isCurrent =
+                                    i === activeEndlessWordIndex &&
+                                    elapsedMs < TIMING.ENDLESS_STREAM_END;
+
+                                  return (
+                                    <span
+                                      key={`endless-${word}-${i}`}
+                                      className={`inline-block mr-1.5 transition-all duration-120 ${
+                                        isCurrent
+                                          ? 'text-[#00F0FF] font-bold scale-[1.10] drop-shadow-[0_0_8px_rgba(0,240,255,0.9)] -translate-y-[0.5px]'
+                                          : isSpoken
+                                          ? 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] opacity-100'
+                                          : 'opacity-0'
+                                      }`}
+                                    >
+                                      {word}
+                                    </span>
+                                  );
+                                })}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </AppBorderBeam>
+                    </motion.div>
+                  </div>
                 )}
               </div>
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-[12px] font-mono font-semibold truncate ${
-                    isActive ? 'text-[#0864C7]' : 'text-[#0F172A]'
+
+              {/* Status */}
+              <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] font-mono text-[#647184]">
+                <span className="flex items-center gap-1.5 text-[#059669] font-semibold">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Cube (2″ × 2″ × 2″) + Hole (Ø 1.000″) + Fillets (R 0.200″)</span>
+                </span>
+                <span className="text-[#0864C7]">Touch / click &amp; drag to rotate in 3D</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Timeline Controls & Verified Stack */}
+      <div className="mt-3 pt-2.5 border-t border-black/5 flex flex-col gap-2">
+        <div className="relative w-full bg-slate-100/80 rounded-xl p-1 border border-slate-200 shadow-inner flex flex-col gap-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 w-full" role="tablist">
+            {STAGES.map((stg) => {
+              const isActive = currentStage === stg.id;
+              const Icon = stg.icon;
+
+              return (
+                <button
+                  key={stg.id}
+                  type="button"
+                  onClick={() => handleStageClick(stg.id)}
+                  className={`py-1.5 px-2 rounded-lg text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
+                    isActive
+                      ? 'bg-white text-[#0864C7] font-semibold shadow-xs border border-[#178BFF]/25'
+                      : 'text-[#647184] hover:text-[#17202A] hover:bg-white/40'
                   }`}
                 >
-                  {phase.name}
-                </span>
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C7F2] shadow-[0_0_6px_#22C7F2]" />
-                )}
-              </div>
-            </button>
-          );
-        })}
-      </div>
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#178BFF]' : 'text-[#94A3B8]'}`} />
+                  <span className="truncate">{stg.shortLabel}</span>
+                </button>
+              );
+            })}
+          </div>
 
-      {/* =======================================================================
-          4. FOOTER STATUS STRIP
-      ======================================================================= */}
-      <div className="pt-3 border-t border-[rgba(15,23,42,0.08)] flex flex-col sm:flex-row items-center justify-between gap-1 text-[10.5px] font-mono text-[#64748B]">
-        <div className="flex items-center gap-1.5">
-          <Layers className="w-3.5 h-3.5 text-[#22C7F2]" />
-          <span>Tech stack: Local AI · Rust runtime · SolidWorks workflow</span>
+          <div className="relative w-full h-1 bg-slate-200/80 rounded-full overflow-hidden mx-auto">
+            <motion.div
+              className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-[#0284C7] via-[#178BFF] to-[#38BDF8] rounded-full"
+              style={{ width: `${Math.min(100, Math.max(0, cycleProgress))}%` }}
+              transition={{ ease: 'linear', duration: 0.05 }}
+            />
+          </div>
         </div>
-        <div>
-          <span>Status: Concept demonstration</span>
+
+        {/* Verified Tech Stack Only (Section 32) */}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[10.5px] font-mono text-[#647184]">
+          <span>Verified Technologies: Tauri · Rust · SolidJS · SQLite · PowerShell</span>
+          <span className="text-[#0864C7] font-semibold">Endless Concept Loop</span>
         </div>
       </div>
     </div>
