@@ -430,15 +430,19 @@ export function EzerVisual() {
                 />
 
                 {/* HUD Overlay */}
-                <div className="absolute top-3 inset-x-4 flex items-center justify-between text-[10px] font-mono select-none z-20">
-                  <div className="text-[#64748B] flex items-center gap-2">
-                    <Monitor className="w-3.5 h-3.5 text-[#38BDF8]" />
-                    <span className="text-white/80 font-medium">Workstation Environment</span>
+                <div className="absolute top-3 inset-x-3 sm:inset-x-4 flex items-center justify-between gap-2 text-[10px] font-mono select-none z-20">
+                  <div className="text-[#64748B] flex items-center gap-1.5 min-w-0 truncate">
+                    <Monitor className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
+                    <span className="text-white/80 font-medium truncate">
+                      <span className="hidden sm:inline">Workstation Environment</span>
+                      <span className="inline sm:hidden">Workstation</span>
+                    </span>
                   </div>
 
-                  <div className="px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9.5px] font-mono text-[#38BDF8] flex items-center gap-1.5 shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
-                    <span>ACT I // VOICE COMMAND INTENT</span>
+                  <div className="px-2 sm:px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9px] sm:text-[9.5px] font-mono text-[#38BDF8] flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse shrink-0" />
+                    <span className="hidden sm:inline">ACT I // VOICE COMMAND INTENT</span>
+                    <span className="inline sm:hidden">ACT I // VOICE INTENT</span>
                   </div>
                 </div>
 
@@ -480,7 +484,7 @@ export function EzerVisual() {
                     animate={{ scaleX: 1, opacity: 1 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     style={{ transformOrigin: 'bottom center' }}
-                    className="relative w-[245px] sm:w-[265px] max-w-[88vw] flex flex-col items-center"
+                    className="relative w-[280px] sm:w-[330px] max-w-[92vw] flex flex-col items-center"
                   >
                     <AppBorderBeam
                       size="sm"
@@ -492,10 +496,10 @@ export function EzerVisual() {
                       duration={2.0}
                       className="w-full rounded-full shadow-2xl"
                     >
-                      <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-1.5 sm:py-2 text-white flex items-center justify-center min-h-[38px] overflow-hidden shadow-2xl">
+                      <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12]/95 border border-white/20 px-4 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
                         {/* Voice Glow Liquid Waveform Simulation (Active during speaking) */}
                         {isSpeaking && (
-                          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
+                          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl sm:rounded-full z-10 opacity-70">
                             <div
                               className="absolute -bottom-2 inset-x-0 h-5"
                               style={{
@@ -523,8 +527,8 @@ export function EzerVisual() {
                         )}
 
                         {!isListeningInitial && !isBorderBeamActive && (
-                          <div className="relative z-20 w-full text-center leading-snug">
-                            <span className="font-mono text-[11px] sm:text-[11.5px] font-semibold">
+                          <div className="relative z-20 w-full text-center leading-snug px-1">
+                            <span className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold leading-relaxed break-words">
                               {WORDS.map((word, i) => {
                                 const isSpoken =
                                   elapsedMs >= TIMING.SPEAKING_END || i <= activeWordIndex;
@@ -599,9 +603,9 @@ export function EzerVisual() {
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               className="w-full relative flex flex-col items-center justify-center py-4 space-y-4"
             >
-              <div className="absolute top-2 right-2 px-2.5 py-0.5 rounded-md bg-white/80 border border-[#CBD5E1] text-[9.5px] font-mono text-[#0864C7] flex items-center gap-1.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF] animate-pulse" />
-                <span>ACT II // CONSTRAINT SOLVER</span>
+              <div className="absolute top-2 right-2 px-2.5 py-0.5 rounded-md bg-white/80 border border-[#CBD5E1] text-[9.5px] font-mono text-[#0864C7] flex items-center gap-1.5 shadow-2xs shrink-0 whitespace-nowrap">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF] animate-pulse shrink-0" />
+                <span className="truncate">ACT II // CONSTRAINT SOLVER</span>
               </div>
 
               {/* Sphere */}
@@ -620,34 +624,34 @@ export function EzerVisual() {
                 </motion.div>
               </div>
 
-              <div className="text-center space-y-2 max-w-sm w-full">
-                <div className="text-xs font-mono font-bold text-[#0864C7] tracking-wider uppercase">
+              <div className="text-center space-y-2 max-w-sm w-full px-2">
+                <div className="text-xs font-mono font-bold text-[#0864C7] tracking-wider uppercase truncate">
                   SOLVING CAD CONSTRAINTS
                 </div>
 
-                <div className="space-y-1.5 text-left text-[11px] font-mono bg-white/85 p-3 rounded-xl border border-black/5 shadow-xs">
-                  <div className={`flex items-center justify-between ${solveStep1 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
-                    <div className="flex items-center gap-2">
+                <div className="space-y-1.5 text-left text-[10.5px] sm:text-[11px] font-mono bg-white/85 p-3 rounded-xl border border-black/5 shadow-xs">
+                  <div className={`flex items-center justify-between gap-2 ${solveStep1 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2 min-w-0 truncate">
                       {solveStep1 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
-                      <span>Base: 2″ × 2″ centered square</span>
+                      <span className="truncate">Base: 2″ × 2″ centered square</span>
                     </div>
-                    <span className="text-[9.5px] opacity-70">{solveStep1 ? 'Solved' : '...'}</span>
+                    <span className="text-[9.5px] opacity-70 shrink-0">{solveStep1 ? 'Solved' : '...'}</span>
                   </div>
 
-                  <div className={`flex items-center justify-between ${solveStep2 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
-                    <div className="flex items-center gap-2">
+                  <div className={`flex items-center justify-between gap-2 ${solveStep2 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2 min-w-0 truncate">
                       {solveStep2 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
-                      <span>Extrude Boss: 2.000″ depth</span>
+                      <span className="truncate">Extrude Boss: 2.000″ depth</span>
                     </div>
-                    <span className="text-[9.5px] opacity-70">{solveStep2 ? 'Solved' : '...'}</span>
+                    <span className="text-[9.5px] opacity-70 shrink-0">{solveStep2 ? 'Solved' : '...'}</span>
                   </div>
 
-                  <div className={`flex items-center justify-between ${solveStep3 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
-                    <div className="flex items-center gap-2">
+                  <div className={`flex items-center justify-between gap-2 ${solveStep3 ? 'text-[#059669]' : 'text-[#94A3B8]'}`}>
+                    <div className="flex items-center gap-2 min-w-0 truncate">
                       {solveStep3 ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-current shrink-0" />}
-                      <span>Cut-Extrude: Ø 1.000″ through-hole</span>
+                      <span className="truncate">Cut-Extrude: Ø 1.000″ through-hole</span>
                     </div>
-                    <span className="text-[9.5px] opacity-70">{solveStep3 ? 'Solved' : '...'}</span>
+                    <span className="text-[9.5px] opacity-70 shrink-0">{solveStep3 ? 'Solved' : '...'}</span>
                   </div>
                 </div>
               </div>
@@ -670,24 +674,28 @@ export function EzerVisual() {
                 onPointerUp={() => handleModelInteraction(false)}
                 onClick={() => handleModelInteraction(false)}
               >
-                {/* HUD Badges */}
-                <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none px-2.5 py-0.5 rounded-md bg-white/85 backdrop-blur-md border border-[#CBD5E1] text-[9.5px] font-mono text-[#0864C7] shadow-2xs">
-                  <span>{currentStage === 'initial_cad' ? 'ACT III // 3D SOLID' : 'ACT IV // MODIFICATION'}</span>
-                </div>
+                {/* HUD Header Bar: Flex row guarantees zero badge overlap */}
+                <div className="absolute top-2.5 inset-x-2.5 z-20 pointer-events-none flex items-start justify-between gap-2 text-[9.5px] font-mono select-none">
+                  {/* Left Status Badge */}
+                  <div className="flex flex-col gap-0.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#CBD5E1] shadow-2xs max-w-[64%] min-w-0">
+                    <span className="text-[#0864C7] font-bold truncate">
+                      {currentStage === 'initial_cad'
+                        ? 'PARAMETRIC SOLID'
+                        : isIterationDone
+                        ? 'FILLETS COMPLETE'
+                        : 'APPLYING FILLETS'}
+                    </span>
+                    <span className="text-[#64748B] truncate text-[9px] sm:text-[9.5px]">
+                      {currentStage === 'initial_cad'
+                        ? 'CUBE: 2″ × 2″ // HOLE: Ø 1″'
+                        : `FILLET: R 0.200″ (${Math.round(liveFilletProgress * 100)}%)`}
+                    </span>
+                  </div>
 
-                <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none flex flex-col gap-0.5 text-[9.5px] font-mono text-[#64748B] bg-white/85 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#CBD5E1] shadow-2xs">
-                  <span className="text-[#0864C7] font-bold">
-                    {currentStage === 'initial_cad'
-                      ? 'PARAMETRIC SOLID'
-                      : isIterationDone
-                      ? 'FILLETS COMPLETE'
-                      : 'APPLYING FILLETS'}
-                  </span>
-                  <span>
-                    {currentStage === 'initial_cad'
-                      ? 'CUBE: 2.000″ × 2.000″ // HOLE: Ø 1.000″'
-                      : `FILLET: R 0.200″ (${Math.round(liveFilletProgress * 100)}%)`}
-                  </span>
+                  {/* Right Stage Badge */}
+                  <div className="px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-md border border-[#CBD5E1] text-[9px] sm:text-[9.5px] font-mono text-[#0864C7] shadow-2xs shrink-0 whitespace-nowrap">
+                    <span>{currentStage === 'initial_cad' ? 'ACT III // 3D SOLID' : 'ACT IV // MODIFICATION'}</span>
+                  </div>
                 </div>
 
                 {/* Camera Swoosh Wrapper */}
@@ -712,8 +720,8 @@ export function EzerVisual() {
                     className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
                     style={{ transformOrigin: 'bottom center' }}
                     animate={{
-                      scale: isStage4Zoomed ? 1.28 : 1,
-                      y: isStage4Zoomed ? -10 : 0,
+                      scale: isStage4Zoomed ? 1.16 : 1,
+                      y: isStage4Zoomed ? -8 : 0,
                     }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   >
@@ -728,10 +736,10 @@ export function EzerVisual() {
                       style={{ transformOrigin: 'bottom center' }}
                       className={`flex flex-col items-center transition-all duration-300 ${
                         isEndlessClimax
-                          ? 'w-[255px] max-w-[85vw]'
+                          ? 'w-[250px] sm:w-[275px] max-w-[88vw]'
                           : isIterationDone
                           ? 'w-auto max-w-[90vw]'
-                          : 'w-[225px] sm:w-[245px] max-w-[88vw]'
+                          : 'w-[235px] sm:w-[265px] max-w-[88vw]'
                       }`}
                     >
                       <AppBorderBeam
@@ -744,7 +752,7 @@ export function EzerVisual() {
                         duration={2.0}
                         className="w-full rounded-full shadow-2xl"
                       >
-                        <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-1.5 text-white flex items-center justify-center min-h-[36px] shadow-2xl overflow-hidden">
+                        <div className="relative w-full rounded-2xl sm:rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 sm:px-4 py-2 text-white flex items-center justify-center min-h-[38px] shadow-2xl overflow-hidden">
                           {/* Voice Glow Liquid Waveform Simulation (Active during iteration speaking) */}
                           {isIterationSpeaking && (
                             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
@@ -782,8 +790,8 @@ export function EzerVisual() {
 
                           {/* 1. Fillet command streaming */}
                           {!isIterationBorderBeamActive && !isIterationDone && (
-                            <div className="relative z-20 w-full text-center leading-snug">
-                              <span className="font-mono text-[11px] font-semibold">
+                            <div className="relative z-20 w-full text-center leading-snug px-1">
+                              <span className="font-mono text-[10.5px] sm:text-[11px] font-semibold leading-relaxed break-words">
                                 {FILLET_WORDS.map((word, i) => {
                                   const isSpoken =
                                     elapsedMs >= TIMING.ITERATION_SPEAKING_END ||
@@ -813,9 +821,9 @@ export function EzerVisual() {
 
                           {/* 2. Fillet border beam working feedback */}
                           {isIterationBorderBeamActive && !isIterationDone && (
-                            <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8]">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
-                              <span>Applying 0.200″ Fillets…</span>
+                            <div className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#38BDF8] px-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping shrink-0" />
+                              <span className="truncate">Applying 0.200″ Fillets…</span>
                             </div>
                           )}
 
@@ -824,17 +832,17 @@ export function EzerVisual() {
                             <motion.div
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#10B981] whitespace-nowrap"
+                              className="relative z-20 flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[#10B981] whitespace-nowrap px-2"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                              <span>Done · 0.200″ Fillets Applied</span>
+                              <span className="truncate">Done · 0.200″ Fillets Applied</span>
                             </motion.div>
                           )}
 
                           {/* 4. FINAL CLIMAX: "the possibilities are endless" streamed word-by-word */}
                           {isEndlessClimax && !isFinalCollapsed && (
-                            <div className="relative z-20 w-full text-center leading-snug">
-                              <span className="font-mono text-xs sm:text-[12.5px] font-semibold tracking-wide">
+                            <div className="relative z-20 w-full text-center leading-snug px-1">
+                              <span className="font-mono text-[11px] sm:text-xs font-semibold tracking-normal sm:tracking-wide break-words">
                                 {ENDLESS_WORDS.map((word, i) => {
                                   const isSpoken =
                                     elapsedMs >= TIMING.ENDLESS_STREAM_END ||
@@ -868,13 +876,15 @@ export function EzerVisual() {
                 )}
               </div>
 
-              {/* Status */}
-              <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] font-mono text-[#647184]">
-                <span className="flex items-center gap-1.5 text-[#059669] font-semibold">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Cube (2″ × 2″ × 2″) + Hole (Ø 1.000″) + Fillets (R 0.200″)</span>
+              {/* Status Bar */}
+              <div className="flex items-center justify-between gap-2 px-1 text-[10.5px] sm:text-[11px] font-mono text-[#647184] min-w-0">
+                <span className="flex items-center gap-1.5 text-[#059669] font-semibold truncate min-w-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Cube (2″×2″×2″) + Hole (Ø 1″) + Fillets</span>
                 </span>
-                <span className="text-[#0864C7]">Touch / click &amp; drag to rotate in 3D</span>
+                <span className="text-[#0864C7] shrink-0 text-[10px] hidden sm:inline">
+                  Drag to rotate in 3D
+                </span>
               </div>
             </motion.div>
           )}
@@ -1055,16 +1065,16 @@ export function EzerVisual() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.45, delay: 0.2, ease: 'easeOut' }}
-                    className="mt-3.5 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-mono text-[#38BDF8] tracking-widest uppercase shadow-lg"
+                    className="mt-3.5 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9.5px] sm:text-[11px] font-mono text-[#38BDF8] tracking-widest uppercase shadow-lg max-w-[90%] truncate"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
-                    <span>ENGINEERING CAD AUTOMATION</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse shrink-0" />
+                    <span className="truncate">ENGINEERING CAD AUTOMATION</span>
                   </motion.div>
                 )}
               </div>
 
               {/* Bottom loop status tag */}
-              <div className="absolute bottom-3 text-[9.5px] font-mono text-white/30 tracking-wider">
+              <div className="absolute bottom-3 inset-x-2 text-center text-[9px] sm:text-[9.5px] font-mono text-white/30 tracking-wider truncate">
                 EZER WORKSTATION RESTARTING…
               </div>
             </motion.div>

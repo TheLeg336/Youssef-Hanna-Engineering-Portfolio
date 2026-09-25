@@ -191,7 +191,7 @@ export function SelectedSystemsReel() {
 
       {/* Footer Metadata & Deep Link */}
       <div className="flex items-center justify-between pt-2.5 border-t border-black/5 text-xs font-mono">
-        <span className="text-[11px] text-[#475569] truncate max-w-[200px] sm:max-w-none">
+        <span className="text-[11px] text-[#475569] truncate flex-1 min-w-0 pr-2">
           {activeSystem.tagline}
         </span>
 

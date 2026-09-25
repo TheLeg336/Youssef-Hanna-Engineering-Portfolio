@@ -309,11 +309,11 @@ export function DualSenseVisual() {
 
       {/* Description Strip */}
       <div className="mt-3 p-3 rounded-xl bg-white border border-[#CBD5E1] shadow-2xs text-xs font-mono">
-        <div className="flex items-center justify-between pb-1 mb-1 border-b border-black/5">
-          <span className="font-bold text-[#17202A] flex items-center gap-1.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1 mb-1 border-b border-black/5">
+          <span className="font-bold text-[#17202A] flex items-center gap-1.5 truncate min-w-0">
             {currentChannelInfo ? currentChannelInfo.label : 'All 4 Concurrent Signal Channels'}
           </span>
-          <span className="text-[10.5px] text-[#0864C7] font-semibold">
+          <span className="text-[10px] sm:text-[10.5px] text-[#0864C7] font-semibold truncate shrink-0">
             {currentChannelInfo ? currentChannelInfo.direction : 'Wired USB Interface'}
           </span>
         </div>

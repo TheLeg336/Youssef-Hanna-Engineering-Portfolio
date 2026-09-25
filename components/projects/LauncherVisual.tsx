@@ -323,10 +323,10 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="absolute top-3 right-3 max-w-[280px] bg-white/95 backdrop-blur-md p-3 rounded-xl border border-[#CBD5E1] shadow-xl text-xs font-mono text-[#17202A] z-20"
+              className="absolute top-3 right-3 max-w-[calc(100%-24px)] sm:max-w-[280px] bg-white/95 backdrop-blur-md p-3 rounded-xl border border-[#CBD5E1] shadow-xl text-xs font-mono text-[#17202A] z-20"
             >
-              <div className="flex items-center justify-between pb-1 mb-1 border-b border-black/5">
-                <span className="font-bold text-[#0864C7]">
+              <div className="flex items-center justify-between gap-2 pb-1 mb-1 border-b border-black/5">
+                <span className="font-bold text-[#0864C7] truncate min-w-0">
                   {selectedMilestone === 'target' ? 'SPECIFICATION REQUIREMENT' : 'CLASS COMPETITION RESULT'}
                 </span>
                 <button

@@ -195,13 +195,14 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
     const top = placeBelow ? relTop + bRect.height + 10 : undefined;
     const bottom = placeBelow ? undefined : cRect.height - relTop + 10;
 
-    const popoverWidth = 340;
+    const maxAvailableWidth = Math.max(260, cRect.width - 24);
+    const popoverWidth = Math.min(340, maxAvailableWidth);
     let left = btnCenter - 60;
-    if (left + popoverWidth > cRect.width - 20) {
-      left = cRect.width - popoverWidth - 20;
+    if (left + popoverWidth > cRect.width - 12) {
+      left = cRect.width - popoverWidth - 12;
     }
-    if (left < 20) {
-      left = 20;
+    if (left < 12) {
+      left = 12;
     }
 
     const triangleOffset = Math.max(16, Math.min(popoverWidth - 24, btnCenter - left));
@@ -616,6 +617,8 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
               bottom: popoverAnchor.bottom,
               left: popoverAnchor.left,
               width: 340,
+              maxWidth: 'calc(100% - 24px)',
+              boxSizing: 'border-box',
               zIndex: 60,
             }}
             className="bg-white rounded-2xl p-4 sm:p-5 shadow-2xl border border-[#CBD5E1] text-[#17202A] font-sans"
