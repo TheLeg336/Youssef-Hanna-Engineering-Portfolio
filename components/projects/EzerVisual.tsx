@@ -432,15 +432,15 @@ export function EzerVisual() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full h-full min-h-[310px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
+              className="w-full h-full min-h-[290px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
             >
               {/* Dynamic Camera: Zooms in more when pill is used, then zooms out to show what is happening! */}
               <motion.div
                 className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none"
                 style={{ transformOrigin: '50% 86%' }}
                 animate={{
-                  scale: isStage1Zoomed ? (isMobile ? 1.05 : 1.38) : 1,
-                  y: isStage1Zoomed ? (isMobile ? -8 : -28) : 0,
+                  scale: isStage1Zoomed ? (isMobile ? 1.02 : 1.38) : (isMobile ? 0.95 : 1),
+                  y: isStage1Zoomed ? (isMobile ? -4 : -28) : 0,
                 }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               >
@@ -454,16 +454,16 @@ export function EzerVisual() {
                 />
 
                 {/* HUD Overlay */}
-                <div className="absolute top-3 inset-x-3 sm:inset-x-4 flex items-center justify-between gap-2 text-[10px] font-mono select-none z-20">
-                  <div className="text-[#64748B] flex items-center gap-1.5 min-w-0 truncate">
-                    <Monitor className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
+                <div className="absolute top-2 sm:top-3 inset-x-2 sm:inset-x-4 flex items-center justify-between gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-mono select-none z-20">
+                  <div className="text-[#64748B] flex items-center gap-1 sm:gap-1.5 min-w-0 truncate">
+                    <Monitor className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#38BDF8] shrink-0" />
                     <span className="text-white/80 font-medium truncate">
                       <span className="hidden sm:inline">Workstation Environment</span>
                       <span className="inline sm:hidden">Workstation</span>
                     </span>
                   </div>
 
-                  <div className="px-2 sm:px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9px] sm:text-[9.5px] font-mono text-[#38BDF8] flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap">
+                  <div className="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[8.5px] sm:text-[9.5px] font-mono text-[#38BDF8] flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0 whitespace-nowrap">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse shrink-0" />
                     <span className="hidden sm:inline">ACT I // VOICE COMMAND INTENT</span>
                     <span className="inline sm:hidden">ACT I // VOICE INTENT</span>
@@ -471,17 +471,17 @@ export function EzerVisual() {
                 </div>
 
                 {/* Desktop Shortcuts */}
-                <div className="absolute top-9 sm:top-11 left-2 sm:left-4 flex flex-col gap-2 sm:gap-3 select-none pointer-events-auto">
+                <div className="absolute top-8 sm:top-11 left-2 sm:left-4 flex flex-col gap-1.5 sm:gap-3 select-none pointer-events-auto">
                   <button
                     type="button"
                     onClick={() => handleStageClick('initial_cad')}
                     title="Jump to 3D CAD Model (Stage 3)"
-                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-11 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-8 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-0.5 sm:p-1 transition-transform active:scale-95"
                   >
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-600 to-red-900 border border-white/20 shadow-md flex items-center justify-center text-white font-bold text-[11px] sm:text-xs group-hover:border-[#38BDF8] transition-all">
+                    <div className="w-6 h-6 sm:w-9 sm:h-9 rounded-md sm:rounded-xl bg-gradient-to-br from-red-600 to-red-900 border border-white/20 shadow-md flex items-center justify-center text-white font-bold text-[9px] sm:text-xs group-hover:border-[#38BDF8] transition-all">
                       SW
                     </div>
-                    <span className="text-[8.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                    <span className="text-[7.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight hidden xs:inline">
                       CAD Solid
                     </span>
                   </button>
@@ -490,19 +490,19 @@ export function EzerVisual() {
                     type="button"
                     onClick={() => handleStageClick('fillet_edit')}
                     title="Jump to Live Fillet Modification (Stage 4)"
-                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-11 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-8 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-0.5 sm:p-1 transition-transform active:scale-95"
                   >
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#1E293B] border border-white/10 shadow-md flex items-center justify-center text-[#94A3B8] group-hover:border-[#38BDF8] transition-all">
-                      <Folder className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+                    <div className="w-6 h-6 sm:w-9 sm:h-9 rounded-md sm:rounded-xl bg-[#1E293B] border border-white/10 shadow-md flex items-center justify-center text-[#94A3B8] group-hover:border-[#38BDF8] transition-all">
+                      <Folder className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" />
                     </div>
-                    <span className="text-[8.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                    <span className="text-[7.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight hidden xs:inline">
                       Fillets
                     </span>
                   </button>
                 </div>
 
                 {/* EZER PILL: NOT present at the beginning (0 to 1.5s)! Appears and expands only when summoned! */}
-                <div className="absolute bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-3">
+                <div className="absolute bottom-[38px] sm:bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-2 sm:px-3">
                   <AnimatePresence>
                     {isPillVisible && (
                       <motion.div
@@ -511,7 +511,7 @@ export function EzerVisual() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.82 }}
                         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative flex flex-col items-center w-[340px] max-w-[92vw]"
+                        className="relative flex flex-col items-center w-[250px] xs:w-[270px] sm:w-[340px] max-w-[84vw] sm:max-w-none"
                       >
                         <AppBorderBeam
                           size="sm"
@@ -523,7 +523,7 @@ export function EzerVisual() {
                           duration={2.0}
                           className="w-full rounded-full shadow-2xl"
                         >
-                          <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
+                          <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 text-white flex items-center justify-center min-h-[34px] sm:min-h-[42px] overflow-hidden shadow-2xl">
                             {/* Live Audio Waveform Glow during speaking */}
                             {isSpeaking && (
                               <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
@@ -550,17 +550,17 @@ export function EzerVisual() {
                               <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="relative z-20 flex items-center justify-center gap-2 text-xs font-mono font-medium text-white/90 select-none whitespace-nowrap"
+                                className="relative z-20 flex items-center justify-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-xs font-mono font-medium text-white/90 select-none whitespace-nowrap"
                               >
-                                <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
+                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
                                 <span className="tracking-wide">Listening...</span>
                               </motion.div>
                             )}
 
                             {/* Word-by-word streaming text */}
                             {!isListeningInitial && !isBorderBeamActive && (
-                              <div className="relative z-20 w-full text-center leading-snug px-1">
-                                <span className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold leading-relaxed break-words">
+                              <div className="relative z-20 w-full text-center leading-tight sm:leading-snug px-0.5 sm:px-1">
+                                <span className="font-mono text-[9px] sm:text-[11.5px] font-semibold leading-snug sm:leading-relaxed break-words">
                                   {WORDS.map((word, i) => {
                                     const isSpoken =
                                       elapsedMs >= TIMING.SPEAKING_END || i <= activeWordIndex;
@@ -570,7 +570,7 @@ export function EzerVisual() {
                                     return (
                                       <span
                                         key={`${word}-${i}`}
-                                        className={`inline-block mr-1 transition-all duration-120 ${
+                                        className={`inline-block mr-0.5 sm:mr-1 transition-all duration-120 ${
                                           isCurrent
                                             ? 'text-[#00F0FF] font-bold scale-[1.06] drop-shadow-[0_0_8px_rgba(0,240,255,0.85)] -translate-y-[0.5px]'
                                             : isSpoken
@@ -591,7 +591,7 @@ export function EzerVisual() {
                               <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="relative z-20 flex items-center justify-center gap-2 text-xs font-mono font-semibold text-[#38BDF8]"
+                                className="relative z-20 flex items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-mono font-semibold text-[#38BDF8]"
                               >
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
                                 <span>Submitting to solver…</span>
@@ -606,32 +606,32 @@ export function EzerVisual() {
               </motion.div>
 
               {/* Taskbar */}
-              <div className="absolute bottom-0 inset-x-0 h-9 bg-[#0F172A]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-between px-3 select-none z-40">
-                <div className="flex items-center gap-2">
+              <div className="absolute bottom-0 inset-x-0 h-7 sm:h-9 bg-[#0F172A]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-between px-2.5 sm:px-3 select-none z-40">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     type="button"
                     onClick={() => handleStageClick('pill_input')}
-                    className="w-6 h-6 rounded flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                   >
                     <div className="grid grid-cols-2 gap-0.5">
-                      <div className="w-1 h-1 bg-[#00F0FF] rounded-xs" />
-                      <div className="w-1 h-1 bg-[#178BFF] rounded-xs" />
-                      <div className="w-1 h-1 bg-[#38BDF8] rounded-xs" />
-                      <div className="w-1 h-1 bg-[#0284C7] rounded-xs" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#00F0FF] rounded-xs" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#178BFF] rounded-xs" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#38BDF8] rounded-xs" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#0284C7] rounded-xs" />
                     </div>
                   </button>
 
-                  <span className="text-[10px] font-mono text-[#94A3B8]">
+                  <span className="text-[8.5px] sm:text-[10px] font-mono text-[#94A3B8]">
                     {isSpeaking
-                      ? 'EZER Agent · Listening'
+                      ? 'EZER · Listening'
                       : isPillVisible
-                      ? 'EZER Agent · Active'
-                      : 'EZER Agent · Standby'}
+                      ? 'EZER · Active'
+                      : 'EZER · Standby'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-[9.5px] font-mono text-[#94A3B8]">
-                  <Wifi className="w-3 h-3" />
+                <div className="flex items-center gap-1.5 sm:gap-2 text-[8.5px] sm:text-[9.5px] font-mono text-[#94A3B8]">
+                  <Wifi className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   <span>11:42 AM</span>
                 </div>
               </div>
@@ -1136,7 +1136,6 @@ export function EzerVisual() {
         {/* Verified Tech Stack Only (Section 32) */}
         <div className="flex flex-wrap items-center justify-between gap-2 text-[10.5px] font-mono text-[#647184]">
           <span>Verified Technologies: Tauri · Rust · SolidJS · SQLite · PowerShell</span>
-          <span className="text-[#0864C7] font-semibold">Endless Concept Loop</span>
         </div>
       </div>
     </div>

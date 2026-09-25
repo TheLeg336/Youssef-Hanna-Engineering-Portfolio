@@ -31,7 +31,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 md:pt-36 lg:pt-40 pb-16 sm:pb-20 overflow-hidden">
       {/* Background ambient pale aerospace blue lighting centered */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-[#178BFF]/8 rounded-full blur-[160px] pointer-events-none" />
 
