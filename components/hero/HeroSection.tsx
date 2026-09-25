@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowDown, FileText, Github, Mail, ExternalLink } from 'lucide-react';
 import { PERSONAL_INFO } from '@/lib/portfolio-data';
-import { SelectedSystemsReel } from './SelectedSystemsReel';
+import { AbstractAssemblyVisual } from './AbstractAssemblyVisual';
 import { AppBorderBeam } from '@/components/ui/LibrariesDevWrapper';
 
 export function HeroSection() {
@@ -32,7 +32,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 overflow-hidden">
+    <section className="relative pt-36 sm:pt-40 lg:pt-44 pb-12 sm:pb-16 overflow-hidden">
       {/* Background ambient pale aerospace blue lighting */}
       <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-[#178BFF]/8 rounded-full blur-[140px] pointer-events-none" />
 
@@ -41,36 +41,34 @@ export function HeroSection() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-16 items-center"
         >
-          {/* LEFT COLUMN: Identity / Recruiter Rail / Headline / CTA (~7 columns) */}
-          <div className="lg:col-span-7 space-y-5 text-left">
-            {/* Recruiter Metadata Rail */}
+          {/* LEFT COLUMN: Identity / Metadata Rail / Headline / CTA (~7 cols) */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            {/* Restrained Single Glass Metadata Rail */}
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2">
-              <span className="glass-pill px-3.5 py-1 rounded-full text-xs font-mono text-[#0864C7] font-semibold inline-flex items-center gap-2 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-[#178BFF] animate-pulse" />
-                <span>Seeking Summer 2027 Internship</span>
-              </span>
-
-              <span className="glass-pill px-3 py-1 rounded-full text-xs font-mono text-[#475569] shadow-xs">
-                Mechanical Engineering · Cal Poly Pomona
-              </span>
-
-              <span className="glass-pill px-3 py-1 rounded-full text-xs font-mono text-[#0864C7] font-bold shadow-xs">
-                GPA 3.74
-              </span>
-
-              <span className="glass-pill px-3 py-1 rounded-full text-xs font-mono text-[#647184] shadow-xs">
-                Expected May 2028
-              </span>
+              <div className="inline-flex flex-wrap items-center gap-2 sm:gap-2.5 p-1 sm:p-1.5 rounded-full glass-panel border border-black/5 text-xs font-mono shadow-xs">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#178BFF]/10 text-[#0864C7] font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-[#178BFF] animate-pulse" />
+                  <span>Seeking Summer 2027 Engineering Internship</span>
+                </span>
+                <span className="text-[#94A3B8] hidden md:inline">·</span>
+                <span className="px-2 text-[#475569] font-medium hidden md:inline">
+                  Mechanical Engineering · Cal Poly Pomona · <strong className="text-[#0864C7] font-bold">GPA 3.74</strong> · Expected May 2028
+                </span>
+              </div>
+              {/* Mobile academic line fallback */}
+              <div className="md:hidden glass-pill px-3 py-1 rounded-full text-xs font-mono text-[#475569] shadow-xs">
+                Mechanical Engineering · Cal Poly Pomona · <strong className="text-[#0864C7]">GPA 3.74</strong> · 2028
+              </div>
             </motion.div>
 
-            {/* Main Headline (Natural casing, intentional line breaks) */}
-            <motion.div variants={itemVariants} className="space-y-1.5">
-              <div className="text-xs font-mono uppercase tracking-widest text-[#647184] font-semibold">
-                Youssef Hanna · Engineering Portfolio
+            {/* Eyebrow & Headline */}
+            <motion.div variants={itemVariants} className="space-y-2.5">
+              <div className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.14em] text-[#52657A] font-semibold">
+                YOUSSEF HANNA · MECHANICAL ENGINEERING
               </div>
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#17202A] leading-[1.08] text-balance">
+              <h1 className="text-4xl sm:text-5xl lg:text-[58px] xl:text-[66px] font-black tracking-[-0.035em] text-[#0F1E31] leading-[1.02] text-balance">
                 From CAD to hardware,
                 <br />
                 I build systems
@@ -82,41 +80,36 @@ export function HeroSection() {
             {/* Concise 2-3 Line Natural Intro */}
             <motion.p
               variants={itemVariants}
-              className="text-base sm:text-lg text-[#4B596A] leading-relaxed max-w-xl"
+              className="text-base sm:text-lg text-[#475569] leading-relaxed max-w-[620px]"
             >
               I&apos;m Youssef Hanna, a junior Mechanical Engineering student at Cal Poly Pomona focused
               on aerospace, hands-on design, prototyping, embedded systems, and real-world testing.
             </motion.p>
 
-            {/* Focus / Target Areas */}
-            <motion.div variants={itemVariants} className="space-y-2 pt-1">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-[#647184] font-semibold flex items-center gap-2">
-                <span>FOCUS / TARGET AREAS:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  'Aerospace',
-                  'Mechanical Design',
-                  'Mechatronics',
-                  'Autonomous Systems',
-                  'Robotics',
-                ].map((area) => (
-                  <span
-                    key={area}
-                    className="px-3 py-1 rounded-full bg-white/80 border border-[#CBD5E1] text-[#334155] font-mono text-[11px] shadow-2xs"
-                  >
-                    {area}
-                  </span>
-                ))}
+            {/* Clean Non-Pill Focus Line */}
+            <motion.div variants={itemVariants} className="pt-1">
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs sm:text-sm text-[#334155]">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] font-semibold mr-1">
+                  FOCUS:
+                </span>
+                <span className="font-medium text-[#1E293B]">Aerospace</span>
+                <span className="text-[#94A3B8]">·</span>
+                <span className="font-medium text-[#1E293B]">Mechanical Design</span>
+                <span className="text-[#94A3B8]">·</span>
+                <span className="font-medium text-[#1E293B]">Mechatronics</span>
+                <span className="text-[#94A3B8]">·</span>
+                <span className="font-medium text-[#1E293B]">Robotics</span>
+                <span className="text-[#94A3B8]">·</span>
+                <span className="font-medium text-[#1E293B]">Autonomous Systems</span>
               </div>
             </motion.div>
 
-            {/* Strict Visual Hierarchy Action Row: Primary Explore Work, Secondary Resume, Tertiary Email, Supporting GitHub */}
+            {/* Action Row */}
             <motion.div
               variants={itemVariants}
-              className="pt-2 flex flex-wrap items-center gap-3"
+              className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4"
             >
-              {/* PRIMARY: Explore Work with Liquid Glass and Aurora Border Beam */}
+              {/* PRIMARY: Explore Work */}
               <AppBorderBeam colorVariant="aurora" size="md" className="rounded-full shadow-lg">
                 <a
                   href="#projects"
@@ -132,7 +125,7 @@ export function HeroSection() {
                 href={PERSONAL_INFO.resumePath}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="liquid-glass-btn-neutral px-4 sm:px-5 py-3 rounded-full text-xs font-mono font-semibold text-[#17202A] hover:text-[#0864C7] inline-flex items-center gap-2 active:scale-95"
+                className="liquid-glass-btn-neutral px-5 py-3 rounded-full text-xs sm:text-sm font-mono font-semibold text-[#17202A] hover:text-[#0864C7] inline-flex items-center gap-2 active:scale-95"
               >
                 <FileText className="w-4 h-4 text-[#178BFF]" />
                 <span>Resume PDF</span>
@@ -161,12 +154,24 @@ export function HeroSection() {
                 <ExternalLink className="w-2.5 h-2.5 text-[#94A3B8]" />
               </a>
             </motion.div>
+
+            {/* Bottom Scroll Cue */}
+            <motion.div variants={itemVariants} className="pt-4 sm:pt-6">
+              <a
+                href="#projects"
+                className="group inline-flex items-center gap-2 text-[11px] font-mono tracking-widest uppercase text-[#647184] hover:text-[#0864C7] transition-colors"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF] group-hover:scale-125 transition-transform" />
+                <span>Selected Engineering Work</span>
+                <ArrowDown className="w-3.5 h-3.5 text-[#178BFF] group-hover:translate-y-0.5 transition-transform" />
+              </a>
+            </motion.div>
           </div>
 
-          {/* RIGHT COLUMN: Interactive "Selected Systems" Hero Reel (~5 columns) */}
+          {/* RIGHT COLUMN: Abstract Exploded Engineering Assembly (~5 cols) */}
           <div className="lg:col-span-5 w-full flex justify-center lg:justify-end">
-            <motion.div variants={itemVariants} className="w-full max-w-xl lg:max-w-none">
-              <SelectedSystemsReel />
+            <motion.div variants={itemVariants} className="w-full max-w-lg lg:max-w-none">
+              <AbstractAssemblyVisual />
             </motion.div>
           </div>
         </motion.div>
