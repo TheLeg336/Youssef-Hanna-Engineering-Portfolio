@@ -1,137 +1,298 @@
 'use client';
 
 import React from 'react';
-import { ExternalLink, Sparkles } from 'lucide-react';
-import { PROJECTS } from '@/lib/portfolio-data';
+import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
 import { LauncherVisual } from '@/components/projects/LauncherVisual';
-import { UniRateVisual } from '@/components/projects/UniRateVisual';
 import { DualSenseVisual } from '@/components/projects/DualSenseVisual';
 import { EzerVisual } from '@/components/projects/EzerVisual';
+import { UniRateVisual } from '@/components/projects/UniRateVisual';
 import { Reveal } from '@/components/motion/Reveal';
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="my-20 sm:my-28 scroll-mt-24">
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
+    <section id="projects" className="my-16 sm:my-24 scroll-mt-28">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header (Section 19) */}
         <Reveal variant="heading">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-black/10 pb-6 mb-12 sm:mb-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-black/10 pb-5 mb-14 sm:mb-20">
             <div>
               <div className="text-xs font-mono text-[#0864C7] font-semibold uppercase tracking-wider flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#178BFF]" />
-                ENGINEERING WORK & SYSTEMS
+                SELECTED ENGINEERING WORK
               </div>
-              <h2 className="text-section-title font-extrabold tracking-tight text-[#17202A] mt-1.5">
-                Featured Engineering Builds
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#17202A] mt-1.5">
+                Physical Systems, Hardware &amp; Software
               </h2>
             </div>
-            <p className="text-xs font-mono text-[#647184] max-w-sm">
-              Physical mechanisms, embedded hardware, Chrome extension DOM injection, and desktop automation.
+            <p className="text-xs sm:text-sm font-mono text-[#647184] max-w-md">
+              Four projects spanning mechanical design, embedded hardware, engineering automation, and software.
             </p>
           </div>
         </Reveal>
 
-        {/* Projects List */}
-        <div className="space-y-20 sm:space-y-28">
-          {PROJECTS.map((project, idx) => {
-            const isEven = idx % 2 === 0;
+        <div className="space-y-24 sm:space-y-28 lg:space-y-32">
+          {/* =========================================================================
+              PROJECT 01: PRECISION TENNIS BALL LAUNCHER (Mechanical & Prototyping)
+              Layout: Desktop Left ~38% text/metrics, Right ~62% visualizer (Sections 21-26)
+             ========================================================================= */}
+          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#FAFBFD]/60 border border-slate-200/60 shadow-xs">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Narrative & Verified Facts (Left ~38%) */}
+              <div className="lg:col-span-5 space-y-4">
+                <Reveal variant="standard">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#647184]">
+                    <span className="text-[#0864C7] font-bold">01</span>
+                    <span className="text-black/20">/</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-white border border-[#CBD5E1] text-[11px] text-[#17202A] font-semibold">
+                      Mechanical / Prototyping
+                    </span>
+                    <span className="text-black/20">·</span>
+                    <span>2024</span>
+                  </div>
 
-            return (
-              <article
-                key={project.slug}
-                className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-              >
-                {/* Text Narrative Column (Desktop side-by-side; Tablet/Mobile reordered) */}
-                <div
-                  className={`w-full lg:col-span-5 space-y-4 sm:space-y-5 ${
-                    isEven ? 'lg:order-1' : 'lg:order-2'
-                  }`}
-                >
-                  <Reveal variant="standard">
-                    {/* Category & Year Metadata */}
-                    <div className="flex items-center gap-2 text-xs font-mono text-[#647184]">
-                      <span className="text-[#0864C7] font-bold">{`0${idx + 1}`}</span>
-                      <span className="text-black/20">/</span>
-                      <span className="px-2.5 py-0.5 rounded-full glass-pill text-[11px] text-[#17202A] font-semibold">
-                        {project.category}
-                      </span>
-                      <span className="text-black/20">·</span>
-                      <span>{project.year}</span>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight mt-1">
+                    Precision Tennis Ball Launcher
+                  </h3>
+
+                  <p className="text-sm sm:text-base text-[#4B596A] leading-relaxed">
+                    Led a ~15-person student engineering team to design, fabricate, and test a high-reach
+                    mechanical launcher. When an unauthorized modification compromised the mechanism one
+                    week before competition, led rapid triage and redesigned around surviving parts—achieving
+                    ~300 ft (3× target distance) with ~30–40% profit margin and winning 1st place in the class competition.
+                  </p>
+
+                  <div className="pt-2 text-xs font-mono text-[#647184] space-y-1">
+                    <div>
+                      <span className="text-[#94A3B8]">ROLE:</span>{' '}
+                      <span className="text-[#17202A] font-bold">Project Lead</span> (~15-Person Team)
                     </div>
-
-                    {/* Project Title */}
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight mt-1">
-                      {project.title}
-                    </h3>
-
-                    {/* Summary */}
-                    <p className="text-sm sm:text-base text-[#4B596A] leading-relaxed">
-                      {project.shortDescription}
-                    </p>
-
-                    {/* Key Technical Metric Pills */}
-                    <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-mono">
-                      {project.metrics.slice(0, 4).map((m) => (
-                        <div
-                          key={m.label}
-                          className="glass-card-solid p-2.5 sm:p-3 rounded-xl"
-                        >
-                          <div className="text-[10px] text-[#647184] uppercase font-medium">{m.label}</div>
-                          <div className={`font-bold text-xs sm:text-sm mt-0.5 ${m.highlight ? 'text-[#0864C7]' : 'text-[#17202A]'}`}>
-                            {m.value}
-                          </div>
-                        </div>
-                      ))}
+                    <div>
+                      <span className="text-[#94A3B8]">OUTCOME:</span>{' '}
+                      <span className="text-[#059669] font-bold">1st Place Class Competition Winner</span>
                     </div>
+                  </div>
+                </Reveal>
+              </div>
 
-                    {/* Role & Status */}
-                    <div className="pt-1 text-xs font-mono text-[#647184] flex flex-wrap items-center gap-x-4 gap-y-1">
-                      <div>
-                        <span className="text-[#94A3B8]">ROLE:</span>{' '}
-                        <span className="text-[#17202A] font-medium">{project.role}</span>
-                      </div>
-                      <div>
-                        <span className="text-[#94A3B8]">STATUS:</span>{' '}
-                        <span className="text-[#0864C7] font-semibold">{project.status}</span>
-                      </div>
-                    </div>
+              {/* Interactive Target vs. Achieved Range Visualizer (Right ~62%) */}
+              <div className="lg:col-span-7">
+                <Reveal variant="visual">
+                  <LauncherVisual />
+                </Reveal>
+              </div>
+            </div>
+          </article>
 
-                    {/* Functional CTAs only (no fake buttons) */}
-                    {project.slug === 'unirate' && (
-                      <div className="pt-3 flex flex-wrap items-center gap-3">
-                        <a
-                          href="https://chromewebstore.google.com/detail/unirate/eeehacjdlohcgmhghnihgbgfmkbopcho"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-5 py-2.5 rounded-full text-xs font-mono font-bold text-white bg-[#178BFF] hover:bg-[#0864C7] inline-flex items-center gap-2 shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] active:scale-95"
-                        >
-                          <span>Chrome Web Store</span>
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-                    )}
-                  </Reveal>
+          {/* =========================================================================
+              PROJECT 02: DUALSENSE PC INTERFACE (Embedded Systems)
+              Layout: Centered Header -> Near-Full-Width Signal Architecture (Sections 27-29)
+             ========================================================================= */}
+          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
+            <Reveal variant="standard">
+              <div className="max-w-3xl mb-6">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
+                  <span className="text-[#0864C7] font-bold">02</span>
+                  <span className="text-black/20">/</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5FF] border border-[#178BFF]/25 text-[11px] text-[#0864C7] font-semibold">
+                    Embedded Systems
+                  </span>
+                  <span className="text-black/20">·</span>
+                  <span>2025</span>
                 </div>
 
-                {/* Interactive Product Window Column */}
-                <div
-                  className={`w-full lg:col-span-7 ${
-                    isEven ? 'lg:order-2' : 'lg:order-1'
-                  }`}
-                >
-                  <Reveal variant="visual">
-                    {project.slug === 'launcher' && <LauncherVisual />}
-                    {project.slug === 'unirate' && <UniRateVisual />}
-                    {project.slug === 'dualsense' && <DualSenseVisual />}
-                    {project.slug === 'ezer' && <EzerVisual />}
-                  </Reveal>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight">
+                  DualSense PC Interface
+                </h3>
+
+                <p className="text-sm sm:text-base text-[#4B596A] mt-2 leading-relaxed">
+                  Raspberry Pi Pico 2 W-based hardware bridge between a PC and PlayStation DualSense controller.
+                  Translates bidirectional communication for controller inputs, dual voice-coil haptic feedback,
+                  motorized adaptive trigger resistance curves, and audio streaming.
+                </p>
+              </div>
+            </Reveal>
+
+            {/* Near-Full-Width Interactive Architecture */}
+            <div className="w-full">
+              <Reveal variant="visual">
+                <DualSenseVisual />
+              </Reveal>
+            </div>
+          </article>
+
+          {/* =========================================================================
+              PROJECT 03: EZER (Featured Experimental Project)
+              Layout: Centered Demo ~80% width -> Two Concise Context Columns (Sections 30-35)
+             ========================================================================= */}
+          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]/80 border border-slate-200/80 shadow-xs">
+            <Reveal variant="standard">
+              <div className="max-w-3xl mx-auto text-center mb-8">
+                <div className="flex items-center justify-center gap-2 text-xs font-mono text-[#647184] mb-1">
+                  <span className="text-[#0864C7] font-bold">03</span>
+                  <span className="text-black/20">/</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-white border border-[#CBD5E1] text-[11px] text-[#17202A] font-semibold">
+                    Engineering Automation &amp; HCI
+                  </span>
+                  <span className="text-black/20">·</span>
+                  <span className="text-[#0864C7] font-semibold">In Active Development</span>
                 </div>
-              </article>
-            );
-          })}
+
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-[#17202A] tracking-tight mt-1">
+                  Ezer
+                </h3>
+
+                <p className="text-sm sm:text-base text-[#4B596A] mt-2 leading-relaxed max-w-2xl mx-auto">
+                  Experimental local desktop assistant exploring fast on-device computer control and automated
+                  CAD engineering workflows. Concept demonstration illustrates natural language geometry synthesis
+                  and live parametric modification.
+                </p>
+              </div>
+            </Reveal>
+
+            {/* Large Centered Visualizer (75–85% width on large displays) */}
+            <div className="max-w-5xl mx-auto">
+              <Reveal variant="visual">
+                <EzerVisual />
+              </Reveal>
+            </div>
+
+            {/* Two Concise Columns Below (Section 30) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto mt-6 pt-6 border-t border-black/5 text-xs font-mono">
+              <div className="p-4 rounded-xl bg-white border border-[#CBD5E1]/60 shadow-2xs">
+                <div className="text-[11px] uppercase text-[#0864C7] font-bold mb-2 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
+                  WHAT I&apos;M EXPLORING
+                </div>
+                <ul className="space-y-1.5 text-[#334155]">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>Local AI inference for privacy-preserving computer control</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>Deterministic CAD synthesis with explicit safety approval gates</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>Repetitive mechanical modeling workflows and constraint generation</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white border border-[#CBD5E1]/60 shadow-2xs">
+                <div className="text-[11px] uppercase text-[#0864C7] font-bold mb-2 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
+                  MY ROLE &amp; APPROACH
+                </div>
+                <ul className="space-y-1.5 text-[#334155]">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>Product concept, systems architecture, and state-machine design</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>Interactive UI/UX design with cognitive state feedback</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[#178BFF]">•</span>
+                    <span>AI-assisted systems development in Tauri, Rust, and SolidJS</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          {/* =========================================================================
+              PROJECT 04: UNIRATE (Published Product)
+              Layout: Top Row Header + Real Action Links -> Injected Table Demo (Sections 36-42)
+             ========================================================================= */}
+          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
+            <Reveal variant="standard">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
+                    <span className="text-[#0864C7] font-bold">04</span>
+                    <span className="text-black/20">/</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBFDF5] border border-[#A7F3D0] text-[11px] text-[#047857] font-semibold">
+                      Published Product
+                    </span>
+                    <span className="text-black/20">·</span>
+                    <span>2024–Present</span>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight">
+                    UniRate
+                  </h3>
+
+                  <p className="text-sm sm:text-base text-[#4B596A] mt-1.5 max-w-xl leading-relaxed">
+                    Published Chrome extension that injects Rate My Professors metrics and review sentiment directly
+                    into university course registration portals, eliminating manual tab-switching during class enrollment.
+                  </p>
+                </div>
+
+                {/* Real Verified Links (Section 37) */}
+                <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
+                  <a
+                    href="https://chromewebstore.google.com/detail/unirate/eeehacjdlohcgmhghnihgbgfmkbopcho"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-full text-xs font-mono font-bold text-white bg-[#178BFF] hover:bg-[#0864C7] inline-flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+                  >
+                    <span>View UniRate</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+
+                  <a
+                    href="https://github.com/TheLeg336/UniRate"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass-pill px-4 py-2 rounded-full text-xs font-mono font-semibold text-[#17202A] hover:text-[#0864C7] inline-flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+                  >
+                    <Github className="w-3.5 h-3.5 text-[#178BFF]" />
+                    <span>Source</span>
+                    <ExternalLink className="w-2.5 h-2.5 text-[#94A3B8]" />
+                  </a>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Interactive Registration Demo */}
+            <div className="w-full">
+              <Reveal variant="visual">
+                <UniRateVisual />
+              </Reveal>
+            </div>
+
+            {/* Factual Product Breakdown (Section 36) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6 pt-5 border-t border-black/5 text-xs font-mono">
+              <div className="p-3.5 rounded-xl bg-[#FAFBFD] border border-[#CBD5E1]/60">
+                <div className="text-[10.5px] uppercase text-[#0864C7] font-bold mb-1">WHY</div>
+                <p className="text-[11px] text-[#475569] leading-relaxed font-sans">
+                  Students lose desired class sections while repeatedly switching tabs to check professor ratings.
+                  UniRate places faculty scores right where students register.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#FAFBFD] border border-[#CBD5E1]/60">
+                <div className="text-[10.5px] uppercase text-[#0864C7] font-bold mb-1">BUILT</div>
+                <p className="text-[11px] text-[#475569] leading-relaxed font-sans">
+                  Conceived, architected, and built solo. Expanded multi-school string normalizers and DOM heuristics
+                  using AI-assisted development and debugging.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#FAFBFD] border border-[#CBD5E1]/60">
+                <div className="text-[10.5px] uppercase text-[#0864C7] font-bold mb-1">TECH STACK</div>
+                <p className="text-[11px] text-[#475569] leading-relaxed font-sans">
+                  JavaScript · HTML5 · CSS3 · Python · Chrome Extensions API · DOM Mutation Observers
+                </p>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
   );
 }
+
 export default ProjectsSection;

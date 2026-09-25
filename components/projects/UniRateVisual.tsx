@@ -446,30 +446,27 @@ export function UniRateVisual() {
         </motion.div>
       )}
 
-      {/* Top Header: Clean metadata without any indicator */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-4 mb-5">
+      {/* Top Header: Factual metadata */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/5 pb-3.5 mb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-mono uppercase tracking-wider text-[#0864C7] font-semibold flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#178BFF]" />
-              Chrome Extension
-            </span>
-            <span className="text-[11px] font-mono text-[#647184]">
-              · In-Portal DOM Injection
+              Chrome Extension · DOM Injection
             </span>
           </div>
-          <h3 className="text-base sm:text-xl font-bold text-[#17202A] mt-1">
-            Interactive Registration Portal Demo
+          <h3 className="text-base sm:text-lg font-bold text-[#17202A] mt-0.5">
+            Registration Portal Injected Cards
           </h3>
         </div>
 
-        <span className="text-xs font-mono text-[#647184]">
-          Portal: Cal Poly Pomona (BroncoDirect)
+        <span className="px-2.5 py-1 rounded-md bg-[#EEF2F6] text-[10px] font-mono text-[#647184] font-semibold border border-[#CBD5E1]/60 self-start sm:self-auto">
+          Representative Demo · Sample Professor Data
         </span>
       </div>
 
       {/* Filter Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-1.5 text-xs font-mono">
           <span className="text-[#647184] text-xs mr-1 flex items-center gap-1 font-semibold">
             <Filter className="w-3.5 h-3.5 text-[#178BFF]" /> Min Rating:
@@ -505,7 +502,7 @@ export function UniRateVisual() {
         </div>
 
         <span className="text-xs font-mono text-[#647184] hidden sm:inline">
-          Live injected Rate My Professors cards
+          Portal: BroncoDirect Registration
         </span>
       </div>
 
@@ -516,7 +513,7 @@ export function UniRateVisual() {
       >
         <table
           suppressHydrationWarning
-          className="w-full text-left text-xs sm:text-sm font-mono border-collapse min-w-[560px]"
+          className="w-full text-left text-xs sm:text-sm font-mono border-collapse min-w-[540px]"
         >
           <thead>
             <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-xs text-[#647184] uppercase tracking-wide">
@@ -540,23 +537,23 @@ export function UniRateVisual() {
                     isDimmed ? 'opacity-35 bg-[#F8FAFC]' : 'hover:bg-[#F8FAFC]'
                   } ${isSelected ? 'bg-[#F0F7FF]' : ''}`}
                 >
-                  <td className="py-3.5 sm:py-4 px-4 font-semibold text-[#17202A]">
+                  <td className="py-3.5 px-4 font-semibold text-[#17202A]">
                     {course.code}
                     <span className="text-[11px] text-[#647184] block font-normal">
                       Sec {course.section}
                     </span>
                   </td>
 
-                  <td className="py-3.5 sm:py-4 px-4 text-[#334155] font-sans font-medium">
+                  <td className="py-3.5 px-4 text-[#334155] font-sans font-medium">
                     {course.title}
                   </td>
 
-                  <td className="py-3.5 sm:py-4 px-4 text-[#17202A] font-sans">
+                  <td className="py-3.5 px-4 text-[#17202A] font-sans">
                     {course.professor}
                   </td>
 
                   {/* Rating Trigger Badge */}
-                  <td className="py-3.5 sm:py-4 px-4">
+                  <td className="py-3.5 px-4">
                     <button
                       ref={idx === 0 ? ratingBtnRef : null}
                       type="button"
@@ -583,7 +580,7 @@ export function UniRateVisual() {
                     </button>
                   </td>
 
-                  <td className="py-3.5 sm:py-4 px-4">
+                  <td className="py-3.5 px-4">
                     <span
                       className={`text-xs font-mono ${
                         course.seats.includes('Open')
@@ -601,9 +598,9 @@ export function UniRateVisual() {
         </table>
       </div>
 
-      {/* DESKTOP / TABLET ANCHORED FLOATING POPOVER */}
+      {/* ANCHORED FLOATING POPOVER (UNIFIED FOR ALL BREAKPOINTS) */}
       <AnimatePresence>
-        {!isMobile && activeCourse && popoverAnchor && (
+        {activeCourse && popoverAnchor && (
           <motion.div
             ref={popoverRef}
             initial={{
@@ -748,117 +745,6 @@ export function UniRateVisual() {
               </p>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* MOBILE BOTTOM SHEET FOR UNIRATE POPOVER */}
-      <AnimatePresence>
-        {isMobile && activeCourse && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleClose}
-              className="absolute inset-0 bg-black/40 backdrop-blur-xs"
-            />
-
-            {/* Sheet */}
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="relative w-full max-w-lg bg-white rounded-t-3xl p-6 shadow-2xl z-10 space-y-4 max-h-[85vh] overflow-y-auto"
-            >
-              <div className="w-12 h-1 bg-[#CBD5E1] rounded-full mx-auto -mt-1 mb-2" />
-
-              <div className="flex items-start justify-between border-b border-black/5 pb-3">
-                <div>
-                  <div className="text-[11px] font-mono text-[#0864C7] font-bold uppercase">
-                    Rate My Professors · Injected Card
-                  </div>
-                  <h4 className="text-xl font-bold text-[#17202A] mt-0.5">
-                    {activeCourse.professor}
-                  </h4>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="p-2 rounded-full text-[#647184] hover:bg-black/5 cursor-pointer"
-                  aria-label="Close details"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-3 gap-2 bg-[#F8FAFC] p-3 rounded-2xl border border-[#E2E8F0] text-center">
-                <div>
-                  <div className="text-xl font-black text-[#0864C7] font-mono">
-                    {activeCourse.rating.toFixed(1)}
-                  </div>
-                  <div className="text-[10px] text-[#647184] uppercase font-mono">
-                    Quality
-                  </div>
-                </div>
-                <div className="border-x border-[#E2E8F0]">
-                  <div className="text-xl font-black text-[#17202A] font-mono">
-                    {activeCourse.difficulty.toFixed(1)}
-                  </div>
-                  <div className="text-[10px] text-[#647184] uppercase font-mono">
-                    Difficulty
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xl font-black text-[#059669] font-mono">
-                    {activeCourse.wouldTakeAgain}%
-                  </div>
-                  <div className="text-[10px] text-[#647184] uppercase font-mono">
-                    Take Again
-                  </div>
-                </div>
-              </div>
-
-              {/* Tags */}
-              <div>
-                <div className="text-xs font-mono text-[#647184] uppercase mb-2">
-                  Top Student Tags:
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {activeCourse.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2.5 py-1 rounded-lg bg-[#EEF2F6] text-xs text-[#334155] font-mono"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Student Review */}
-              <div className="border-t border-black/5 pt-3 text-xs text-[#334155]">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#647184] mb-1">
-                  <span>Student Feedback ({activeCourse.review.course})</span>
-                  <span>{activeCourse.review.date}</span>
-                </div>
-                <p className="text-sm italic leading-relaxed text-[#17202A]">
-                  &ldquo;{activeCourse.review.text}&rdquo;
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleClose}
-                className="w-full py-3 rounded-xl bg-[#178BFF] text-white font-semibold text-sm shadow-md hover:bg-[#0864C7] transition-colors cursor-pointer"
-              >
-                Close Inspector
-              </button>
-            </motion.div>
-          </div>
         )}
       </AnimatePresence>
 

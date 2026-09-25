@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useSyncExternalStore } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Monitor, Cpu, Gamepad2, Zap, Activity, Gauge, Volume2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Monitor, Cpu, Gamepad2, Zap, Activity, Gauge, Volume2 } from 'lucide-react';
 import { useReducedMotion } from '@/components/motion/Reveal';
 import { useElementVisibility } from '@/lib/useVisibility';
 
@@ -22,7 +22,7 @@ export function DualSenseVisual() {
   const [activeChannel, setActiveChannel] = useState<ChannelKey>('all');
   const mounted = useMounted();
   const containerRef = useRef<HTMLDivElement>(null);
-  const isVisible = useElementVisibility(containerRef, 0.2);
+  const isVisible = useElementVisibility(containerRef, 0.25);
   const prefersReduced = useReducedMotion();
 
   const channels = [
@@ -30,41 +30,37 @@ export function DualSenseVisual() {
       id: 'inputs' as ChannelKey,
       name: 'Inputs',
       label: 'Controller Inputs',
-      description: 'Analog sticks, buttons, and 6-axis IMU data routed from controller through Pico 2 W to PC host.',
+      description: 'Analog sticks, buttons, and IMU data bridged from controller through Pico 2 W to PC host.',
       direction: 'DualSense → Pico 2 W → PC Host',
-      dirType: 'left', // from right to left
+      dirType: 'upstream',
       icon: Zap,
-      color: '#178BFF',
     },
     {
       id: 'haptics' as ChannelKey,
       name: 'Haptics',
       label: 'Dual Haptic Actuators',
-      description: 'PC force-feedback waveforms translated by the Pico into dual voice-coil actuator displacement.',
+      description: 'PC force-feedback waveforms translated by Pico 2 W into dual voice-coil actuator displacement.',
       direction: 'PC Host → Pico 2 W → DualSense',
-      dirType: 'right', // from left to right
+      dirType: 'downstream',
       icon: Activity,
-      color: '#0864C7',
     },
     {
       id: 'triggers' as ChannelKey,
-      name: 'Triggers',
+      name: 'Adaptive Triggers',
       label: 'Adaptive Triggers',
-      description: 'Motorized braking curves and dynamic resistance profiles bridged to controller gear actuators.',
+      description: 'Dynamic resistance profiles bridged to controller motorized gear actuators.',
       direction: 'PC Host → Pico 2 W → DualSense',
-      dirType: 'right',
+      dirType: 'downstream',
       icon: Gauge,
-      color: '#0284C7',
     },
     {
       id: 'audio' as ChannelKey,
       name: 'Audio / Mic',
       label: 'Bidirectional Audio',
-      description: 'Audio playback and microphone input telemetry bridged over synchronous USB endpoints.',
+      description: 'Audio playback and microphone stream communication bridged over USB interface.',
       direction: 'Bidirectional (PC ↔ Pico 2 W ↔ DualSense)',
-      dirType: 'bi',
+      dirType: 'bidirectional',
       icon: Volume2,
-      color: '#7C3AED',
     },
   ];
 
@@ -73,31 +69,31 @@ export function DualSenseVisual() {
   return (
     <div
       ref={containerRef}
-      className="w-full glass-panel rounded-2xl p-5 sm:p-6 overflow-hidden select-none"
+      className="w-full glass-panel rounded-2xl p-5 sm:p-6 md:p-7 overflow-hidden select-none"
     >
-      {/* Top Header & Channel Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-4 mb-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-3.5 mb-4">
         <div>
           <div className="text-[11px] font-mono uppercase tracking-wider text-[#0864C7] font-semibold flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#178BFF]" />
-            Embedded Systems · RP2350 Architecture
+            Embedded Hardware · Raspberry Pi Pico 2 W
           </div>
           <h3 className="text-base sm:text-lg font-bold text-[#17202A] mt-0.5">
-            DualSense to PC Interactive Signal Flow
+            Bidirectional Signal Architecture
           </h3>
         </div>
 
-        <span className="text-[11px] font-mono text-[#647184]">
-          Wired bridge · 4 bidirectional channels
+        <span className="px-2.5 py-1 rounded-md bg-[#EEF2F6] text-[10px] font-mono text-[#647184] font-semibold border border-[#CBD5E1]/60 self-start sm:self-auto">
+          Wired Hardware Bridge
         </span>
       </div>
 
-      {/* Actual Functional Channel Filter Buttons */}
-      <div className="flex flex-wrap items-center gap-1.5 mb-6">
+      {/* Channel Selector Pill Row (Horizontally scrollable on mobile) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveChannel('all')}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
+          className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
             activeChannel === 'all'
               ? 'glass-pill-active font-bold text-[#0864C7]'
               : 'glass-pill text-[#647184] hover:text-[#17202A]'
@@ -115,7 +111,7 @@ export function DualSenseVisual() {
               key={ch.id}
               type="button"
               onClick={() => setActiveChannel(ch.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all inline-flex items-center gap-1.5 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
                 isActive
                   ? 'glass-pill-active font-bold text-[#0864C7]'
                   : 'glass-pill text-[#647184] hover:text-[#17202A]'
@@ -128,112 +124,89 @@ export function DualSenseVisual() {
         })}
       </div>
 
-      {/* Signal Flow Diagram Surface */}
-      <div className="relative w-full py-8 px-4 sm:px-8 bg-gradient-to-b from-[#FAFBFD] to-[#F1F5F9] rounded-xl border border-[#CBD5E1] overflow-hidden">
+      {/* DESKTOP & TABLET: HORIZONTAL ARCHITECTURE VISUALIZATION */}
+      <div className="hidden sm:block relative w-full py-8 px-6 bg-gradient-to-b from-[#FAFBFD] to-[#F1F5F9] rounded-xl border border-[#CBD5E1] overflow-hidden">
         <div className="absolute inset-0 bg-tech-grid-fine opacity-50 pointer-events-none" />
 
         {/* 3 Hardware Nodes Grid */}
-        <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-6 items-center text-center">
+        <div className="relative z-10 grid grid-cols-3 gap-6 items-center text-center">
           {/* Node 1: PC Host */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white shadow-md border border-[#CBD5E1] flex items-center justify-center text-[#178BFF] mb-2 group-hover:border-[#178BFF]">
-              <Monitor className="w-7 h-7 sm:w-8 sm:h-8" />
+            <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-[#CBD5E1] flex items-center justify-center text-[#178BFF] mb-2">
+              <Monitor className="w-8 h-8" />
             </div>
-            <div className="text-xs sm:text-sm font-bold text-[#17202A]">PC Host</div>
+            <div className="text-sm font-bold text-[#17202A]">PC Host</div>
             <div className="text-[10px] font-mono text-[#647184]">Windows / Linux</div>
           </div>
 
           {/* Node 2: Raspberry Pi Pico 2 W */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#EAF5FF] shadow-md border-2 border-[#178BFF] flex items-center justify-center text-[#0864C7] mb-2 relative">
-              <Cpu className="w-7 h-7 sm:w-8 sm:h-8" />
+            <div className="w-16 h-16 rounded-2xl bg-[#EAF5FF] shadow-md border-2 border-[#178BFF] flex items-center justify-center text-[#0864C7] mb-2 relative">
+              <Cpu className="w-8 h-8" />
               <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#178BFF] animate-pulse" />
             </div>
-            <div className="text-xs sm:text-sm font-bold text-[#17202A]">RP2350 Bridge</div>
-            <div className="text-[10px] font-mono text-[#0864C7] font-semibold">Pico 2 W Microcontroller</div>
+            <div className="text-sm font-bold text-[#0864C7]">Pico 2 W Bridge</div>
+            <div className="text-[10px] font-mono text-[#647184]">RP2350 Microcontroller</div>
           </div>
 
           {/* Node 3: DualSense Controller */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white shadow-md border border-[#CBD5E1] flex items-center justify-center text-[#178BFF] mb-2">
-              <Gamepad2 className="w-7 h-7 sm:w-8 sm:h-8" />
+            <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-[#CBD5E1] flex items-center justify-center text-[#178BFF] mb-2">
+              <Gamepad2 className="w-8 h-8" />
             </div>
-            <div className="text-xs sm:text-sm font-bold text-[#17202A]">DualSense</div>
-            <div className="text-[10px] font-mono text-[#647184]">Haptics & Triggers</div>
+            <div className="text-sm font-bold text-[#17202A]">DualSense</div>
+            <div className="text-[10px] font-mono text-[#647184]">Haptics &amp; Triggers</div>
           </div>
         </div>
 
-        {/* Animated Signal SVG Paths Connecting Nodes */}
-        <div className="relative mt-6 pt-4 border-t border-black/5">
-          <svg
-            viewBox="0 0 500 50"
-            className="w-full h-12 overflow-visible"
-            preserveAspectRatio="none"
-          >
-            {/* Base line 1: PC to Pico */}
-            <line
-              x1="90"
-              y1="25"
-              x2="230"
-              y2="25"
-              stroke="#CBD5E1"
-              strokeWidth="2"
-              strokeDasharray="4 4"
-            />
-            {/* Base line 2: Pico to DualSense */}
-            <line
-              x1="270"
-              y1="25"
-              x2="410"
-              y2="25"
-              stroke="#CBD5E1"
-              strokeWidth="2"
-              strokeDasharray="4 4"
-            />
+        {/* Horizontal SVG Connection Paths */}
+        <div className="relative mt-6 pt-3 border-t border-black/5">
+          <svg viewBox="0 0 500 40" className="w-full h-10 overflow-visible" preserveAspectRatio="none">
+            <line x1="90" y1="20" x2="230" y2="20" stroke="#CBD5E1" strokeWidth="2" strokeDasharray="4 4" />
+            <line x1="270" y1="20" x2="410" y2="20" stroke="#CBD5E1" strokeWidth="2" strokeDasharray="4 4" />
 
-            {/* Dynamic Traveling Signal Packets */}
             {mounted && isVisible && !prefersReduced && (
               <>
-                {/* Inputs: Right to Left (410 -> 270, 230 -> 90) */}
+                {/* Inputs: Controller -> Pico -> PC */}
                 {(activeChannel === 'all' || activeChannel === 'inputs') && (
                   <>
                     <motion.circle
                       cx="410"
-                      cy="25"
+                      cy="20"
                       r="4"
                       fill="#178BFF"
                       animate={{ cx: [410, 270] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+                      transition={{ duration: 1.3, repeat: Infinity, ease: 'linear' }}
                     />
                     <motion.circle
                       cx="230"
-                      cy="25"
+                      cy="20"
                       r="4"
                       fill="#178BFF"
                       animate={{ cx: [230, 90] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear', delay: 0.7 }}
+                      transition={{ duration: 1.3, repeat: Infinity, ease: 'linear', delay: 0.65 }}
                     />
                   </>
                 )}
 
-                {/* Haptics / Triggers: Left to Right (90 -> 230, 270 -> 410) */}
+                {/* Haptics & Triggers: PC -> Pico -> Controller */}
                 {(activeChannel === 'all' || activeChannel === 'haptics' || activeChannel === 'triggers') && (
                   <>
                     <motion.circle
                       cx="90"
-                      cy="25"
+                      cy="20"
                       r="4"
                       fill="#0864C7"
                       animate={{ cx: [90, 230] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+                      transition={{ duration: 1.3, repeat: Infinity, ease: 'linear' }}
                     />
                     <motion.circle
                       cx="270"
-                      cy="25"
+                      cy="20"
                       r="4"
                       fill="#0864C7"
                       animate={{ cx: [270, 410] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear', delay: 0.7 }}
+                      transition={{ duration: 1.3, repeat: Infinity, ease: 'linear', delay: 0.65 }}
                     />
                   </>
                 )}
@@ -243,19 +216,19 @@ export function DualSenseVisual() {
                   <>
                     <motion.circle
                       cx="90"
-                      cy="20"
+                      cy="15"
                       r="3.5"
                       fill="#7C3AED"
                       animate={{ cx: [90, 230] }}
-                      transition={{ duration: 1.6, repeat: Infinity, ease: 'linear', delay: 0.3 }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.2 }}
                     />
                     <motion.circle
                       cx="410"
-                      cy="30"
+                      cy="25"
                       r="3.5"
                       fill="#7C3AED"
                       animate={{ cx: [410, 270] }}
-                      transition={{ duration: 1.6, repeat: Infinity, ease: 'linear', delay: 0.5 }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.4 }}
                     />
                   </>
                 )}
@@ -263,61 +236,107 @@ export function DualSenseVisual() {
             )}
           </svg>
         </div>
+      </div>
 
-        {/* Selected Channel Explanation Card */}
-        <div className="mt-2 p-3.5 rounded-xl bg-white/95 border border-[#CBD5E1] shadow-xs text-xs font-mono text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-black/5 pb-1.5 mb-2">
-            <span className="font-bold text-[#17202A] flex items-center gap-1.5">
-              {currentChannelInfo ? (
-                <>
-                  <currentChannelInfo.icon className="w-3.5 h-3.5 text-[#178BFF]" />
-                  <span>{currentChannelInfo.label}</span>
-                </>
-              ) : (
-                'All 4 Concurrent Signal Channels Active'
-              )}
-            </span>
-
-            <span className="text-[11px] text-[#0864C7] font-semibold">
-              {currentChannelInfo ? currentChannelInfo.direction : 'Full Duplex USB Stream'}
-            </span>
+      {/* MOBILE: CLEAN VERTICAL ARCHITECTURE (Per Section 65) */}
+      <div className="sm:hidden relative w-full py-5 px-4 bg-gradient-to-b from-[#FAFBFD] to-[#F1F5F9] rounded-xl border border-[#CBD5E1] overflow-hidden">
+        <div className="flex flex-col items-center gap-3">
+          {/* Node 1: PC Host */}
+          <div className="flex items-center gap-3 w-full max-w-[240px] p-2.5 rounded-xl bg-white border border-[#CBD5E1] shadow-2xs">
+            <Monitor className="w-6 h-6 text-[#178BFF] shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-[#17202A]">PC Host</div>
+              <div className="text-[10px] font-mono text-[#647184]">Windows / Linux</div>
+            </div>
           </div>
 
-          <p className="text-[11px] text-[#475569] font-sans leading-relaxed">
-            {currentChannelInfo
-              ? currentChannelInfo.description
-              : 'Dedicated dual-core ARM Cortex-M33 scanning loop processes inputs on Core 0 while Core 1 routes force-feedback telemetry packets to prevent input starvation.'}
-          </p>
+          {/* Vertical Signal Arrow / Line */}
+          <div className="h-6 w-0.5 bg-[#CBD5E1] relative flex items-center justify-center">
+            {mounted && isVisible && !prefersReduced && (
+              <motion.div
+                className="w-2 h-2 rounded-full bg-[#178BFF]"
+                animate={{ y: [-10, 10] }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
+              />
+            )}
+          </div>
+
+          {/* Node 2: Pico 2 W */}
+          <div className="flex items-center gap-3 w-full max-w-[240px] p-2.5 rounded-xl bg-[#EAF5FF] border-2 border-[#178BFF] shadow-xs">
+            <Cpu className="w-6 h-6 text-[#0864C7] shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-[#0864C7]">Pico 2 W Bridge</div>
+              <div className="text-[10px] font-mono text-[#647184]">RP2350 Controller</div>
+            </div>
+          </div>
+
+          {/* Vertical Signal Arrow / Line */}
+          <div className="h-6 w-0.5 bg-[#CBD5E1] relative flex items-center justify-center">
+            {mounted && isVisible && !prefersReduced && (
+              <motion.div
+                className="w-2 h-2 rounded-full bg-[#0864C7]"
+                animate={{ y: [10, -10] }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: 'linear', delay: 0.55 }}
+              />
+            )}
+          </div>
+
+          {/* Node 3: DualSense */}
+          <div className="flex items-center gap-3 w-full max-w-[240px] p-2.5 rounded-xl bg-white border border-[#CBD5E1] shadow-2xs">
+            <Gamepad2 className="w-6 h-6 text-[#178BFF] shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-[#17202A]">DualSense Controller</div>
+              <div className="text-[10px] font-mono text-[#647184]">Haptics &amp; Triggers</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Verified Hardware Details */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 pt-3 border-t border-black/5 text-xs font-mono">
-        <div className="glass-card-solid p-3 rounded-xl">
-          <div className="text-[10px] text-[#647184] uppercase">Microcontroller</div>
-          <div className="text-xs font-bold text-[#17202A] mt-0.5">RP2350 (Pico 2 W)</div>
-          <div className="text-[10px] text-[#647184]">Dual-Core M33</div>
+      {/* Description Strip */}
+      <div className="mt-3 p-3 rounded-xl bg-white border border-[#CBD5E1] shadow-2xs text-xs font-mono">
+        <div className="flex items-center justify-between pb-1 mb-1 border-b border-black/5">
+          <span className="font-bold text-[#17202A] flex items-center gap-1.5">
+            {currentChannelInfo ? currentChannelInfo.label : 'All 4 Concurrent Signal Channels'}
+          </span>
+          <span className="text-[10.5px] text-[#0864C7] font-semibold">
+            {currentChannelInfo ? currentChannelInfo.direction : 'Wired USB Interface'}
+          </span>
+        </div>
+        <p className="text-[11px] text-[#475569] font-sans leading-relaxed">
+          {currentChannelInfo
+            ? currentChannelInfo.description
+            : 'Hardware bridge translates controller inputs, dual voice-coil haptic vibrations, motorized adaptive trigger braking curves, and audio telemetry between PC and controller.'}
+        </p>
+      </div>
+
+      {/* Verified Compact Facts Rail */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 mt-3 border-t border-black/5 text-xs font-mono">
+        <div className="p-2.5 rounded-xl bg-white/70 border border-[#CBD5E1]/60">
+          <div className="text-[10px] text-[#647184] uppercase font-medium">Role</div>
+          <div className="text-xs font-bold text-[#17202A] mt-0.5">Designer / Builder</div>
+          <div className="text-[10px] text-[#647184]">Solo Embedded Build</div>
         </div>
 
-        <div className="glass-card-solid p-3 rounded-xl">
-          <div className="text-[10px] text-[#647184] uppercase">Interface Type</div>
-          <div className="text-xs font-bold text-[#17202A] mt-0.5">Wired Hardware Bridge</div>
-          <div className="text-[10px] text-[#647184]">Hand-Soldered Header</div>
+        <div className="p-2.5 rounded-xl bg-white/70 border border-[#CBD5E1]/60">
+          <div className="text-[10px] text-[#647184] uppercase font-medium">Hardware</div>
+          <div className="text-xs font-bold text-[#0864C7] mt-0.5">Raspberry Pi Pico 2 W</div>
+          <div className="text-[10px] text-[#647184]">RP2350 Microcontroller</div>
         </div>
 
-        <div className="glass-card-solid p-3 rounded-xl">
-          <div className="text-[10px] text-[#647184] uppercase">Active Channels</div>
-          <div className="text-xs font-bold text-[#17202A] mt-0.5">4 Bidirectional</div>
-          <div className="text-[10px] text-[#647184]">Inputs, Haptics, Triggers, Audio</div>
+        <div className="p-2.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0]">
+          <div className="text-[10px] text-[#047857] uppercase font-bold">Status</div>
+          <div className="text-xs font-bold text-[#047857] mt-0.5">Built &amp; Functional</div>
+          <div className="text-[10px] text-[#059669]">Hand-Soldered Hardware</div>
         </div>
 
-        <div className="glass-card-solid p-3 rounded-xl bg-[#F0FDF4] border-[#BBF7D0]">
-          <div className="text-[10px] text-[#047857] uppercase font-bold">Build Status</div>
-          <div className="text-xs font-bold text-[#047857] mt-0.5">Built & Functional</div>
-          <div className="text-[10px] text-[#059669]">Physical Hardware</div>
+        <div className="p-2.5 rounded-xl bg-white/70 border border-[#CBD5E1]/60">
+          <div className="text-[10px] text-[#647184] uppercase font-medium">Functions</div>
+          <div className="text-xs font-bold text-[#17202A] mt-0.5">4 Signal Streams</div>
+          <div className="text-[10px] text-[#647184]">Inputs · Haptics · Triggers · Audio</div>
         </div>
       </div>
     </div>
   );
 }
+
 export default DualSenseVisual;

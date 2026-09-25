@@ -11,103 +11,94 @@ export function PhilosophySection() {
     {
       num: '01',
       title: 'DESIGN',
-      tagline: 'Define constraints.',
-      detail: 'Analyze physical load paths, calculate budget margins, and question baseline assumptions.',
+      sentence: 'Define constraints.',
     },
     {
       num: '02',
       title: 'BUILD',
-      tagline: 'Turn geometry into hardware.',
-      detail: 'Fabricate physical assemblies, solder interconnects, and integrate real mechatronic parts.',
+      sentence: 'Turn geometry into hardware.',
     },
     {
       num: '03',
       title: 'TEST',
-      tagline: 'Measure real behavior.',
-      detail: 'Measure empirical launch distance, thermal dissipation, and packet latency under stress.',
+      sentence: 'Measure what actually happens.',
     },
     {
       num: '04',
       title: 'ITERATE',
-      tagline: 'Fix what reality exposes.',
-      detail: 'Triage unexpected failures calmly, extract surviving value, and rebuild a stiffer, superior system.',
+      sentence: 'Fix what reality exposes.',
     },
   ];
 
   return (
-    <section id="philosophy" className="my-20 sm:my-28 py-16 sm:py-20 border-y border-black/5 relative overflow-hidden bg-[#FAFBFD]">
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#178BFF]/6 rounded-full blur-[140px] pointer-events-none" />
+    <section id="philosophy" className="my-16 sm:my-24 py-16 sm:py-20 border-y border-black/5 relative overflow-hidden bg-[#FAFBFD]">
+      {/* Background ambient pale lighting */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-[#178BFF]/6 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-        {/* Quote Block */}
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Centered Editorial Quote Block (Max width ~850px) */}
         <Reveal variant="heading">
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <div className="text-xs font-mono text-[#0864C7] font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
+          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+            <div className="text-xs font-mono text-[#0864C7] font-semibold uppercase tracking-wider mb-3 flex items-center justify-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#178BFF]" />
               ENGINEERING PHILOSOPHY
             </div>
-            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#17202A] leading-tight">
+            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#17202A] leading-tight text-balance">
               &ldquo;I’m drawn to engineering problems where an idea eventually has to leave the screen and work in the real world.&rdquo;
             </blockquote>
           </div>
         </Reveal>
 
-        {/* Connected Lifecycle System */}
+        {/* Connected Lifecycle Path (No large cards — single connected pipeline) */}
         <Reveal variant="visual">
-          <div className="relative">
-            {/* Desktop Connecting Vector Line */}
-            <div className="hidden lg:block absolute top-[28px] left-[6%] right-[6%] h-[2px] z-0">
+          <div className="relative max-w-4xl mx-auto">
+            {/* Desktop / Tablet Connecting Line */}
+            <div className="hidden md:block absolute top-[18px] left-[12%] right-[12%] h-[2px] z-0">
               <motion.div
                 initial={{ scaleX: prefersReduced ? 1 : 0 }}
                 whileInView={{ scaleX: 1 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] as const }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] as const }}
                 className="w-full h-full bg-gradient-to-r from-[#178BFF]/30 via-[#0864C7] to-[#178BFF]/30 origin-left"
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative z-10">
+            {/* Desktop / Tablet Horizontal Pipeline */}
+            <div className="hidden md:grid grid-cols-4 gap-4 relative z-10 text-center">
               {stages.map((st, i) => (
-                <motion.div
-                  key={st.num}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.5,
-                    delay: prefersReduced ? 0 : i * 0.12,
-                    ease: [0.22, 1, 0.36, 1] as const,
-                  }}
-                  className="glass-card-solid p-6 rounded-2xl flex flex-col justify-between group hover:border-[#178BFF]/40 transition-colors shadow-xs"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="w-8 h-8 rounded-full bg-[#EAF5FF] text-[#0864C7] text-xs font-mono font-bold flex items-center justify-center border border-[#178BFF]/25 shadow-xs">
-                        {st.num}
-                      </span>
-                      <span className="text-[10px] font-mono text-[#647184] uppercase tracking-wider">
-                        PHASE {st.num}
-                      </span>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-[#17202A] tracking-tight">
-                      {st.title}
-                    </h3>
-
-                    <div className="text-xs font-mono text-[#0864C7] font-semibold mt-1">
-                      {st.tagline}
-                    </div>
-
-                    <p className="text-xs text-[#4B596A] mt-3 leading-relaxed">
-                      {st.detail}
-                    </p>
+                <div key={st.num} className="flex flex-col items-center">
+                  {/* Step Circle Indicator */}
+                  <div className="w-9 h-9 rounded-full bg-white border-2 border-[#178BFF] text-[#0864C7] font-mono text-xs font-bold flex items-center justify-center shadow-xs mb-3">
+                    {st.num}
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-black/5 text-[10px] font-mono text-[#94A3B8]">
-                    Loop: Validate Real Performance
+                  <h3 className="text-sm font-bold text-[#17202A] font-mono tracking-wide">
+                    {st.title}
+                  </h3>
+
+                  <p className="text-xs text-[#4B596A] mt-1 font-sans">
+                    {st.sentence}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile Vertical Connected Timeline */}
+            <div className="md:hidden relative border-l-2 border-[#178BFF]/40 ml-4 pl-6 space-y-6">
+              {stages.map((st) => (
+                <div key={st.num} className="relative">
+                  {/* Milestone Dot */}
+                  <div className="absolute -left-[31px] top-0.5 w-3.5 h-3.5 rounded-full bg-white border-2 border-[#178BFF] shadow-xs" />
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xs font-mono font-bold text-[#0864C7]">{st.num}</span>
+                    <span className="text-xs font-bold text-[#17202A] font-mono">{st.title}</span>
                   </div>
-                </motion.div>
+
+                  <p className="text-xs text-[#4B596A] mt-0.5">
+                    {st.sentence}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
@@ -116,4 +107,5 @@ export function PhilosophySection() {
     </section>
   );
 }
+
 export default PhilosophySection;

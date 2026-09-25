@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navbar } from '@/components/nav/Navbar';
 import { HeroSection } from '@/components/hero/HeroSection';
-import { QuickMetrics } from '@/components/sections/QuickMetrics';
 import { ProjectsSection } from '@/components/sections/ProjectsSection';
 import { PhilosophySection } from '@/components/sections/PhilosophySection';
 import { AboutSection } from '@/components/sections/AboutSection';
@@ -27,10 +26,7 @@ export default function HomePage() {
         {/* 01: Hero Section */}
         <HeroSection />
 
-        {/* 02: Quick Metrics Strip */}
-        <QuickMetrics />
-
-        {/* 03: Selected Work & Interactive Product Demos */}
+        {/* 02: Selected Engineering Work & Interactive System Visualizers */}
         <ProjectsSection />
 
         {/* 04: Engineering Philosophy: Design → Build → Test → Iterate */}

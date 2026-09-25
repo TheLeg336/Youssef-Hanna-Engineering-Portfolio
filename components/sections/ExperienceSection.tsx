@@ -2,89 +2,107 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { ShieldCheck, Users, Award } from 'lucide-react';
+import { ShieldCheck, Users, Award, BookOpen } from 'lucide-react';
 import { EXPERIENCE_DATA, LAUNCHER_TIMELINE, PERSONAL_INFO } from '@/lib/portfolio-data';
 import { Reveal, useReducedMotion } from '@/components/motion/Reveal';
 
 export function ExperienceSection() {
   const prefersReduced = useReducedMotion();
 
+  const leadershipSteps = [
+    {
+      stage: 'TARGET',
+      desc: '~100 ft project requirement with strict out-of-pocket budget bounds.',
+    },
+    {
+      stage: 'DISRUPTION',
+      desc: 'Major mechanical failure roughly one week before competition.',
+    },
+    {
+      stage: 'ASSESS',
+      desc: 'Triaged intact components with the ~15-person team and identified usable parts.',
+    },
+    {
+      stage: 'REDESIGN',
+      desc: 'Rebuilt around surviving pieces into a more compact, stiffer chassis.',
+    },
+    {
+      stage: 'RESULT',
+      desc: '~300 ft achieved (3× target distance) and won 1st place in the class competition.',
+    },
+  ];
+
   return (
-    <section id="experience" className="my-20 sm:my-28 scroll-mt-24">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="experience" className="my-16 sm:my-24 scroll-mt-28">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <Reveal variant="heading">
-          <div className="border-b border-black/10 pb-6 mb-12 sm:mb-14">
+          <div className="border-b border-black/10 pb-5 mb-10 sm:mb-12">
             <div className="text-xs font-mono text-[#0864C7] font-semibold uppercase tracking-wider flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#178BFF]" />
-              ENGINEERING LEADERSHIP & EXPERIENCE
+              ENGINEERING LEADERSHIP &amp; EXPERIENCE
             </div>
-            <h2 className="text-section-title font-extrabold tracking-tight text-[#17202A] mt-1.5">
-              Leadership & Work Experience
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#17202A] mt-1.5">
+              Leadership &amp; Work History
             </h2>
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* Left Column: Featured Leadership Narrative Timeline */}
-          <div className="lg:col-span-7 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Column: Featured Engineering Leadership (~65%) */}
+          <div className="lg:col-span-8 space-y-6">
             <Reveal variant="standard">
               <div className="glass-panel p-6 sm:p-7 rounded-2xl space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/5 pb-4">
                   <div>
                     <div className="flex items-center gap-2 text-xs font-mono text-[#0864C7] font-semibold">
                       <Users className="w-4 h-4" />
-                      <span>ENGINEERING PROJECT LEAD</span>
+                      <span>ENGINEERING LEADERSHIP</span>
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold text-[#17202A] mt-0.5">
-                      15-Person Launcher Team · Emergency Recovery
+                      Launcher Team Lead · Emergency Failure Recovery
                     </h3>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#059669] bg-[#EBFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full self-start sm:self-auto shadow-xs">
+                  <span className="text-xs font-mono font-bold text-[#059669] bg-[#EBFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full self-start sm:self-auto shadow-2xs">
                     1st Place Winner
                   </span>
                 </div>
 
                 <p className="text-sm text-[#4B596A] leading-relaxed">
-                  Led a ~15-person cross-functional student engineering team at Cal Poly Pomona.
-                  When an unauthorized modification compromised the mechanism one week before competition,
-                  directed triage recovery, redesigned around damaged parts, compacted the frame,
-                  and led the team to victory reaching ~300 ft with ~30–40% profit margin.
+                  Served as Project Lead for approximately 15 engineering students during Introduction to
+                  Engineering and Design at Cal Poly Pomona. When an unauthorized modification compromised the
+                  mechanism one week before competition, assembled the team, triaged surviving components,
+                  redesigned the assembly into a more compact chassis, and achieved ~300 ft for the class win.
                 </p>
 
-                {/* Sequential Leadership Timeline */}
-                <div className="space-y-4 pt-2">
-                  <div className="text-xs font-mono uppercase text-[#647184] tracking-wider mb-2 font-medium">
-                    Critical Failure Recovery Timeline
+                {/* Concise Recovery Timeline (Section 52) */}
+                <div className="space-y-3 pt-2">
+                  <div className="text-xs font-mono uppercase text-[#647184] tracking-wider font-semibold">
+                    Recovery Timeline:
                   </div>
 
-                  <div className="relative border-l-2 border-[#CBD5E1] ml-3 pl-5 space-y-5">
-                    {LAUNCHER_TIMELINE.map((item, idx) => (
+                  <div className="relative border-l-2 border-[#178BFF]/40 ml-3 pl-5 space-y-4">
+                    {leadershipSteps.map((item, idx) => (
                       <motion.div
-                        key={item.phase}
-                        initial={{ opacity: 0, x: -8 }}
+                        key={item.stage}
+                        initial={{ opacity: 0, x: -6 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{
-                          duration: 0.4,
-                          delay: prefersReduced ? 0 : idx * 0.08,
+                          duration: 0.35,
+                          delay: prefersReduced ? 0 : idx * 0.06,
                         }}
                         className="relative"
                       >
-                        {/* Milestone dot */}
-                        <div className="absolute -left-[27px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-[#178BFF] shadow-xs" />
+                        <div className="absolute -left-[27px] top-1 w-3 h-3 rounded-full bg-white border-2 border-[#178BFF] shadow-xs" />
 
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[11px] text-[#0864C7] font-bold">
-                            {item.phase} · {item.stage}
-                          </span>
-                          <span className="text-black/20">|</span>
-                          <span className="text-xs font-bold text-[#17202A]">
-                            {item.title}
+                          <span className="font-mono text-xs font-bold text-[#0864C7]">
+                            {item.stage}
                           </span>
                         </div>
-                        <p className="text-xs text-[#4B596A] mt-1 leading-relaxed">
-                          {item.detail}
+                        <p className="text-xs text-[#4B596A] mt-0.5 leading-relaxed">
+                          {item.desc}
                         </p>
                       </motion.div>
                     ))}
@@ -92,72 +110,62 @@ export function ExperienceSection() {
                 </div>
               </div>
             </Reveal>
+          </div>
 
-            {/* Community Tutoring Note */}
-            <Reveal variant="standard" delay={0.1}>
-              <div className="glass-panel p-5 rounded-2xl flex items-start gap-3 text-xs">
-                <Users className="w-4 h-4 text-[#178BFF] shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-bold text-[#17202A]">
-                    Mathematics Tutor & Community Education
+          {/* Right Column: Visually Quieter Work Experience, Tutoring & Honors (~35%) */}
+          <div className="lg:col-span-4 space-y-5">
+            {/* Work Experience: Security Guard (Section 53) */}
+            <Reveal variant="visual">
+              <div className="glass-panel p-5 rounded-2xl space-y-3 bg-white/70">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#647184] font-semibold border-b border-black/5 pb-2">
+                  <ShieldCheck className="w-4 h-4 text-[#178BFF]" />
+                  <span>WORK EXPERIENCE</span>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex items-baseline justify-between">
+                    <h4 className="text-xs font-bold text-[#17202A]">Security Guard</h4>
+                    <span className="text-[10px] font-mono text-[#647184]">Mar 2026 – Aug 2026</span>
                   </div>
-                  <p className="text-[#647184] mt-1 leading-relaxed">
-                    Tutored students in algebra, geometry, and calculus through church community programs,
-                    breaking down abstract mathematics into intuitive physical analogies.
+                  <div className="text-[11px] font-mono text-[#0864C7]">Kero Security · California</div>
+
+                  <p className="text-xs text-[#4B596A] leading-relaxed pt-1">
+                    Monitored assigned sites, performed routine patrols, communicated with staff and visitors,
+                    and helped maintain a safe environment.
                   </p>
                 </div>
               </div>
             </Reveal>
-          </div>
 
-          {/* Right Column: Work Experience & Honors */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Work Experience */}
-            <Reveal variant="visual">
-              <div className="glass-panel p-6 rounded-2xl space-y-4">
-                <div className="flex items-center gap-2 text-xs font-mono text-[#0864C7] font-semibold border-b border-black/5 pb-3">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>PROFESSIONAL WORK EXPERIENCE</span>
+            {/* Mathematics Tutoring (Section 54) */}
+            <Reveal variant="visual" delay={0.08}>
+              <div className="glass-panel p-5 rounded-2xl space-y-2 bg-white/70">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#647184] font-semibold border-b border-black/5 pb-2">
+                  <BookOpen className="w-4 h-4 text-[#178BFF]" />
+                  <span>COMMUNITY EDUCATION</span>
                 </div>
 
-                {EXPERIENCE_DATA.map((job) => (
-                  <div key={job.company} className="space-y-2">
-                    <div className="flex items-baseline justify-between">
-                      <h4 className="text-sm font-bold text-[#17202A]">{job.role}</h4>
-                      <span className="text-[11px] font-mono text-[#647184]">{job.period}</span>
-                    </div>
-                    <div className="text-xs font-mono text-[#0864C7] font-medium">{job.company} · California</div>
-
-                    <p className="text-xs text-[#4B596A] leading-relaxed pt-1">
-                      {job.summary}
-                    </p>
-
-                    <ul className="space-y-1.5 pt-2 text-xs text-[#647184]">
-                      {job.responsibilities.map((r, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="text-[#178BFF] font-mono">•</span>
-                          <span className="leading-relaxed">{r}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                <h4 className="text-xs font-bold text-[#17202A]">Mathematics Tutor</h4>
+                <p className="text-xs text-[#4B596A] leading-relaxed">
+                  Tutored mathematics for students and community members, breaking complex concepts into
+                  clear step-by-step explanations.
+                </p>
               </div>
             </Reveal>
 
             {/* Academic Honors */}
-            <Reveal variant="visual" delay={0.1}>
-              <div className="glass-panel p-6 rounded-2xl space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono text-[#D97706] font-semibold border-b border-black/5 pb-3">
+            <Reveal variant="visual" delay={0.12}>
+              <div className="glass-panel p-5 rounded-2xl space-y-2.5 bg-white/70">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#D97706] font-semibold border-b border-black/5 pb-2">
                   <Award className="w-4 h-4" />
-                  <span>ACADEMIC HONORS</span>
+                  <span>HONORS</span>
                 </div>
 
-                <div className="space-y-2.5">
+                <div className="space-y-1.5 text-xs">
                   {PERSONAL_INFO.honors.map((h) => (
-                    <div key={h.title} className="glass-card-solid p-3 rounded-xl">
-                      <div className="text-xs font-bold text-[#17202A]">{h.title}</div>
-                      <div className="text-[11px] text-[#647184] mt-0.5">{h.detail}</div>
+                    <div key={h.title} className="text-[#334155]">
+                      <span className="font-bold text-[#17202A]">{h.title}</span>
+                      <span className="text-[#647184] text-[11px] block">{h.detail}</span>
                     </div>
                   ))}
                 </div>
@@ -169,4 +177,5 @@ export function ExperienceSection() {
     </section>
   );
 }
+
 export default ExperienceSection;

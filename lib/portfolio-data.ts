@@ -107,94 +107,94 @@ export interface SkillGroup {
 
 export const SKILLS_DATA: SkillGroup[] = [
   {
-    category: 'CAD & Engineering Design',
+    category: 'CAD & DESIGN',
     skills: [
       {
         name: 'SolidWorks',
-        note: 'Comfortable creating complex individual parts efficiently; actively developing assembly workflows.',
-        projectSlug: 'ezer',
-        projectName: 'Ezer / Coursework',
+        note: '3D parametric modeling, drawing packages, and mechanical assemblies.',
+        projectSlug: 'launcher',
+        projectName: 'Used in Launcher & Ezer Concept',
       },
       {
         name: 'Onshape',
-        note: 'Parametric cloud modeling & collaborative CAD.',
+        note: 'Collaborative cloud modeling and parametric part studios.',
       },
       {
         name: 'Blender',
-        note: 'Surface visualization, polygonal modeling & rendering.',
+        note: 'Polygonal surface visualization and 3D rendering.',
       },
     ],
   },
   {
-    category: 'Programming & Logic',
+    category: 'PROGRAMMING',
     skills: [
       {
         name: 'Python',
-        note: 'Engineering scripts, numerical analysis, data processing.',
+        note: 'Engineering scripts, numerical analysis, and data processing.',
       },
       {
         name: 'C++',
-        note: 'Object-oriented programming, embedded algorithms.',
+        note: 'Object-oriented programming and embedded algorithms.',
       },
       {
         name: 'JavaScript',
-        note: 'Extension architecture, DOM injection, frontend logic.',
+        note: 'Extension architecture, DOM injection, and frontend logic.',
         projectSlug: 'unirate',
-        projectName: 'UniRate',
+        projectName: 'Used in UniRate',
       },
       {
-        name: 'HTML5 & CSS3',
-        note: 'Responsive layout systems & interface styling.',
+        name: 'HTML/CSS',
+        note: 'Responsive layout systems and modern interface styling.',
         projectSlug: 'unirate',
-        projectName: 'UniRate',
+        projectName: 'Used in UniRate',
       },
     ],
   },
   {
-    category: 'Embedded Systems & Hardware',
+    category: 'EMBEDDED / HARDWARE',
     skills: [
       {
         name: 'Raspberry Pi Pico 2 W',
-        note: 'Primary microcontroller platform; RP2350 architecture.',
+        note: 'Primary microcontroller platform; RP2350 dual-core architecture.',
         projectSlug: 'dualsense',
-        projectName: 'DualSense PC Interface',
+        projectName: 'Used in DualSense',
       },
       {
-        name: 'Precision Soldering',
-        note: 'Header pins, wiring harnesses, through-hole connections.',
+        name: 'Soldering',
+        note: 'Header pins, wiring harnesses, and through-hole connections.',
         projectSlug: 'dualsense',
-        projectName: 'DualSense PC Interface',
+        projectName: 'Used in DualSense',
       },
       {
         name: 'Electronics Integration',
-        note: 'Sensors, actuators, USB HID translation, power rails.',
+        note: 'Sensors, actuators, USB HID translation, and power rails.',
         projectSlug: 'dualsense',
-        projectName: 'DualSense PC Interface',
+        projectName: 'Used in DualSense',
       },
     ],
   },
   {
-    category: 'Fabrication & Prototyping',
+    category: 'FABRICATION / TOOLS',
     skills: [
       {
-        name: '3D Printing (FDM)',
-        note: 'Rapid iterative geometry validation & bracketry.',
+        name: '3D Printing',
+        note: 'Rapid iterative geometry validation and custom bracketry.',
       },
       {
         name: 'Laser Cutting',
-        note: 'Sheet stock profiling, mechanical linkages, templates.',
+        note: 'Sheet stock profiling, mechanical linkages, and templates.',
       },
       {
         name: 'Hand & Power Tools',
-        note: 'Drilling, fastening, tapping, structural assembly.',
+        note: 'Drilling, fastening, cutting, and structural assembly.',
         projectSlug: 'launcher',
-        projectName: 'Tennis Ball Launcher',
+        projectName: 'Used in Launcher Prototyping',
       },
       {
         name: 'Excel',
-        note: 'Engineering budgets, project metrics, cost calculations.',
+        note: 'Engineering budgets, project metrics, and commercial margin calculations.',
         projectSlug: 'launcher',
-        projectName: 'Tennis Ball Launcher',
+        projectName: 'Used in Launcher Margin Scoring',
       },
     ],
   },
