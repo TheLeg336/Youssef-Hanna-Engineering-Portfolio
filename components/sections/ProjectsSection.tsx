@@ -121,83 +121,117 @@ export function ProjectsSection() {
           </article>
 
           {/* =========================================================================
-              PROJECT 03: EZER (Featured Experimental Project)
-              Layout: Centered Demo ~80% width -> Two Concise Context Columns (Sections 30-35)
+              PROJECT 03: EZER (Flagship Interactive CAD Demo Section)
+              Layout: Two-Column Composition (38% left narrative / 62% right live demo)
+              Responsive: Collapses to single column on tablet; purpose-built order on mobile
              ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]/80 border border-slate-200/80 shadow-xs">
-            <Reveal variant="standard">
-              <div className="max-w-3xl mx-auto text-center mb-8">
-                <div className="flex items-center justify-center gap-2 text-xs font-mono text-[#647184] mb-1">
-                  <span className="text-[#0864C7] font-bold">03</span>
-                  <span className="text-black/20">/</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-white border border-[#CBD5E1] text-[11px] text-[#17202A] font-semibold">
-                    Engineering Automation &amp; HCI
-                  </span>
-                  <span className="text-black/20">·</span>
-                  <span className="text-[#0864C7] font-semibold">In Active Development</span>
+          <article className="rounded-[28px] sm:rounded-[32px] p-4 sm:p-7 lg:p-10 bg-[#F6F8FB] border border-[rgba(15,23,42,0.08)] shadow-[0_16px_40px_rgba(15,23,42,0.08)] relative overflow-hidden">
+            {/* Background Ambient Depth */}
+            <div
+              className="absolute -top-32 -left-32 w-96 h-96 rounded-full pointer-events-none blur-3xl opacity-30"
+              style={{
+                background: 'radial-gradient(circle, rgba(34,199,242,0.35) 0%, rgba(47,128,255,0.15) 50%, transparent 75%)',
+              }}
+            />
+
+            <div className="relative z-10 max-w-[1280px] mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* -------------------------------------------------------------
+                    LEFT COLUMN: Project Information & Narrative (38% on desktop)
+                ------------------------------------------------------------- */}
+                <div className="lg:col-span-5 flex flex-col justify-between h-full pt-1 lg:pt-3">
+                  <Reveal variant="standard">
+                    <div>
+                      {/* 1. Eyebrow Line */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#0864C7] px-2.5 py-0.5 rounded-full bg-white border border-[#CBD5E1] shadow-2xs">
+                          AI &amp; Automation · 2025–Present
+                        </span>
+                        <span className="text-[10px] font-mono text-[#64748B] hidden sm:inline">
+                          Local AI + CAD Automation
+                        </span>
+                      </div>
+
+                      {/* 2. Project Title */}
+                      <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight">
+                        Ezer
+                      </h3>
+
+                      {/* 3. Short Description */}
+                      <p className="mt-3 text-sm sm:text-base text-[#475569] leading-relaxed font-sans">
+                        Experimental local desktop assistant exploring fast on-device computer-use models.
+                        Investigating automated CAD workflows in SolidWorks with strict human-in-the-loop safety gates.
+                      </p>
+
+                      {/* 4. 2 x 2 Metadata Card Grid */}
+                      <div className="grid grid-cols-2 gap-3 mt-6 sm:mt-7">
+                        {/* Card 1: STATUS */}
+                        <div className="rounded-[18px] p-4 bg-[rgba(255,255,255,0.84)] border border-[rgba(15,23,42,0.08)] shadow-[0_2px_8px_rgba(15,23,42,0.04)] flex flex-col justify-between">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-bold">
+                            STATUS
+                          </span>
+                          <span className="text-xs sm:text-[13px] font-mono font-semibold text-[#0F172A] mt-1.5 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                            In Active Development
+                          </span>
+                        </div>
+
+                        {/* Card 2: TARGET MODEL */}
+                        <div className="rounded-[18px] p-4 bg-[rgba(255,255,255,0.84)] border border-[rgba(15,23,42,0.08)] shadow-[0_2px_8px_rgba(15,23,42,0.04)] flex flex-col justify-between">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-bold">
+                            TARGET MODEL
+                          </span>
+                          <span className="text-xs sm:text-[13px] font-mono font-semibold text-[#0F172A] mt-1.5 truncate">
+                            Local On-Device AI
+                          </span>
+                        </div>
+
+                        {/* Card 3: DOMAIN FOCUS */}
+                        <div className="rounded-[18px] p-4 bg-[rgba(255,255,255,0.84)] border border-[rgba(15,23,42,0.08)] shadow-[0_2px_8px_rgba(15,23,42,0.04)] flex flex-col justify-between">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-bold">
+                            DOMAIN FOCUS
+                          </span>
+                          <span className="text-xs sm:text-[13px] font-mono font-semibold text-[#0F172A] mt-1.5 truncate">
+                            CAD / SolidWorks
+                          </span>
+                        </div>
+
+                        {/* Card 4: ARCHITECTURE */}
+                        <div className="rounded-[18px] p-4 bg-[rgba(255,255,255,0.84)] border border-[rgba(15,23,42,0.08)] shadow-[0_2px_8px_rgba(15,23,42,0.04)] flex flex-col justify-between">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-bold">
+                            ARCHITECTURE
+                          </span>
+                          <span className="text-xs sm:text-[13px] font-mono font-semibold text-[#0F172A] mt-1.5 truncate">
+                            Tauri + Rust Backend
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 5. Concise Role & Status Lines */}
+                      <div className="mt-6 pt-5 border-t border-[rgba(15,23,42,0.08)] text-[11px] sm:text-xs font-mono text-[#64748B] space-y-1.5">
+                        <div className="flex items-start gap-1.5 leading-snug">
+                          <span className="font-bold text-[#0F172A] shrink-0">ROLE:</span>
+                          <span className="text-[#475569]">
+                            Product Concept, Systems Design, UX, &amp; AI-Assisted Development
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-[#0F172A]">STATUS:</span>
+                          <span className="text-[#0864C7] font-semibold">In Active Development</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Reveal>
                 </div>
 
-                <h3 className="text-2xl sm:text-4xl font-extrabold text-[#17202A] tracking-tight mt-1">
-                  Ezer
-                </h3>
-
-                <p className="text-sm sm:text-base text-[#4B596A] mt-2 leading-relaxed max-w-2xl mx-auto">
-                  Experimental local desktop assistant exploring fast on-device computer control and automated
-                  CAD engineering workflows. Concept demonstration illustrates natural language geometry synthesis
-                  and live parametric modification.
-                </p>
-              </div>
-            </Reveal>
-
-            {/* Large Centered Visualizer (75–85% width on large displays) */}
-            <div className="max-w-5xl mx-auto">
-              <Reveal variant="visual">
-                <EzerVisual />
-              </Reveal>
-            </div>
-
-            {/* Two Concise Columns Below (Section 30) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto mt-6 pt-6 border-t border-black/5 text-xs font-mono">
-              <div className="p-4 rounded-xl bg-white border border-[#CBD5E1]/60 shadow-2xs">
-                <div className="text-[11px] uppercase text-[#0864C7] font-bold mb-2 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
-                  WHAT I&apos;M EXPLORING
+                {/* -------------------------------------------------------------
+                    RIGHT COLUMN: Flagship Live Demo Stage (62% on desktop)
+                ------------------------------------------------------------- */}
+                <div className="lg:col-span-7 w-full">
+                  <Reveal variant="visual">
+                    <EzerVisual />
+                  </Reveal>
                 </div>
-                <ul className="space-y-1.5 text-[#334155]">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>Local AI inference for privacy-preserving computer control</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>Deterministic CAD synthesis with explicit safety approval gates</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>Repetitive mechanical modeling workflows and constraint generation</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white border border-[#CBD5E1]/60 shadow-2xs">
-                <div className="text-[11px] uppercase text-[#0864C7] font-bold mb-2 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
-                  MY ROLE &amp; APPROACH
-                </div>
-                <ul className="space-y-1.5 text-[#334155]">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>Product concept, systems architecture, and state-machine design</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>Interactive UI/UX design with cognitive state feedback</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-[#178BFF]">•</span>
-                    <span>AI-assisted systems development in Tauri, Rust, and SolidJS</span>
-                  </li>
-                </ul>
               </div>
             </div>
           </article>
