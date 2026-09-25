@@ -165,7 +165,7 @@ export function HeroSection() {
 
           {/* RIGHT COLUMN: Interactive "Selected Systems" Hero Reel (~5 columns) */}
           <div className="lg:col-span-5 w-full flex justify-center lg:justify-end">
-            <motion.div variants={itemVariants} className="w-full max-w-lg">
+            <motion.div variants={itemVariants} className="w-full max-w-xl lg:max-w-none">
               <SelectedSystemsReel />
             </motion.div>
           </div>

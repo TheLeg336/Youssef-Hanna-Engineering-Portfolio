@@ -15,12 +15,19 @@ const LANDING = { x: 460, y: 175 };
 const PEAK = { x: 260, y: 50 };
 const TARGET_100_X = 180;
 
-export function LauncherVisual() {
+interface LauncherVisualProps {
+  idPrefix?: string;
+}
+
+export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisible = useElementVisibility(containerRef, 0.25);
   const prefersReduced = useReducedMotion();
   const [progress, setProgress] = useState(1); // 0 to 1
   const [selectedMilestone, setSelectedMilestone] = useState<string | null>(null);
+
+  const pathGradId = `${idPrefix}-pathGrad`;
+  const fillGradId = `${idPrefix}-fillGrad`;
 
   const reqIdRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
@@ -102,13 +109,13 @@ export function LauncherVisual() {
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
-            <linearGradient id="launcherPathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id={pathGradId} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#178BFF" stopOpacity="0.85" />
               <stop offset="50%" stopColor="#0864C7" stopOpacity="0.95" />
               <stop offset="100%" stopColor="#059669" stopOpacity="1" />
             </linearGradient>
 
-            <linearGradient id="launcherFillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={fillGradId} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#178BFF" stopOpacity="0.10" />
               <stop offset="100%" stopColor="#0864C7" stopOpacity="0" />
             </linearGradient>
@@ -191,7 +198,7 @@ export function LauncherVisual() {
                 ORIGIN.y + (-40 - ORIGIN.y) * flightT
               } ${ballX} ${ballY}`}
               fill="none"
-              stroke="url(#launcherPathGrad)"
+              stroke={`url(#${pathGradId})`}
               strokeWidth="3"
               strokeLinecap="round"
             />

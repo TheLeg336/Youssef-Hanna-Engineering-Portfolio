@@ -91,7 +91,11 @@ interface PopoverAnchor {
   course: MockCourse;
 }
 
-export function UniRateVisual() {
+interface UniRateVisualProps {
+  layoutPrefix?: string;
+}
+
+export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps = {}) {
   const [minRating, setMinRating] = useState<number>(0);
   const [activeCourse, setActiveCourse] = useState<MockCourse | null>(null);
   const [popoverAnchor, setPopoverAnchor] = useState<PopoverAnchor | null>(null);
@@ -479,7 +483,7 @@ export function UniRateVisual() {
               >
                 {isSelected && (
                   <motion.div
-                    layoutId="filter-pill-unirate"
+                    layoutId={`${layoutPrefix}-filter-pill-unirate`}
                     className="absolute inset-0 bg-[#178BFF] rounded-lg shadow-xs"
                     transition={{ type: 'spring', damping: 25, stiffness: 350 }}
                   />
