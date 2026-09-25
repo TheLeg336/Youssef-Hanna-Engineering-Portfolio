@@ -9,7 +9,7 @@ import { PERSONAL_INFO } from '@/lib/portfolio-data';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('projects');
+  const [activeSection, setActiveSection] = useState<string>('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const pathname = usePathname();
@@ -25,25 +25,79 @@ export function Navbar() {
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    if (!isHomePage) {
+      setActiveSection('');
+      return;
+    }
 
-      if (isHomePage) {
-        const sections = ['projects', 'philosophy', 'about', 'skills', 'experience', 'contact'];
-        const scrollPosition = window.scrollY + 200;
+    const updateActiveSection = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 20);
 
-        for (let i = sections.length - 1; i >= 0; i--) {
-          const el = document.getElementById(sections[i]);
-          if (el && el.offsetTop <= scrollPosition) {
-            setActiveSection(sections[i]);
-            break;
-          }
+      // 1. When at the top of the page (Hero section), no nav pill is selected
+      if (scrollY < 120) {
+        setActiveSection('');
+        return;
+      }
+
+      // 2. When at the very bottom of the page, guarantee Contact is active
+      const isAtBottom =
+        window.innerHeight + scrollY >= document.documentElement.scrollHeight - 50;
+      if (isAtBottom) {
+        setActiveSection('contact');
+        return;
+      }
+
+      // 3. Focal line: 36% down from the top of the viewport (natural reading eye level just below header)
+      const focalY = window.innerHeight * 0.36;
+      const sections = ['projects', 'philosophy', 'about', 'skills', 'experience', 'contact'];
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (!el) continue;
+
+        const rect = el.getBoundingClientRect();
+        // Check if the section encompasses the focal line
+        if (rect.top <= focalY && rect.bottom > focalY) {
+          setActiveSection(sectionId);
+          return;
         }
+      }
+
+      // Fallback for fast scrolls or subtle margin transitions: find the section closest to the focal line
+      let closestSection = '';
+      let minDistance = Infinity;
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        const dist = Math.abs(rect.top - focalY);
+        if (rect.bottom > 0 && dist < minDistance) {
+          minDistance = dist;
+          closestSection = sectionId;
+        }
+      }
+
+      if (closestSection) {
+        setActiveSection(closestSection);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Calculate immediately on mount
+    updateActiveSection();
+    const rafId = requestAnimationFrame(updateActiveSection);
+
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+    window.addEventListener('resize', updateActiveSection, { passive: true });
+    window.addEventListener('hashchange', updateActiveSection, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', updateActiveSection);
+      window.removeEventListener('resize', updateActiveSection);
+      window.removeEventListener('hashchange', updateActiveSection);
+    };
   }, [isHomePage]);
 
   return (
@@ -119,6 +173,9 @@ export function Navbar() {
               <a
                 key={link.id}
                 href={link.href}
+                onClick={() => {
+                  setActiveSection(link.id);
+                }}
                 className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
                   isActive ? 'text-[#0864C7] font-bold' : 'text-[#647184] hover:text-[#17202A]'
                 }`}
@@ -181,16 +238,30 @@ export function Navbar() {
             </div>
 
             <div className="flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 rounded-xl text-sm font-medium text-[#17202A] hover:bg-[#F1F5F9] transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = isHomePage && activeSection === link.id;
+
+                return (
+                  <a
+                    key={link.id}
+                    href={link.href}
+                    onClick={() => {
+                      setActiveSection(link.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors flex items-center justify-between ${
+                      isActive
+                        ? 'bg-[#EAF5FF] text-[#0864C7] font-bold border border-[#178BFF]/25'
+                        : 'text-[#17202A] hover:bg-[#F1F5F9]'
+                    }`}
+                  >
+                    <span>{link.label}</span>
+                    {isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#178BFF]" />
+                    )}
+                  </a>
+                );
+              })}
 
               <a
                 href={PERSONAL_INFO.resumePath}

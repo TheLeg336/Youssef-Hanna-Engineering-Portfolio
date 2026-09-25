@@ -31,7 +31,7 @@ export function PhilosophySection() {
   ];
 
   return (
-    <section id="philosophy" className="my-16 sm:my-24 py-16 sm:py-20 border-y border-black/5 relative overflow-hidden bg-[#FAFBFD]">
+    <section id="philosophy" className="my-16 sm:my-24 py-16 sm:py-20 border-y border-black/5 relative overflow-hidden bg-[#FAFBFD] scroll-mt-28">
       {/* Background ambient pale lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-[#178BFF]/6 rounded-full blur-[140px] pointer-events-none" />
 
