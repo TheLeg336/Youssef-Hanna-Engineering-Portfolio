@@ -74,14 +74,14 @@ const ENDLESS_WORDS = [
 // TIMELINE SCHEDULE (in milliseconds)
 const TIMING = {
   // STAGE 1: VOICE COMMAND & INTENT (0 - 8000ms)
-  // At start, closed pill sits visibly for 1.5s, then zooms in & expands horizontally!
+  // At start (0 to 1.5s): clean workstation, NO pill present!
   DESKTOP_START: 0,
-  PILL_CLOSED_HOLD: 1500,     // 0 to 1.5s: closed pill with "● EZER" sits visibly
-  CAMERA_ZOOM_IN_START: 1500, // Camera smoothly zooms in to frame the pill as it opens
-  PILL_EXPAND_START: 1500,    // Pill expands horizontally
-  SPEAKING_START: 2200,       // Natural voice typing streaming begins
-  SPEAKING_END: 5400,         // Voice typing completes (camera stays focused - NO zoom out!)
-  BORDER_BEAM_START: 5600,    // Border beam & "Submitting to solver..." feedback
+  PILL_APPEAR_START: 1500,     // At 1.5s, pill enters/expands onto desktop (never there at start!)
+  PILL_ZOOM_IN_START: 1900,    // Camera zooms in more when pill is being used
+  SPEAKING_START: 2200,        // Natural voice typing streaming begins
+  SPEAKING_END: 5400,          // Voice typing completes
+  PILL_ZOOM_OUT_START: 5500,   // Camera zooms out to show what is happening (submitting to solver)
+  BORDER_BEAM_START: 5600,     // Border beam active
   BORDER_BEAM_END: 7800,
   STAGE_1_END: 8000,
 
@@ -94,32 +94,32 @@ const TIMING = {
   STAGE_3_END: 15000,
 
   // STAGE 4: LIVE FILLET MODIFICATION & CLIMAX (15000 - 30600ms)
-  ITERATION_PILL_EXPAND: 15000,
-  ITERATION_ZOOM_IN_START: 15400, // Cinematic zoom in on CAD & pill for fillet modification
+  ITERATION_PILL_APPEAR: 15000,
+  ITERATION_ZOOM_IN_START: 15300, // Zooms in more when pill is being used for modification
   ITERATION_SPEAKING_START: 15600,
   ITERATION_SPEAKING_END: 18600,
+  ITERATION_ZOOM_OUT_START: 18800,// Zooms out so user can clearly see every change on the 3D model!
   ITERATION_BORDER_BEAM_START: 18800,
   ITERATION_BORDER_BEAM_END: 21200,
   FILLET_START: 18800,
   FILLET_END: 21200,
-  ITERATION_DONE_START: 21200,
-  
-  // FINAL CLIMAX: STREAM "the possibilities are endless"
-  FINAL_CLIMAX_START: 22000,
-  FINAL_ZOOM_DOWN_START: 22200,   // Camera zooms closer for climax
-  ENDLESS_STREAM_START: 22400,
-  ENDLESS_STREAM_END: 24200,
+  ITERATION_DONE_START: 21200,    // Fillets complete; user sees all changes on 3D geometry
 
-  // CAMERA DIVE INTO PILL: Zooms all the way into the dark pill into 100% black
+  // FINAL CLIMAX: ZOOM BACK IN & STREAM "the possibilities are endless"
+  FINAL_ZOOM_IN_START: 22200,     // Zooms back in after user sees every change!
+  ENDLESS_STREAM_START: 22500,
+  ENDLESS_STREAM_END: 24300,
+
+  // CAMERA DIVE: DOES NOT ZOOM OUT, ZOOMS MORE IN UNTIL FULLY BLACK
   DIVE_INTO_PILL_START: 24600,
 
-  // OUTRO: PURE BLACK SCREEN -> SWITCH JOY-CON SNAP ANIMATION WITH TILTED "E"
+  // OUTRO: PURE BLACK SCREEN -> SWITCH JOY-CON ANIMATION WITH TILTED "E"
   BLACKOUT_START: 25200,
-  ZER_APPEAR_START: 25500,        // "ZER" appears centered in pure white
-  E_SLIDE_START: 25950,           // "E" appears tilted counterclockwise (-18deg) and slides in
-  SNAP_MOMENT: 26320,             // "E" aligns to 0deg: mechanical snap & recoil!
+  ZER_APPEAR_START: 25500,        // "ZER" appears in pure white
+  E_SLIDE_START: 25900,           // "E" appears tilted counterclockwise (-22deg) and slides in
+  SNAP_MOMENT: 26280,             // "E" aligns to 0deg: Joy-Con snap & recoil!
   SNAP_FLASH_END: 26550,          // Specular flash & subtle ripple fade
-  OUTRO_FADE_TO_RESTART: 29800,   // Hold pure white "EZER" with ZERO descriptions, then clean fade
+  OUTRO_FADE_TO_RESTART: 29800,   // Pure white "EZER" holds with ZERO descriptions, then clean fade
   TOTAL_CYCLE: 30600,
 };
 
@@ -156,7 +156,7 @@ const STAGES = [
     name: 'Live Modification',
     shortLabel: '4. Fillet & Outro',
     timeLabel: '0:15',
-    startMs: TIMING.ITERATION_PILL_EXPAND,
+    startMs: TIMING.ITERATION_PILL_APPEAR,
     endMs: TIMING.TOTAL_CYCLE,
     icon: Sparkles,
   },
@@ -240,11 +240,13 @@ export function EzerVisual() {
   }, [isVisible, prefersReduced]);
 
   // Stage 1 variables
-  const isPillExpanded = elapsedMs >= TIMING.PILL_EXPAND_START;
-  const isStage1Zoomed = elapsedMs >= TIMING.CAMERA_ZOOM_IN_START;
+  // Pill is NOT there at the beginning (0 to 1.5s)! Appears only at PILL_APPEAR_START!
+  const isPillVisible = elapsedMs >= TIMING.PILL_APPEAR_START;
+  const isStage1Zoomed =
+    elapsedMs >= TIMING.PILL_ZOOM_IN_START && elapsedMs < TIMING.PILL_ZOOM_OUT_START;
   const isSpeaking = elapsedMs >= TIMING.SPEAKING_START && elapsedMs < TIMING.SPEAKING_END;
   const isListeningInitial =
-    elapsedMs >= TIMING.PILL_EXPAND_START && elapsedMs < TIMING.SPEAKING_START;
+    elapsedMs >= TIMING.PILL_APPEAR_START && elapsedMs < TIMING.SPEAKING_START;
 
   const speechProgress = useMemo(() => {
     if (elapsedMs < TIMING.SPEAKING_START) return 0;
@@ -267,8 +269,13 @@ export function EzerVisual() {
   const solveStep3 = elapsedMs >= TIMING.SOLVING_START + 2800;
 
   // Stage 4 In-Viewport Ezer Pill Calculations
-  const isStage4Zoomed = elapsedMs >= TIMING.ITERATION_ZOOM_IN_START;
-  const isClimaxZoomed = elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START;
+  // Zooms in more when pill is being used, then zooms out so user can see every change!
+  const isStage4PillZoomed =
+    elapsedMs >= TIMING.ITERATION_ZOOM_IN_START && elapsedMs < TIMING.ITERATION_ZOOM_OUT_START;
+  
+  // After seeing every change, zooms back in for "the possibilities are endless", then zooms MORE in into black!
+  const isClimaxZoomed =
+    elapsedMs >= TIMING.FINAL_ZOOM_IN_START && elapsedMs < TIMING.DIVE_INTO_PILL_START;
 
   const isIterationSpeaking =
     elapsedMs >= TIMING.ITERATION_SPEAKING_START && elapsedMs < TIMING.ITERATION_SPEAKING_END;
@@ -305,7 +312,7 @@ export function EzerVisual() {
   }, [elapsedMs]);
 
   // FINAL CLIMAX: "the possibilities are endless" streaming progress
-  const isEndlessClimax = elapsedMs >= TIMING.FINAL_CLIMAX_START;
+  const isEndlessClimax = elapsedMs >= TIMING.FINAL_ZOOM_IN_START;
   const isEndlessStreaming =
     elapsedMs >= TIMING.ENDLESS_STREAM_START && elapsedMs < TIMING.ENDLESS_STREAM_END;
 
@@ -327,7 +334,7 @@ export function EzerVisual() {
     );
   }, [elapsedMs, endlessProgress]);
 
-  // CAMERA DIVE: Zooms into the dark pill into 100% black
+  // CAMERA DIVE: Does NOT zoom out, zooms MORE in until 100% fully black
   const isDivingIntoPill =
     elapsedMs >= TIMING.DIVE_INTO_PILL_START && elapsedMs < TIMING.OUTRO_FADE_TO_RESTART;
 
@@ -415,13 +422,13 @@ export function EzerVisual() {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="w-full h-full min-h-[350px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
             >
-              {/* Dynamic Camera Zoom Wrapper: Zooms in smoothly at 1.5s and stays focused (NO zoom-out!) */}
+              {/* Dynamic Camera: Zooms in more when pill is used, then zooms out to show what is happening! */}
               <motion.div
                 className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none"
                 style={{ transformOrigin: '50% 86%' }}
                 animate={{
-                  scale: isStage1Zoomed ? 1.24 : 1,
-                  y: isStage1Zoomed ? -20 : 0,
+                  scale: isStage1Zoomed ? 1.38 : 1,
+                  y: isStage1Zoomed ? -28 : 0,
                 }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               >
@@ -482,47 +489,29 @@ export function EzerVisual() {
                   </button>
                 </div>
 
-                {/* VISIBLE CLOSED PILL AT START (0 to 1.5s), THEN WIDENS SMOOTHLY (Never vanishes or comes from thin air!) */}
+                {/* EZER PILL: NOT present at the beginning (0 to 1.5s)! Appears and expands only when summoned! */}
                 <div className="absolute bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-3">
-                  <motion.div
-                    className="relative flex flex-col items-center max-w-[92vw]"
-                    initial={{ width: 110 }}
-                    animate={{
-                      width: isPillExpanded ? 340 : 110,
-                    }}
-                    style={{
-                      width: isPillExpanded ? 340 : 110,
-                      minWidth: isPillExpanded ? 280 : 110,
-                    }}
-                    transition={{
-                      duration: 0.55,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <AppBorderBeam
-                      size="sm"
-                      colorVariant="ocean"
-                      strength={1.0}
-                      active={isBorderBeamActive}
-                      theme="dark"
-                      borderRadius={9999}
-                      duration={2.0}
-                      className="w-full rounded-full shadow-2xl"
-                    >
-                      <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
-                        {/* CLOSED STATE (0 to 1.5s): Visibly sits with pulsing cyan dot and bold EZER */}
-                        {!isPillExpanded && (
-                          <div className="flex items-center gap-2 px-1 select-none whitespace-nowrap">
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_8px_#00F0FF]" />
-                            <span className="text-xs font-mono text-white font-bold tracking-widest">
-                              EZER
-                            </span>
-                          </div>
-                        )}
-
-                        {/* EXPANDED STATE (1.5s onwards): Listening -> Speech Streaming -> Submitting */}
-                        {isPillExpanded && (
-                          <>
+                  <AnimatePresence>
+                    {isPillVisible && (
+                      <motion.div
+                        key="act1-ezer-pill"
+                        initial={{ opacity: 0, scale: 0.82, y: 12 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.82 }}
+                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative flex flex-col items-center w-[340px] max-w-[92vw]"
+                      >
+                        <AppBorderBeam
+                          size="sm"
+                          colorVariant="ocean"
+                          strength={1.0}
+                          active={isBorderBeamActive}
+                          theme="dark"
+                          borderRadius={9999}
+                          duration={2.0}
+                          className="w-full rounded-full shadow-2xl"
+                        >
+                          <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
                             {/* Live Audio Waveform Glow during speaking */}
                             {isSpeaking && (
                               <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10 opacity-70">
@@ -596,11 +585,11 @@ export function EzerVisual() {
                                 <span>Submitting to solver…</span>
                               </motion.div>
                             )}
-                          </>
-                        )}
-                      </div>
-                    </AppBorderBeam>
-                  </motion.div>
+                          </div>
+                        </AppBorderBeam>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
 
@@ -623,7 +612,7 @@ export function EzerVisual() {
                   <span className="text-[10px] font-mono text-[#94A3B8]">
                     {isSpeaking
                       ? 'EZER Agent · Listening'
-                      : isPillExpanded
+                      : isPillVisible
                       ? 'EZER Agent · Active'
                       : 'EZER Agent · Standby'}
                   </span>
@@ -702,7 +691,7 @@ export function EzerVisual() {
             </motion.div>
           )}
 
-          {/* ACT 3 & 4: 3D CAD MODEL VIEWPORT WITH CINEMATIC MODIFICATION ZOOM & CLIMAX DIVE */}
+          {/* ACT 3 & 4: 3D CAD MODEL VIEWPORT WITH DYNAMIC ZOOM IN/OUT CYCLE & DIVE INTO BLACK */}
           {(currentStage === 'initial_cad' || currentStage === 'fillet_edit') && (
             <motion.div
               key="stage-cad-interactive-viewport"
@@ -746,24 +735,28 @@ export function EzerVisual() {
                   </div>
                 </div>
 
-                {/* 3D CAD Viewport with restored cinematic zoom & final dive into dark pill */}
+                {/* 3D CAD Viewport with precise camera zoom choreography:
+                    1. Zooms in when pill is used for speech
+                    2. Zooms OUT so user can see every change happening on the 3D model!
+                    3. After seeing changes, zooms back in for climax text
+                    4. Does NOT zoom out again, but plunges more in until fully black! */}
                 <motion.div
                   className="w-full h-full"
                   style={{ transformOrigin: '50% 86%' }}
                   animate={{
                     scale: isDivingIntoPill
-                      ? 3.5
+                      ? 3.6
                       : isClimaxZoomed
-                      ? 1.45
-                      : isStage4Zoomed
-                      ? 1.25
+                      ? 1.55
+                      : isStage4PillZoomed
+                      ? 1.35
                       : 1,
                     y: isDivingIntoPill
                       ? -80
                       : isClimaxZoomed
-                      ? -28
-                      : isStage4Zoomed
-                      ? -16
+                      ? -35
+                      : isStage4PillZoomed
+                      ? -24
                       : 0,
                     opacity: isDivingIntoPill ? 0.2 : 1,
                     filter: isDivingIntoPill ? 'blur(10px)' : 'blur(0px)',
@@ -779,14 +772,14 @@ export function EzerVisual() {
                   />
                 </motion.div>
 
-                {/* IN-VIEWPORT COMPACT PILL (WITH MORPHING TO CLIMAX & DIVE-INTO-PILL CAMERA ZOOM) */}
+                {/* IN-VIEWPORT PILL: Zooms in with camera, dives straight into dark pill */}
                 {currentStage === 'fillet_edit' && (
                   <motion.div
                     className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
                     style={{ transformOrigin: 'center center' }}
                     animate={{
-                      scale: isDivingIntoPill ? 36 : isClimaxZoomed ? 1.15 : isStage4Zoomed ? 1.08 : 1,
-                      y: isDivingIntoPill ? -110 : isClimaxZoomed ? -8 : 0,
+                      scale: isDivingIntoPill ? 38 : isClimaxZoomed ? 1.25 : isStage4PillZoomed ? 1.15 : 1,
+                      y: isDivingIntoPill ? -115 : isClimaxZoomed ? -12 : 0,
                     }}
                     transition={{
                       duration: isDivingIntoPill ? 0.65 : 0.55,
@@ -968,8 +961,8 @@ export function EzerVisual() {
             - All White, All Caps: "EZER"
             - Nintendo Switch Joy-Con lock animation:
               1. "ZER" is centered in pure bold white
-              2. "E" starts tilted counterclockwise (-18deg), slides down the rail and rotates into 0deg alignment
-              3. SNAP! Mechanical Joy-Con recoil (dip down 6px & spring back up)
+              2. "E" starts tilted counterclockwise (-22deg), slides down the rail and rotates into 0deg alignment
+              3. SNAP! Mechanical Joy-Con recoil (dip down 8px & spring back up)
               4. Crisp specular white flash + expanding subtle shockwave ring + baseline glint
               5. Sits in pure, proud stillness with ZERO descriptions or badges
            ========================================================================= */}
@@ -985,12 +978,12 @@ export function EzerVisual() {
             >
               {/* BRAND LOCKUP: ALL WHITE, ALL CAPS, NINTENDO SWITCH JOY-CON SNAP */}
               <div className="relative flex items-center justify-center">
-                {/* Mechanical Recoil Wrapper: Shifts down 6px on snap and springs back */}
+                {/* Mechanical Recoil Wrapper: Shifts down 8px on snap and springs back */}
                 <motion.div
                   animate={
                     hasSnapOccurred
                       ? {
-                          y: [0, 6, -1.5, 0],
+                          y: [0, 8, -2.5, 0],
                         }
                       : { y: 0 }
                   }
@@ -1001,30 +994,27 @@ export function EzerVisual() {
                   }}
                   className="relative flex items-baseline tracking-normal font-mono font-black text-6xl sm:text-7xl md:text-8xl select-none leading-none"
                 >
-                  {/* LETTER "E": Starts tilted counterclockwise (-18deg) above, slides down the rail and rotates into 0deg */}
+                  {/* LETTER "E": Starts tilted counterclockwise (-22deg) above, slides down the rail and rotates into 0deg alignment */}
                   <div className="relative overflow-visible">
                     {isESliding ? (
                       <motion.span
                         initial={{
-                          y: -85,
-                          x: -18,
-                          rotate: -18,
-                          scale: 1.15,
+                          y: -110,
+                          x: -28,
+                          rotate: -22,
+                          scale: 1.25,
                           opacity: 0,
                         }}
                         animate={{
-                          y: hasSnapOccurred ? 0 : 0,
-                          x: hasSnapOccurred ? 0 : 0,
-                          rotate: hasSnapOccurred ? 0 : 0,
+                          y: 0,
+                          x: 0,
+                          rotate: 0,
                           scale: 1,
                           opacity: 1,
                         }}
                         transition={{
-                          y: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                          x: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                          rotate: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                          scale: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                          opacity: { duration: 0.12 },
+                          duration: 0.38,
+                          ease: [0.2, 0.9, 0.3, 1],
                         }}
                         className="inline-block text-white"
                         style={{ transformOrigin: 'bottom right' }}
@@ -1053,20 +1043,20 @@ export function EzerVisual() {
                   {/* THE "CLICK" FLASH: A crisp white specular ping at the contact joint */}
                   {isSnapFlashActive && (
                     <motion.div
-                      initial={{ opacity: 0, scaleY: 0.4 }}
-                      animate={{ opacity: [0, 1, 0], scaleY: [0.4, 1.4, 0.8] }}
-                      transition={{ duration: 0.18, ease: 'easeOut' }}
-                      className="absolute left-[0.74em] top-0 bottom-0 w-[3px] bg-white pointer-events-none shadow-[0_0_16px_#FFFFFF]"
+                      initial={{ opacity: 0, scaleY: 0.3 }}
+                      animate={{ opacity: [0, 1, 0], scaleY: [0.3, 1.5, 0.7] }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="absolute left-[0.74em] top-0 bottom-0 w-[3px] bg-white pointer-events-none shadow-[0_0_20px_#FFFFFF]"
                     />
                   )}
 
                   {/* SUBTLE CONTACT SHOCKWAVE RING */}
                   {isSnapFlashActive && (
                     <motion.div
-                      initial={{ opacity: 0.8, scale: 0.2 }}
-                      animate={{ opacity: 0, scale: 2.2 }}
-                      transition={{ duration: 0.35, ease: 'easeOut' }}
-                      className="absolute left-[0.74em] top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border border-white pointer-events-none shadow-[0_0_12px_#FFFFFF]"
+                      initial={{ opacity: 0.9, scale: 0.2 }}
+                      animate={{ opacity: 0, scale: 2.6 }}
+                      transition={{ duration: 0.38, ease: 'easeOut' }}
+                      className="absolute left-[0.74em] top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-white pointer-events-none shadow-[0_0_16px_#FFFFFF]"
                     />
                   )}
 
@@ -1074,9 +1064,9 @@ export function EzerVisual() {
                   {hasSnapOccurred && (
                     <motion.div
                       initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: '100%', opacity: [0, 0.8, 0] }}
-                      transition={{ duration: 0.35, ease: 'easeOut' }}
-                      className="absolute -bottom-2 inset-x-0 h-[1.5px] bg-white pointer-events-none shadow-[0_0_8px_#FFFFFF]"
+                      animate={{ width: '100%', opacity: [0, 0.85, 0] }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                      className="absolute -bottom-2.5 inset-x-0 h-[2px] bg-white pointer-events-none shadow-[0_0_12px_#FFFFFF]"
                     />
                   )}
                 </motion.div>
