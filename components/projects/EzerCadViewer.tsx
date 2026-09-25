@@ -108,8 +108,18 @@ export function EzerCadViewer({
     // Camera
     const width = container.clientWidth || 400;
     const height = container.clientHeight || 340;
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
-    camera.position.set(2.8, 2.2, 3.2);
+    const isMobileWidth = width < 600;
+    const camera = new THREE.PerspectiveCamera(
+      isMobileWidth ? 48 : 42,
+      width / height,
+      0.1,
+      100
+    );
+    if (isMobileWidth) {
+      camera.position.set(3.4, 2.7, 3.8);
+    } else {
+      camera.position.set(2.8, 2.2, 3.2);
+    }
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -257,6 +267,8 @@ export function EzerCadViewer({
       for (const entry of entries) {
         const { width: newWidth, height: newHeight } = entry.contentRect;
         if (newWidth > 0 && newHeight > 0) {
+          const isMobile = newWidth < 600;
+          camera.fov = isMobile ? 48 : 42;
           camera.aspect = newWidth / newHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(newWidth, newHeight);
@@ -295,7 +307,7 @@ export function EzerCadViewer({
 
   return (
     <div
-      className="relative w-full h-[360px] sm:h-[400px] bg-gradient-to-b from-[#FAFBFD] to-[#EEF2F6] rounded-xl overflow-hidden border border-[#CBD5E1] select-none"
+      className="relative w-full h-[300px] sm:h-[400px] bg-gradient-to-b from-[#FAFBFD] to-[#EEF2F6] rounded-xl overflow-hidden border border-[#CBD5E1] select-none"
       role="img"
       aria-label="Interactive 3D model of a 2 inch cube with a centered 1 inch diameter through-hole."
     >

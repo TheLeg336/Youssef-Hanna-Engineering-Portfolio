@@ -111,9 +111,14 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
   const [simulatedHoverMetric, setSimulatedHoverMetric] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const portalWrapperRef = useRef<HTMLDivElement>(null);
   const ratingBtnRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [scale, setScale] = useState(1);
+  const scaleRef = useRef(1);
+  const [portalHeight, setPortalHeight] = useState<number | null>(null);
 
   const isVisible = useElementVisibility(containerRef, 0.3);
   const prefersReduced = useReducedMotion();
@@ -124,17 +129,43 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
   const isUserHoveringCard = useRef(false);
   const isMobileRef = useRef(false);
 
-  // Detect mobile / touch environment
+  // Detect mobile / touch environment & compute responsive demo scale (< 580px)
   useEffect(() => {
-    const checkMobile = () => {
+    const updateDimensions = () => {
       const isTouch = window.matchMedia('(pointer: coarse)').matches;
       const mobile = window.innerWidth < 768 || isTouch;
       setIsMobile(mobile);
       isMobileRef.current = mobile;
+
+      if (containerRef.current) {
+        const w = containerRef.current.clientWidth;
+        const BASE_WIDTH = 580;
+        if (w < BASE_WIDTH) {
+          const nextScale = Math.min(1, Math.max(0.48, w / BASE_WIDTH));
+          setScale(nextScale);
+          scaleRef.current = nextScale;
+        } else {
+          setScale(1);
+          scaleRef.current = 1;
+        }
+      }
     };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  // Monitor portal height to dynamically scale outer container height
+  useEffect(() => {
+    if (!portalWrapperRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setPortalHeight(entry.contentRect.height);
+      }
+    });
+    observer.observe(portalWrapperRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // Keyboard accessibility: Escape closes popover
@@ -179,27 +210,32 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
     }
   }, []);
 
-  // Position calculation: anchors popover relative to containerRef
+  // Position calculation: anchors popover relative to portalWrapperRef
   const calculateAnchor = useCallback((course: MockCourse, btnEl: HTMLElement | null): PopoverAnchor | null => {
-    const container = containerRef.current;
-    if (!container || !btnEl) return null;
+    const portal = portalWrapperRef.current;
+    if (!portal || !btnEl) return null;
 
-    const cRect = container.getBoundingClientRect();
+    const currentScale = scaleRef.current || 1;
+    const pRect = portal.getBoundingClientRect();
     const bRect = btnEl.getBoundingClientRect();
 
-    const relTop = bRect.top - cRect.top;
-    const relLeft = bRect.left - cRect.left;
-    const btnCenter = relLeft + bRect.width / 2;
+    const relTop = (bRect.top - pRect.top) / currentScale;
+    const relLeft = (bRect.left - pRect.left) / currentScale;
+    const btnWidth = bRect.width / currentScale;
+    const btnHeight = bRect.height / currentScale;
+    const btnCenter = relLeft + btnWidth / 2;
+    const virtualPortalWidth = pRect.width / currentScale;
+    const virtualPortalHeight = pRect.height / currentScale;
 
     const placeBelow = relTop < 290;
-    const top = placeBelow ? relTop + bRect.height + 10 : undefined;
-    const bottom = placeBelow ? undefined : cRect.height - relTop + 10;
+    const top = placeBelow ? relTop + btnHeight + 10 : undefined;
+    const bottom = placeBelow ? undefined : virtualPortalHeight - relTop + 10;
 
-    const maxAvailableWidth = Math.max(260, cRect.width - 24);
+    const maxAvailableWidth = Math.max(260, virtualPortalWidth - 24);
     const popoverWidth = Math.min(340, maxAvailableWidth);
     let left = btnCenter - 60;
-    if (left + popoverWidth > cRect.width - 12) {
-      left = cRect.width - popoverWidth - 12;
+    if (left + popoverWidth > virtualPortalWidth - 12) {
+      left = virtualPortalWidth - popoverWidth - 12;
     }
     if (left < 12) {
       left = 12;
@@ -240,15 +276,17 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
         elapsedRef.current = (elapsedRef.current + delta) % TOTAL_CYCLE;
         const t = elapsedRef.current;
 
-        const container = containerRef.current;
+        const portal = portalWrapperRef.current;
         const btn = ratingBtnRef.current;
 
-        if (container && btn) {
-          const cRect = container.getBoundingClientRect();
+        if (portal && btn) {
+          const currentScale = scaleRef.current || 1;
+          const pRect = portal.getBoundingClientRect();
           const bRect = btn.getBoundingClientRect();
-          const targetX = bRect.left - cRect.left + bRect.width / 2;
-          const targetY = bRect.top - cRect.top + bRect.height / 2;
-          const startX = Math.min(targetX + 130, cRect.width - 45);
+          const targetX = (bRect.left - pRect.left + bRect.width / 2) / currentScale;
+          const targetY = (bRect.top - pRect.top + bRect.height / 2) / currentScale;
+          const virtualPortalWidth = pRect.width / currentScale;
+          const startX = Math.min(targetX + 130, virtualPortalWidth - 45);
           const startY = targetY + 95;
 
           // Step 0: Quick fade in with no delay
@@ -387,59 +425,8 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
   return (
     <div
       ref={containerRef}
-      className="w-full glass-panel rounded-2xl p-6 sm:p-7 md:p-8 relative select-none min-h-[480px] overflow-visible"
+      className="w-full glass-panel rounded-2xl p-3.5 sm:p-7 md:p-8 relative select-none overflow-hidden"
     >
-      {/* Refined Simulated Desktop/Mobile Cursor Overlay with Accurate Orientation & Click Ripple */}
-      {!prefersReduced && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute z-70 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] select-none"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: cursorVisible ? 1 : 0,
-            x: cursorPos.x - 3,
-            y: cursorPos.y - 2,
-            scale: isSimulatedClicking ? 0.86 : 1,
-          }}
-          style={{
-            transformOrigin: '3px 2px',
-          }}
-          transition={{
-            opacity: { duration: 0.22 },
-            x: { duration: 1.05, ease: [0.22, 1, 0.36, 1] },
-            y: { duration: 1.05, ease: [0.22, 1, 0.36, 1] },
-            scale: { duration: 0.12 },
-          }}
-        >
-          {/* Click Ripple Wave at the pointer tip */}
-          {isSimulatedClicking && (
-            <motion.span
-              initial={{ scale: 0.2, opacity: 0.9 }}
-              animate={{ scale: 2.2, opacity: 0 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-[#178BFF] pointer-events-none"
-            />
-          )}
-
-          {/* Authentic Standard OS Mouse Pointer Arrow (Tip at (3, 2), points up-left) */}
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="overflow-visible"
-          >
-            <path
-              d="M3 2V18.5L7.5 14L11.5 21.5L13.8 20.2L9.8 13H15.5L3 2Z"
-              fill="#111827"
-              stroke="#FFFFFF"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </motion.div>
-      )}
-
       {/* Top Header: Factual metadata */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/5 pb-3.5 mb-4">
         <div>
@@ -459,10 +446,78 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
         </span>
       </div>
 
-      {/* Filter Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-1.5 text-xs font-mono">
-          <span className="text-[#647184] text-xs mr-1 flex items-center gap-1 font-semibold">
+      {/* Responsive Scaled Interactive Portal Area (< 580px shrinks demo to fit mobile completely) */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          height: portalHeight && scale < 1 ? `${portalHeight * scale}px` : 'auto',
+        }}
+      >
+        <div
+          ref={portalWrapperRef}
+          style={{
+            width: scale < 1 ? '580px' : '100%',
+            minWidth: scale < 1 ? '580px' : 'auto',
+            transform: scale < 1 ? `scale(${scale})` : 'none',
+            transformOrigin: 'top left',
+          }}
+          className="relative min-h-[440px] pb-4"
+        >
+          {/* Refined Simulated Desktop/Mobile Cursor Overlay with Accurate Orientation & Click Ripple */}
+          {!prefersReduced && (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute z-70 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] select-none"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: cursorVisible ? 1 : 0,
+                x: cursorPos.x - 3,
+                y: cursorPos.y - 2,
+                scale: isSimulatedClicking ? 0.86 : 1,
+              }}
+              style={{
+                transformOrigin: '3px 2px',
+              }}
+              transition={{
+                opacity: { duration: 0.22 },
+                x: { duration: 1.05, ease: [0.22, 1, 0.36, 1] },
+                y: { duration: 1.05, ease: [0.22, 1, 0.36, 1] },
+                scale: { duration: 0.12 },
+              }}
+            >
+              {/* Click Ripple Wave at the pointer tip */}
+              {isSimulatedClicking && (
+                <motion.span
+                  initial={{ scale: 0.2, opacity: 0.9 }}
+                  animate={{ scale: 2.2, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-[#178BFF] pointer-events-none"
+                />
+              )}
+
+              {/* Authentic Standard OS Mouse Pointer Arrow (Tip at (3, 2), points up-left) */}
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="overflow-visible"
+              >
+                <path
+                  d="M3 2V18.5L7.5 14L11.5 21.5L13.8 20.2L9.8 13H15.5L3 2Z"
+                  fill="#111827"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.div>
+          )}
+
+          {/* Filter Controls Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-1.5 text-xs font-mono">
+              <span className="text-[#647184] text-xs mr-1 flex items-center gap-1 font-semibold">
             <Filter className="w-3.5 h-3.5 text-[#178BFF]" /> Min Rating:
           </span>
           {[0, 3.5, 4.0, 4.5].map((val) => {
@@ -743,6 +798,8 @@ export function UniRateVisual({ layoutPrefix = 'unirate' }: UniRateVisualProps =
           </motion.div>
         )}
       </AnimatePresence>
+        </div>
+      </div>
 
       {/* Footer Info & Verification */}
       <div className="mt-5 pt-3.5 border-t border-black/5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-[#647184]">

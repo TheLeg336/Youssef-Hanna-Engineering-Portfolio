@@ -128,6 +128,7 @@ const STAGES = [
     id: 'pill_input',
     name: 'Voice Command',
     shortLabel: '1. Voice Command',
+    mobileLabel: '1. Voice',
     timeLabel: '0:00',
     startMs: 0,
     endMs: TIMING.STAGE_1_END,
@@ -137,6 +138,7 @@ const STAGES = [
     id: 'solving_orb',
     name: 'Constraint Solving',
     shortLabel: '2. Solving Engine',
+    mobileLabel: '2. Solver',
     timeLabel: '0:08',
     startMs: TIMING.SOLVING_START,
     endMs: TIMING.STAGE_2_END,
@@ -146,6 +148,7 @@ const STAGES = [
     id: 'initial_cad',
     name: '3D CAD Model',
     shortLabel: '3. 3D Geometry',
+    mobileLabel: '3. 3D CAD',
     timeLabel: '0:11',
     startMs: TIMING.CAD_STAGE_START,
     endMs: TIMING.STAGE_3_END,
@@ -155,6 +158,7 @@ const STAGES = [
     id: 'fillet_edit',
     name: 'Live Modification',
     shortLabel: '4. Fillet & Outro',
+    mobileLabel: '4. Fillet',
     timeLabel: '0:15',
     startMs: TIMING.ITERATION_PILL_APPEAR,
     endMs: TIMING.TOTAL_CYCLE,
@@ -174,7 +178,17 @@ export function EzerVisual() {
   const [elapsedMs, setElapsedMs] = useState(0);
 
   const [isStageFading, setIsStageFading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const isActivelyDraggingRef = useRef(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   let currentStage: StageId = 'pill_input';
   if (elapsedMs < TIMING.STAGE_1_END) {
@@ -380,10 +394,10 @@ export function EzerVisual() {
   return (
     <div
       ref={containerRef}
-      className="w-full glass-panel rounded-2xl p-4 sm:p-5 md:p-6 overflow-hidden flex flex-col justify-between min-h-[500px]"
+      className="w-full glass-panel rounded-2xl p-3.5 sm:p-5 md:p-6 overflow-hidden flex flex-col justify-between min-h-[460px] sm:min-h-[500px]"
     >
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-3 mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 border-b border-black/5 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#178BFF]/10 text-[#0864C7] font-semibold border border-[#178BFF]/20">
@@ -405,7 +419,7 @@ export function EzerVisual() {
 
       {/* Main Dynamic Viewport */}
       <div
-        className={`relative flex-1 flex flex-col justify-center items-center py-1 min-h-[350px] transition-opacity duration-200 ease-out ${
+        className={`relative flex-1 flex flex-col justify-center items-center py-1 min-h-[310px] sm:min-h-[350px] transition-opacity duration-200 ease-out ${
           isStageFading ? 'opacity-0' : 'opacity-100'
         }`}
       >
@@ -418,15 +432,15 @@ export function EzerVisual() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full h-full min-h-[350px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
+              className="w-full h-full min-h-[310px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
             >
               {/* Dynamic Camera: Zooms in more when pill is used, then zooms out to show what is happening! */}
               <motion.div
                 className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none"
                 style={{ transformOrigin: '50% 86%' }}
                 animate={{
-                  scale: isStage1Zoomed ? 1.38 : 1,
-                  y: isStage1Zoomed ? -28 : 0,
+                  scale: isStage1Zoomed ? (isMobile ? 1.05 : 1.38) : 1,
+                  y: isStage1Zoomed ? (isMobile ? -8 : -28) : 0,
                 }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               >
@@ -457,17 +471,17 @@ export function EzerVisual() {
                 </div>
 
                 {/* Desktop Shortcuts */}
-                <div className="absolute top-11 left-4 flex flex-col gap-3 select-none pointer-events-auto">
+                <div className="absolute top-9 sm:top-11 left-2 sm:left-4 flex flex-col gap-2 sm:gap-3 select-none pointer-events-auto">
                   <button
                     type="button"
                     onClick={() => handleStageClick('initial_cad')}
                     title="Jump to 3D CAD Model (Stage 3)"
-                    className="flex flex-col items-center gap-1 w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-11 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-900 border border-white/20 shadow-md flex items-center justify-center text-white font-bold text-xs group-hover:border-[#38BDF8] transition-all">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-600 to-red-900 border border-white/20 shadow-md flex items-center justify-center text-white font-bold text-[11px] sm:text-xs group-hover:border-[#38BDF8] transition-all">
                       SW
                     </div>
-                    <span className="text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                    <span className="text-[8.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight">
                       CAD Solid
                     </span>
                   </button>
@@ -476,12 +490,12 @@ export function EzerVisual() {
                     type="button"
                     onClick={() => handleStageClick('fillet_edit')}
                     title="Jump to Live Fillet Modification (Stage 4)"
-                    className="flex flex-col items-center gap-1 w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 w-11 sm:w-14 group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#178BFF] rounded-lg p-1 transition-transform active:scale-95"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[#1E293B] border border-white/10 shadow-md flex items-center justify-center text-[#94A3B8] group-hover:border-[#38BDF8] transition-all">
-                      <Folder className="w-4 h-4 text-amber-400" />
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#1E293B] border border-white/10 shadow-md flex items-center justify-center text-[#94A3B8] group-hover:border-[#38BDF8] transition-all">
+                      <Folder className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
                     </div>
-                    <span className="text-[9.5px] font-mono text-white/80 text-center leading-tight">
+                    <span className="text-[8.5px] sm:text-[9.5px] font-mono text-white/80 text-center leading-tight">
                       Fillets
                     </span>
                   </button>
@@ -745,16 +759,16 @@ export function EzerVisual() {
                     scale: isDivingIntoPill
                       ? 3.6
                       : isClimaxZoomed
-                      ? 1.55
+                      ? (isMobile ? 1.12 : 1.55)
                       : isStage4PillZoomed
-                      ? 1.35
+                      ? (isMobile ? 1.06 : 1.35)
                       : 1,
                     y: isDivingIntoPill
-                      ? -80
+                      ? (isMobile ? -45 : -80)
                       : isClimaxZoomed
-                      ? -35
+                      ? (isMobile ? -14 : -35)
                       : isStage4PillZoomed
-                      ? -24
+                      ? (isMobile ? -10 : -24)
                       : 0,
                     opacity: isDivingIntoPill ? 0.2 : 1,
                     filter: isDivingIntoPill ? 'blur(10px)' : 'blur(0px)',
@@ -776,8 +790,18 @@ export function EzerVisual() {
                     className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
                     style={{ transformOrigin: 'center center' }}
                     animate={{
-                      scale: isDivingIntoPill ? 38 : isClimaxZoomed ? 1.25 : isStage4PillZoomed ? 1.15 : 1,
-                      y: isDivingIntoPill ? -115 : isClimaxZoomed ? -12 : 0,
+                      scale: isDivingIntoPill
+                        ? 38
+                        : isClimaxZoomed
+                        ? (isMobile ? 1.06 : 1.25)
+                        : isStage4PillZoomed
+                        ? (isMobile ? 1.03 : 1.15)
+                        : 1,
+                      y: isDivingIntoPill
+                        ? (isMobile ? -75 : -115)
+                        : isClimaxZoomed
+                        ? (isMobile ? -8 : -12)
+                        : 0,
                     }}
                     transition={{
                       duration: isDivingIntoPill ? 0.65 : 0.55,
@@ -1076,7 +1100,7 @@ export function EzerVisual() {
       {/* Timeline Controls & Verified Stack */}
       <div className="mt-3 pt-2.5 border-t border-black/5 flex flex-col gap-2">
         <div className="relative w-full bg-slate-100/80 rounded-xl p-1 border border-slate-200 shadow-inner flex flex-col gap-1">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 w-full" role="tablist">
+          <div className="grid grid-cols-4 gap-1 w-full" role="tablist">
             {STAGES.map((stg) => {
               const isActive = currentStage === stg.id;
               const Icon = stg.icon;
@@ -1086,14 +1110,15 @@ export function EzerVisual() {
                   key={stg.id}
                   type="button"
                   onClick={() => handleStageClick(stg.id)}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
+                  className={`py-1.5 px-1 sm:px-2 rounded-lg text-[10.5px] sm:text-xs font-mono transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] ${
                     isActive
                       ? 'bg-white text-[#0864C7] font-semibold shadow-xs border border-[#178BFF]/25'
                       : 'text-[#647184] hover:text-[#17202A] hover:bg-white/40'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#178BFF]' : 'text-[#94A3B8]'}`} />
-                  <span className="truncate">{stg.shortLabel}</span>
+                  <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${isActive ? 'text-[#178BFF]' : 'text-[#94A3B8]'}`} />
+                  <span className="hidden sm:inline truncate">{stg.shortLabel}</span>
+                  <span className="inline sm:hidden truncate">{stg.mobileLabel}</span>
                 </button>
               );
             })}
