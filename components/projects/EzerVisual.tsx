@@ -93,7 +93,7 @@ const TIMING = {
   CAD_STAGE_START: 11000,
   STAGE_3_END: 14400,
 
-  // STAGE 4 (14400 - 27000ms)
+  // STAGE 4 (14400 - 30400ms)
   ITERATION_PILL_EXPAND: 14400,
   ITERATION_ZOOM_IN_START: 14800,
   ITERATION_SPEAKING_START: 15400,
@@ -108,10 +108,17 @@ const TIMING = {
   // FINAL CLIMAX: ZOOM DOWN AGAIN & STREAM "the possibilities are endless"
   FINAL_ZOOM_DOWN_START: 22600,
   ENDLESS_STREAM_START: 23100,
-  ENDLESS_STREAM_END: 25100,
-  FINAL_COLLAPSE_START: 25700,
-  FINAL_LOOP_TRANSITION: 26500,
-  TOTAL_CYCLE: 27000,
+  ENDLESS_STREAM_END: 24900,
+  FINAL_COLLAPSE_START: 25400,
+
+  // OUTRO: FADE TO BLACK -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
+  BLACKOUT_START: 26000,
+  ZER_APPEAR_START: 26400,
+  E_HIT_START: 27100,
+  IMPACT_MOMENT: 27380,
+  SHOCKWAVE_END: 28300,
+  OUTRO_FADE_TO_RESTART: 29700,
+  TOTAL_CYCLE: 30400,
 };
 
 const STAGES = [
@@ -144,8 +151,8 @@ const STAGES = [
   },
   {
     id: 'fillet_edit',
-    name: 'Live Iteration Loop',
-    shortLabel: '4. Live Modification',
+    name: 'Live Modification',
+    shortLabel: '4. Fillet & Outro',
     timeLabel: '0:15',
     startMs: TIMING.ITERATION_PILL_EXPAND,
     endMs: TIMING.TOTAL_CYCLE,
@@ -259,7 +266,7 @@ export function EzerVisual() {
   // Stage 4 In-Viewport Ezer Pill Calculations
   const isStage4Zoomed =
     (elapsedMs >= TIMING.ITERATION_ZOOM_IN_START && elapsedMs < TIMING.ITERATION_ZOOM_OUT_START) ||
-    elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START;
+    (elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START && elapsedMs < TIMING.BLACKOUT_START);
 
   const isIterationSpeaking =
     elapsedMs >= TIMING.ITERATION_SPEAKING_START && elapsedMs < TIMING.ITERATION_SPEAKING_END;
@@ -319,7 +326,14 @@ export function EzerVisual() {
   }, [elapsedMs, endlessProgress]);
 
   const isFinalCollapsed = elapsedMs >= TIMING.FINAL_COLLAPSE_START;
-  const isLoopTransition = elapsedMs >= TIMING.FINAL_LOOP_TRANSITION;
+
+  // OUTRO: Blackout & "zer" + "e" collision animation states
+  const isBlackoutActive = elapsedMs >= TIMING.BLACKOUT_START;
+  const isZerVisible = elapsedMs >= TIMING.ZER_APPEAR_START;
+  const isEIncoming = elapsedMs >= TIMING.E_HIT_START;
+  const hasImpactOccurred = elapsedMs >= TIMING.IMPACT_MOMENT;
+  const isShockwaveActive = elapsedMs >= TIMING.IMPACT_MOMENT && elapsedMs < TIMING.SHOCKWAVE_END;
+  const isOutroFadingOut = elapsedMs >= TIMING.OUTRO_FADE_TO_RESTART;
 
   const cycleProgress = (elapsedMs / TIMING.TOTAL_CYCLE) * 100;
 
@@ -382,7 +396,7 @@ export function EzerVisual() {
       {/* Main Dynamic Viewport */}
       <div
         className={`relative flex-1 flex flex-col justify-center items-center py-1 min-h-[350px] transition-opacity duration-200 ease-out ${
-          isStageFading || isLoopTransition ? 'opacity-0' : 'opacity-100'
+          isStageFading ? 'opacity-0' : 'opacity-100'
         }`}
       >
         <AnimatePresence mode="wait">
@@ -861,6 +875,197 @@ export function EzerVisual() {
                   <span>Cube (2″ × 2″ × 2″) + Hole (Ø 1.000″) + Fillets (R 0.200″)</span>
                 </span>
                 <span className="text-[#0864C7]">Touch / click &amp; drag to rotate in 3D</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* =========================================================================
+            ACT 5 / BRAND OUTRO: FADE TO BLACK -> "zer" -> "e" SLAMS IN WITH IMPACT & PARTICLES -> RESTART
+           ========================================================================= */}
+        <AnimatePresence>
+          {isBlackoutActive && (
+            <motion.div
+              key="ezer-blackout-outro"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isOutroFadingOut ? 0 : 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: isOutroFadingOut ? 0.6 : 0.45, ease: 'easeInOut' }}
+              className="absolute inset-0 z-50 rounded-xl overflow-hidden bg-[#040711] flex flex-col items-center justify-center pointer-events-none select-none"
+            >
+              {/* Subtle ambient aerospace radial background light */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-40"
+                style={{
+                  background:
+                    'radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.18) 0%, rgba(2, 6, 23, 0.85) 65%, #040711 100%)',
+                }}
+              />
+
+              {/* Grid texture for technical CAD workstation aesthetic */}
+              <div
+                className="absolute inset-0 opacity-15 pointer-events-none"
+                style={{
+                  backgroundImage: `radial-gradient(circle at 1px 1px, rgba(56, 189, 248, 0.4) 1px, transparent 0)`,
+                  backgroundSize: '20px 20px',
+                }}
+              />
+
+              {/* IMPACT SHOCKWAVE FLASH (Triggers at IMPACT_MOMENT for ~250ms) */}
+              {isShockwaveActive && (
+                <motion.div
+                  initial={{ opacity: 0.85, scale: 0.3 }}
+                  animate={{ opacity: 0, scale: 3.4 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  className="absolute w-52 h-52 rounded-full pointer-events-none"
+                  style={{
+                    background:
+                      'radial-gradient(circle, rgba(0, 240, 255, 0.7) 0%, rgba(14, 165, 233, 0.35) 40%, transparent 75%)',
+                    filter: 'blur(10px)',
+                  }}
+                />
+              )}
+
+              {/* EXPANDING SHOCKWAVE RING */}
+              {isShockwaveActive && (
+                <motion.div
+                  initial={{ opacity: 1, scale: 0.2 }}
+                  animate={{ opacity: 0, scale: 3.0 }}
+                  transition={{ duration: 0.55, ease: [0.1, 0.9, 0.2, 1] }}
+                  className="absolute w-44 h-44 rounded-full border-2 border-[#00F0FF] shadow-[0_0_24px_#00F0FF] pointer-events-none"
+                />
+              )}
+
+              {/* SCATTERING IMPACT SPARK PARTICLES */}
+              {isShockwaveActive && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  {[
+                    { angle: 25, dist: 75, size: 3.5, delay: 0 },
+                    { angle: 65, dist: 90, size: 2.5, delay: 0.02 },
+                    { angle: 110, dist: 80, size: 3, delay: 0 },
+                    { angle: 155, dist: 100, size: 2, delay: 0.03 },
+                    { angle: 200, dist: 85, size: 3, delay: 0.01 },
+                    { angle: 245, dist: 95, size: 2.5, delay: 0.02 },
+                    { angle: 290, dist: 80, size: 3.5, delay: 0 },
+                    { angle: 335, dist: 90, size: 2, delay: 0.02 },
+                    { angle: 40, dist: 110, size: 2.5, delay: 0.04 },
+                    { angle: 180, dist: 105, size: 2, delay: 0.03 },
+                    { angle: 130, dist: 88, size: 2.8, delay: 0.01 },
+                    { angle: 315, dist: 95, size: 2.8, delay: 0.02 },
+                  ].map((p, idx) => {
+                    const rad = (p.angle * Math.PI) / 180;
+                    const tx = Math.cos(rad) * p.dist;
+                    const ty = Math.sin(rad) * p.dist;
+
+                    return (
+                      <motion.div
+                        key={`spark-${idx}`}
+                        initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                        animate={{ x: tx, y: ty, opacity: 0, scale: 0.2 }}
+                        transition={{ duration: 0.5, delay: p.delay, ease: 'easeOut' }}
+                        className="absolute rounded-full bg-[#00F0FF] shadow-[0_0_8px_#00F0FF]"
+                        style={{ width: p.size, height: p.size }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* MAIN BRAND TEXT LOCKUP */}
+              <div className="relative z-20 flex flex-col items-center justify-center">
+                {/* Logo Characters Container */}
+                <div className="relative flex items-center font-mono font-black tracking-tight leading-none text-5xl sm:text-6xl md:text-7xl">
+                  {/* LETTER "e" — ROCKETS IN FROM THE LEFT AND SLAMS INTO "zer" */}
+                  {isEIncoming && (
+                    <motion.span
+                      initial={{
+                        x: -160,
+                        opacity: 0,
+                        scale: 1.6,
+                        rotate: -12,
+                        filter: 'blur(8px)',
+                      }}
+                      animate={{
+                        x: hasImpactOccurred ? [0, 4, -2, 0] : 0,
+                        opacity: 1,
+                        scale: 1,
+                        rotate: 0,
+                        filter: 'blur(0px)',
+                      }}
+                      transition={{
+                        x: hasImpactOccurred
+                          ? { duration: 0.22, ease: 'easeOut' }
+                          : { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                        opacity: { duration: 0.15 },
+                        scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                        rotate: { duration: 0.28 },
+                        filter: { duration: 0.2 },
+                      }}
+                      className={`inline-block transition-all duration-300 ${
+                        hasImpactOccurred
+                          ? 'text-[#00F0FF] drop-shadow-[0_0_28px_rgba(0,240,255,0.95)]'
+                          : 'text-white'
+                      }`}
+                    >
+                      e
+                    </motion.span>
+                  )}
+
+                  {/* LETTERS "zer" — APPEAR FIRST, THEN JOLT/RECOIL ON IMPACT */}
+                  {isZerVisible && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.92, y: 6 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        y: 0,
+                        x: hasImpactOccurred ? [0, 18, -4, 2, 0] : 0,
+                      }}
+                      transition={{
+                        opacity: { duration: 0.35, ease: 'easeOut' },
+                        scale: { duration: 0.35, ease: 'easeOut' },
+                        x: hasImpactOccurred
+                          ? { duration: 0.42, times: [0, 0.2, 0.5, 0.8, 1], ease: 'easeOut' }
+                          : { duration: 0 },
+                      }}
+                      className={`inline-block transition-all duration-300 ${
+                        hasImpactOccurred
+                          ? 'text-white drop-shadow-[0_0_28px_rgba(0,240,255,0.7)]'
+                          : 'text-white/90'
+                      }`}
+                    >
+                      zer
+                    </motion.span>
+                  )}
+                </div>
+
+                {/* LUMINOUS UNDER-GLOW ACCENT LINE (Sweeps across logo after impact) */}
+                {hasImpactOccurred && (
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 140, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="h-[2px] bg-gradient-to-r from-transparent via-[#00F0FF] to-transparent mt-2 shadow-[0_0_12px_#00F0FF]"
+                  />
+                )}
+
+                {/* SECONDARY BADGE: "ENGINEERING CAD AUTOMATION" */}
+                {hasImpactOccurred && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, delay: 0.2, ease: 'easeOut' }}
+                    className="mt-3.5 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-mono text-[#38BDF8] tracking-widest uppercase shadow-lg"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
+                    <span>ENGINEERING CAD AUTOMATION</span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Bottom loop status tag */}
+              <div className="absolute bottom-3 text-[9.5px] font-mono text-white/30 tracking-wider">
+                EZER WORKSTATION RESTARTING…
               </div>
             </motion.div>
           )}
