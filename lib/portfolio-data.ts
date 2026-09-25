@@ -361,92 +361,6 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    slug: 'unirate',
-    title: 'UniRate',
-    type: 'Browser Extension / Product Development',
-    category: 'Product & Software',
-    role: 'Solo Developer (AI-assisted)',
-    year: '2024–Present',
-    status: 'Published — Chrome Web Store',
-    shortDescription:
-      'Solo-built Chrome extension that injects Rate My Professors metrics directly into university course registration portals. Features fuzzy professor matching, difficulty ratings, review popovers, and multi-school support.',
-    longDescription:
-      'UniRate is a publicly released Chrome extension created to eliminate the friction students face every semester during course registration. Instead of manually cross-referencing dozens of professors across tabs while seats evaporate, UniRate seamlessly queries and injects professor quality scores, difficulty indices, and student review sentiment right onto the university portal registration table.',
-    techStack: ['JavaScript', 'HTML5', 'CSS3', 'Python', 'Chrome Extensions API', 'DOM Injection'],
-    metrics: [
-      { label: 'Status', value: 'Live on Web Store', highlight: true },
-      { label: 'Development', value: 'Solo + AI-Assisted' },
-      { label: 'Core Language', value: 'JavaScript (~70%)' },
-      { label: 'Portal Support', value: 'Multi-School Capable' },
-    ],
-    links: {
-      chromeStore:
-        'https://chromewebstore.google.com/detail/unirate/eeehacjdlohcgmhghnihgbgfmkbopcho',
-    },
-    sections: [
-      {
-        number: '01',
-        title: 'Overview',
-        content:
-          'UniRate is a published Chrome extension that integrates Rate My Professors metrics directly into college and university schedule search and course registration portals. Conceived, designed, and developed solo with AI-assisted debugging and code expansion.',
-      },
-      {
-        number: '02',
-        title: 'The Problem',
-        content:
-          'During university registration periods, class sections fill within seconds. Students must repeatedly copy professor names, open external rating sites, search each faculty member, filter reviews, and jump back to the registration portal. This manual context-switching causes missed class enrollments and unnecessary anxiety.',
-      },
-      {
-        number: '03',
-        title: 'Design Constraints',
-        content:
-          'The extension must run silently across diverse university portal layouts (often rendered in legacy table structures or dynamic single-page applications) without causing DOM redraw lag, breaking portal authentication, or leaking user session data.',
-      },
-      {
-        number: '04',
-        title: 'My Role & Development Model',
-        content:
-          'Solo builder. I originated the product vision, created the core architecture, designed the injected UI components, and managed Chrome Web Store publication. I utilized AI-assisted development tools to review code, troubleshoot edge cases in DOM traversal, and accelerate multi-institution compatibility, while maintaining 100% ownership of product architecture, feature priorities, and user testing.',
-      },
-      {
-        number: '05',
-        title: 'Architecture & Approach',
-        content:
-          'Content scripts parse schedule tables on the active tab, identify instructor naming strings, query structured professor data via background endpoints, and dynamically append an unobtrusive rating badge. Hovering or clicking triggers a lightweight, custom-styled review popover displaying overall rating, difficulty, "would take again" percentage, and recent student reviews.',
-      },
-      {
-        number: '06',
-        title: 'Core Features',
-        content:
-          'Includes direct rating chip beside professor names, detailed modal breakdown, minimum score filtering, support for manual search fallback when naming conventions differ, and institutional selection for multi-campus portals.',
-      },
-      {
-        number: '07',
-        title: 'Technical Challenge',
-        content:
-          'University schedules frequently list faculty names inconsistently: some use "Last, First M.", others use abbreviated nicknames ("Bob" vs "Robert"), or leave fields as "Staff". Rigid exact-match queries initially failed on approximately 25% of listings.',
-      },
-      {
-        number: '08',
-        title: 'Resolution & Testing',
-        content:
-          'Engineered a multi-stage string normalizer and fuzzy-matching heuristic that strips honorifics and middle initials, paired with a manual query button right inside the injected card if automated matching encounters ambiguity.',
-      },
-      {
-        number: '09',
-        title: 'Outcome & Release',
-        content:
-          'Successfully verified and published on the official Chrome Web Store. The extension actively assists college students in building balanced course schedules with instant, transparent faculty insights.',
-      },
-      {
-        number: '10',
-        title: 'What I Learned',
-        content:
-          'Building consumer software that injects into untrusted third-party DOMs demands rigorous defensive programming, zero assumptions about HTML structure, and clean decoupling between UI presentation and data retrieval layers.',
-      },
-    ],
-  },
-  {
     slug: 'ezer',
     title: 'Ezer',
     type: 'Local AI / Computer Automation / HCI',
@@ -536,6 +450,92 @@ export const PROJECTS: Project[] = [
         title: 'What I Learned',
         content:
           'Product design in AI tools is fundamentally about establishing human trust. An agent that acts silently is dangerous; an agent that communicates state clearly, asks for confirmation at critical junctures, and runs with complete local privacy is genuinely useful.',
+      },
+    ],
+  },
+  {
+    slug: 'unirate',
+    title: 'UniRate',
+    type: 'Browser Extension / Product Development',
+    category: 'Product & Software',
+    role: 'Solo Developer (AI-assisted)',
+    year: '2024–Present',
+    status: 'Published — Chrome Web Store',
+    shortDescription:
+      'Solo-built Chrome extension that injects Rate My Professors metrics directly into university course registration portals. Features fuzzy professor matching, difficulty ratings, review popovers, and multi-school support.',
+    longDescription:
+      'UniRate is a publicly released Chrome extension created to eliminate the friction students face every semester during course registration. Instead of manually cross-referencing dozens of professors across tabs while seats evaporate, UniRate seamlessly queries and injects professor quality scores, difficulty indices, and student review sentiment right onto the university portal registration table.',
+    techStack: ['JavaScript', 'HTML5', 'CSS3', 'Python', 'Chrome Extensions API', 'DOM Injection'],
+    metrics: [
+      { label: 'Status', value: 'Live on Web Store', highlight: true },
+      { label: 'Development', value: 'Solo + AI-Assisted' },
+      { label: 'Core Language', value: 'JavaScript (~70%)' },
+      { label: 'Portal Support', value: 'Multi-School Capable' },
+    ],
+    links: {
+      chromeStore:
+        'https://chromewebstore.google.com/detail/unirate/eeehacjdlohcgmhghnihgbgfmkbopcho',
+    },
+    sections: [
+      {
+        number: '01',
+        title: 'Overview',
+        content:
+          'UniRate is a published Chrome extension that integrates Rate My Professors metrics directly into college and university schedule search and course registration portals. Conceived, designed, and developed solo with AI-assisted debugging and code expansion.',
+      },
+      {
+        number: '02',
+        title: 'The Problem',
+        content:
+          'During university registration periods, class sections fill within seconds. Students must repeatedly copy professor names, open external rating sites, search each faculty member, filter reviews, and jump back to the registration portal. This manual context-switching causes missed class enrollments and unnecessary anxiety.',
+      },
+      {
+        number: '03',
+        title: 'Design Constraints',
+        content:
+          'The extension must run silently across diverse university portal layouts (often rendered in legacy table structures or dynamic single-page applications) without causing DOM redraw lag, breaking portal authentication, or leaking user session data.',
+      },
+      {
+        number: '04',
+        title: 'My Role & Development Model',
+        content:
+          'Solo builder. I originated the product vision, created the core architecture, designed the injected UI components, and managed Chrome Web Store publication. I utilized AI-assisted development tools to review code, troubleshoot edge cases in DOM traversal, and accelerate multi-institution compatibility, while maintaining 100% ownership of product architecture, feature priorities, and user testing.',
+      },
+      {
+        number: '05',
+        title: 'Architecture & Approach',
+        content:
+          'Content scripts parse schedule tables on the active tab, identify instructor naming strings, query structured professor data via background endpoints, and dynamically append an unobtrusive rating badge. Hovering or clicking triggers a lightweight, custom-styled review popover displaying overall rating, difficulty, "would take again" percentage, and recent student reviews.',
+      },
+      {
+        number: '06',
+        title: 'Core Features',
+        content:
+          'Includes direct rating chip beside professor names, detailed modal breakdown, minimum score filtering, support for manual search fallback when naming conventions differ, and institutional selection for multi-campus portals.',
+      },
+      {
+        number: '07',
+        title: 'Technical Challenge',
+        content:
+          'University schedules frequently list faculty names inconsistently: some use "Last, First M.", others use abbreviated nicknames ("Bob" vs "Robert"), or leave fields as "Staff". Rigid exact-match queries initially failed on approximately 25% of listings.',
+      },
+      {
+        number: '08',
+        title: 'Resolution & Testing',
+        content:
+          'Engineered a multi-stage string normalizer and fuzzy-matching heuristic that strips honorifics and middle initials, paired with a manual query button right inside the injected card if automated matching encounters ambiguity.',
+      },
+      {
+        number: '09',
+        title: 'Outcome & Release',
+        content:
+          'Successfully verified and published on the official Chrome Web Store. The extension actively assists college students in building balanced course schedules with instant, transparent faculty insights.',
+      },
+      {
+        number: '10',
+        title: 'What I Learned',
+        content:
+          'Building consumer software that injects into untrusted third-party DOMs demands rigorous defensive programming, zero assumptions about HTML structure, and clean decoupling between UI presentation and data retrieval layers.',
       },
     ],
   },

@@ -84,51 +84,14 @@ export function ProjectsSection() {
           </article>
 
           {/* =========================================================================
-              PROJECT 02: DUALSENSE PC INTERFACE (Embedded Systems)
-              Layout: Centered Header -> Near-Full-Width Signal Architecture (Sections 27-29)
-             ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
-            <Reveal variant="standard">
-              <div className="max-w-3xl mb-6">
-                <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
-                  <span className="text-[#0864C7] font-bold">02</span>
-                  <span className="text-black/20">/</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5FF] border border-[#178BFF]/25 text-[11px] text-[#0864C7] font-semibold">
-                    Embedded Systems
-                  </span>
-                  <span className="text-black/20">·</span>
-                  <span>2025</span>
-                </div>
-
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight">
-                  DualSense PC Interface
-                </h3>
-
-                <p className="text-sm sm:text-base text-[#4B596A] mt-2 leading-relaxed">
-                  Raspberry Pi Pico 2 W-based hardware bridge between a PC and PlayStation DualSense controller.
-                  Translates bidirectional communication for controller inputs, dual voice-coil haptic feedback,
-                  motorized adaptive trigger resistance curves, and audio streaming.
-                </p>
-              </div>
-            </Reveal>
-
-            {/* Near-Full-Width Interactive Architecture */}
-            <div className="w-full">
-              <Reveal variant="visual">
-                <DualSenseVisual />
-              </Reveal>
-            </div>
-          </article>
-
-          {/* =========================================================================
-              PROJECT 03: EZER (Featured Experimental Project)
+              PROJECT 02: EZER (Featured Experimental Project)
               Layout: Centered Demo ~80% width -> Two Concise Context Columns (Sections 30-35)
              ========================================================================= */}
           <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]/80 border border-slate-200/80 shadow-xs">
             <Reveal variant="standard">
               <div className="max-w-3xl mx-auto text-center mb-8">
                 <div className="flex items-center justify-center gap-2 text-xs font-mono text-[#647184] mb-1">
-                  <span className="text-[#0864C7] font-bold">03</span>
+                  <span className="text-[#0864C7] font-bold">02</span>
                   <span className="text-black/20">/</span>
                   <span className="px-2.5 py-0.5 rounded-full bg-white border border-[#CBD5E1] text-[11px] text-[#17202A] font-semibold">
                     Engineering Automation &amp; HCI
@@ -203,7 +166,7 @@ export function ProjectsSection() {
           </article>
 
           {/* =========================================================================
-              PROJECT 04: UNIRATE (Published Product)
+              PROJECT 03: UNIRATE (Published Product)
               Layout: Top Row Header + Real Action Links -> Injected Table Demo (Sections 36-42)
              ========================================================================= */}
           <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
@@ -211,7 +174,7 @@ export function ProjectsSection() {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
-                    <span className="text-[#0864C7] font-bold">04</span>
+                    <span className="text-[#0864C7] font-bold">03</span>
                     <span className="text-black/20">/</span>
                     <span className="px-2.5 py-0.5 rounded-full bg-[#EBFDF5] border border-[#A7F3D0] text-[11px] text-[#047857] font-semibold">
                       Published Product
@@ -287,6 +250,43 @@ export function ProjectsSection() {
                   JavaScript · HTML5 · CSS3 · Python · Chrome Extensions API · DOM Mutation Observers
                 </p>
               </div>
+            </div>
+          </article>
+
+          {/* =========================================================================
+              PROJECT 04: DUALSENSE PC INTERFACE (Embedded Systems)
+              Layout: Centered Header -> Near-Full-Width Signal Architecture (Sections 27-29)
+             ========================================================================= */}
+          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
+            <Reveal variant="standard">
+              <div className="max-w-3xl mb-6">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
+                  <span className="text-[#0864C7] font-bold">04</span>
+                  <span className="text-black/20">/</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5FF] border border-[#178BFF]/25 text-[11px] text-[#0864C7] font-semibold">
+                    Embedded Systems
+                  </span>
+                  <span className="text-black/20">·</span>
+                  <span>2025</span>
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#17202A] tracking-tight">
+                  DualSense PC Interface
+                </h3>
+
+                <p className="text-sm sm:text-base text-[#4B596A] mt-2 leading-relaxed">
+                  Raspberry Pi Pico 2 W-based hardware bridge between a PC and PlayStation DualSense controller.
+                  Translates bidirectional communication for controller inputs, dual voice-coil haptic feedback,
+                  motorized adaptive trigger resistance curves, and audio streaming.
+                </p>
+              </div>
+            </Reveal>
+
+            {/* Near-Full-Width Interactive Architecture */}
+            <div className="w-full">
+              <Reveal variant="visual">
+                <DualSenseVisual />
+              </Reveal>
             </div>
           </article>
         </div>

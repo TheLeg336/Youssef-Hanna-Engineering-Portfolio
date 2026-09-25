@@ -26,12 +26,6 @@ const SYSTEMS: SystemItem[] = [
     tagline: '~100 ft spec target → ~300 ft achieved (3× target)',
   },
   {
-    id: 'dualsense',
-    label: 'DualSense',
-    category: 'Embedded Hardware',
-    tagline: 'Pico 2 W hardware bridge: PC ↔ Controller',
-  },
-  {
     id: 'ezer',
     label: 'Ezer',
     category: 'Engineering Automation',
@@ -42,6 +36,12 @@ const SYSTEMS: SystemItem[] = [
     label: 'UniRate',
     category: 'Software / Extension',
     tagline: 'In-portal professor ratings & review popover',
+  },
+  {
+    id: 'dualsense',
+    label: 'DualSense',
+    category: 'Embedded Hardware',
+    tagline: 'Pico 2 W hardware bridge: PC ↔ Controller',
   },
 ];
 
@@ -148,19 +148,6 @@ export function SelectedSystemsReel() {
             </motion.div>
           )}
 
-          {activeId === 'dualsense' && (
-            <motion.div
-              key="hero-dualsense"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="w-full"
-            >
-              <DualSenseVisual />
-            </motion.div>
-          )}
-
           {activeId === 'ezer' && (
             <motion.div
               key="hero-ezer"
@@ -184,6 +171,19 @@ export function SelectedSystemsReel() {
               className="w-full"
             >
               <UniRateVisual layoutPrefix="hero" />
+            </motion.div>
+          )}
+
+          {activeId === 'dualsense' && (
+            <motion.div
+              key="hero-dualsense"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="w-full"
+            >
+              <DualSenseVisual />
             </motion.div>
           )}
         </AnimatePresence>
