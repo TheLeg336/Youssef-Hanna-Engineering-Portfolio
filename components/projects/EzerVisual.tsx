@@ -74,13 +74,14 @@ const ENDLESS_WORDS = [
 // TIMELINE SCHEDULE (in milliseconds)
 const TIMING = {
   // STAGE 1: VOICE COMMAND & INTENT (0 - 8000ms)
-  // At start, EZER is closed for 1.5 seconds, then smoothly expands horizontally!
+  // At start, closed pill sits visibly for 1.5s, then zooms in & expands horizontally!
   DESKTOP_START: 0,
-  PILL_CLOSED_HOLD: 1500,  // Closed pill for 1.5 seconds
-  PILL_EXPAND_START: 1500, // Smooth horizontal expansion
-  SPEAKING_START: 2200,    // Natural voice typing streaming begins
-  SPEAKING_END: 5400,      // Voice typing completes (camera stays stable - NO zoom out!)
-  BORDER_BEAM_START: 5600, // Border beam & "Submitting to solver..." feedback
+  PILL_CLOSED_HOLD: 1500,     // 0 to 1.5s: closed pill with "● EZER" sits visibly
+  CAMERA_ZOOM_IN_START: 1500, // Camera smoothly zooms in to frame the pill as it opens
+  PILL_EXPAND_START: 1500,    // Pill expands horizontally
+  SPEAKING_START: 2200,       // Natural voice typing streaming begins
+  SPEAKING_END: 5400,         // Voice typing completes (camera stays focused - NO zoom out!)
+  BORDER_BEAM_START: 5600,    // Border beam & "Submitting to solver..." feedback
   BORDER_BEAM_END: 7800,
   STAGE_1_END: 8000,
 
@@ -94,6 +95,7 @@ const TIMING = {
 
   // STAGE 4: LIVE FILLET MODIFICATION & CLIMAX (15000 - 30600ms)
   ITERATION_PILL_EXPAND: 15000,
+  ITERATION_ZOOM_IN_START: 15400, // Cinematic zoom in on CAD & pill for fillet modification
   ITERATION_SPEAKING_START: 15600,
   ITERATION_SPEAKING_END: 18600,
   ITERATION_BORDER_BEAM_START: 18800,
@@ -104,19 +106,20 @@ const TIMING = {
   
   // FINAL CLIMAX: STREAM "the possibilities are endless"
   FINAL_CLIMAX_START: 22000,
+  FINAL_ZOOM_DOWN_START: 22200,   // Camera zooms closer for climax
   ENDLESS_STREAM_START: 22400,
   ENDLESS_STREAM_END: 24200,
 
-  // CAMERA DIVE INTO PILL: Zooms cleanly all the way into the dark pill into black!
+  // CAMERA DIVE INTO PILL: Zooms all the way into the dark pill into 100% black
   DIVE_INTO_PILL_START: 24600,
 
-  // OUTRO: PURE BLACK SCREEN -> NINTENDO SWITCH-STYLE JOY-CON SNAP "EZER"
+  // OUTRO: PURE BLACK SCREEN -> SWITCH JOY-CON SNAP ANIMATION WITH TILTED "E"
   BLACKOUT_START: 25200,
-  ZER_APPEAR_START: 25500,      // "ZER" appears centered in pure white
-  E_SLIDE_START: 25950,         // "E" starts sliding down the rail from above
-  SNAP_MOMENT: 26270,           // "E" locks into "ZER": mechanical snap & recoil!
-  SNAP_FLASH_END: 26450,        // Specular click gleam fades
-  OUTRO_FADE_TO_RESTART: 29800, // Hold pure white "EZER" with ZERO descriptions, then clean fade
+  ZER_APPEAR_START: 25500,        // "ZER" appears centered in pure white
+  E_SLIDE_START: 25950,           // "E" appears tilted counterclockwise (-18deg) and slides in
+  SNAP_MOMENT: 26320,             // "E" aligns to 0deg: mechanical snap & recoil!
+  SNAP_FLASH_END: 26550,          // Specular flash & subtle ripple fade
+  OUTRO_FADE_TO_RESTART: 29800,   // Hold pure white "EZER" with ZERO descriptions, then clean fade
   TOTAL_CYCLE: 30600,
 };
 
@@ -238,6 +241,7 @@ export function EzerVisual() {
 
   // Stage 1 variables
   const isPillExpanded = elapsedMs >= TIMING.PILL_EXPAND_START;
+  const isStage1Zoomed = elapsedMs >= TIMING.CAMERA_ZOOM_IN_START;
   const isSpeaking = elapsedMs >= TIMING.SPEAKING_START && elapsedMs < TIMING.SPEAKING_END;
   const isListeningInitial =
     elapsedMs >= TIMING.PILL_EXPAND_START && elapsedMs < TIMING.SPEAKING_START;
@@ -263,6 +267,9 @@ export function EzerVisual() {
   const solveStep3 = elapsedMs >= TIMING.SOLVING_START + 2800;
 
   // Stage 4 In-Viewport Ezer Pill Calculations
+  const isStage4Zoomed = elapsedMs >= TIMING.ITERATION_ZOOM_IN_START;
+  const isClimaxZoomed = elapsedMs >= TIMING.FINAL_ZOOM_DOWN_START;
+
   const isIterationSpeaking =
     elapsedMs >= TIMING.ITERATION_SPEAKING_START && elapsedMs < TIMING.ITERATION_SPEAKING_END;
 
@@ -324,7 +331,7 @@ export function EzerVisual() {
   const isDivingIntoPill =
     elapsedMs >= TIMING.DIVE_INTO_PILL_START && elapsedMs < TIMING.OUTRO_FADE_TO_RESTART;
 
-  // OUTRO: Nintendo Switch Joy-Con style animation states
+  // OUTRO: Switch Joy-Con animation states with counterclockwise tilt
   const isBlackoutActive = elapsedMs >= TIMING.BLACKOUT_START;
   const isZerVisible = elapsedMs >= TIMING.ZER_APPEAR_START;
   const isESliding = elapsedMs >= TIMING.E_SLIDE_START;
@@ -408,8 +415,16 @@ export function EzerVisual() {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="w-full h-full min-h-[350px] sm:min-h-[370px] relative rounded-xl overflow-hidden border border-[#CBD5E1] shadow-md bg-[#0A0F1D] flex flex-col justify-between"
             >
-              {/* Stable Workstation Canvas (Zero awkward camera jumping or zooming out) */}
-              <div className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none">
+              {/* Dynamic Camera Zoom Wrapper: Zooms in smoothly at 1.5s and stays focused (NO zoom-out!) */}
+              <motion.div
+                className="w-full h-full absolute inset-0 flex flex-col justify-between pointer-events-none"
+                style={{ transformOrigin: '50% 86%' }}
+                animate={{
+                  scale: isStage1Zoomed ? 1.24 : 1,
+                  y: isStage1Zoomed ? -20 : 0,
+                }}
+                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              >
                 {/* Wallpaper grid */}
                 <div
                   className="absolute inset-0 opacity-20 pointer-events-none"
@@ -467,12 +482,17 @@ export function EzerVisual() {
                   </button>
                 </div>
 
-                {/* SINGLE UNIFIED EZER PILL: Smoothly widens from closed 92px to full width (Zero flickering) */}
+                {/* VISIBLE CLOSED PILL AT START (0 to 1.5s), THEN WIDENS SMOOTHLY (Never vanishes or comes from thin air!) */}
                 <div className="absolute bottom-[46px] inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-center px-3">
                   <motion.div
                     className="relative flex flex-col items-center max-w-[92vw]"
+                    initial={{ width: 110 }}
                     animate={{
-                      width: isPillExpanded ? 340 : 92,
+                      width: isPillExpanded ? 340 : 110,
+                    }}
+                    style={{
+                      width: isPillExpanded ? 340 : 110,
+                      minWidth: isPillExpanded ? 280 : 110,
                     }}
                     transition={{
                       duration: 0.55,
@@ -490,11 +510,11 @@ export function EzerVisual() {
                       className="w-full rounded-full shadow-2xl"
                     >
                       <div className="relative w-full rounded-full bg-[#070B12]/95 border border-white/20 px-3.5 py-2 sm:py-2.5 text-white flex items-center justify-center min-h-[42px] overflow-hidden shadow-2xl">
-                        {/* CLOSED STATE (0 to 1.5s): Closed pill with cyan pulse dot & EZER */}
+                        {/* CLOSED STATE (0 to 1.5s): Visibly sits with pulsing cyan dot and bold EZER */}
                         {!isPillExpanded && (
-                          <div className="flex items-center gap-2 select-none">
-                            <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_8px_#00F0FF]" />
-                            <span className="text-[11px] font-mono text-white/80 font-bold tracking-widest">
+                          <div className="flex items-center gap-2 px-1 select-none whitespace-nowrap">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_8px_#00F0FF]" />
+                            <span className="text-xs font-mono text-white font-bold tracking-widest">
                               EZER
                             </span>
                           </div>
@@ -529,7 +549,7 @@ export function EzerVisual() {
                               <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="relative z-20 flex items-center justify-center gap-2 text-xs font-mono font-medium text-white/90 select-none"
+                                className="relative z-20 flex items-center justify-center gap-2 text-xs font-mono font-medium text-white/90 select-none whitespace-nowrap"
                               >
                                 <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_6px_#00F0FF]" />
                                 <span className="tracking-wide">Listening...</span>
@@ -582,7 +602,7 @@ export function EzerVisual() {
                     </AppBorderBeam>
                   </motion.div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Taskbar */}
               <div className="absolute bottom-0 inset-x-0 h-9 bg-[#0F172A]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-between px-3 select-none z-40">
@@ -682,7 +702,7 @@ export function EzerVisual() {
             </motion.div>
           )}
 
-          {/* ACT 3 & 4: 3D CAD MODEL VIEWPORT WITH LIVE FILLET & ENDLESS CLIMAX */}
+          {/* ACT 3 & 4: 3D CAD MODEL VIEWPORT WITH CINEMATIC MODIFICATION ZOOM & CLIMAX DIVE */}
           {(currentStage === 'initial_cad' || currentStage === 'fillet_edit') && (
             <motion.div
               key="stage-cad-interactive-viewport"
@@ -726,18 +746,30 @@ export function EzerVisual() {
                   </div>
                 </div>
 
-                {/* 3D CAD Viewport with smooth camera dive into dark pill */}
+                {/* 3D CAD Viewport with restored cinematic zoom & final dive into dark pill */}
                 <motion.div
                   className="w-full h-full"
-                  style={{ transformOrigin: '50% 88%' }}
+                  style={{ transformOrigin: '50% 86%' }}
                   animate={{
-                    scale: isDivingIntoPill ? 3.5 : 1,
-                    y: isDivingIntoPill ? -80 : 0,
+                    scale: isDivingIntoPill
+                      ? 3.5
+                      : isClimaxZoomed
+                      ? 1.45
+                      : isStage4Zoomed
+                      ? 1.25
+                      : 1,
+                    y: isDivingIntoPill
+                      ? -80
+                      : isClimaxZoomed
+                      ? -28
+                      : isStage4Zoomed
+                      ? -16
+                      : 0,
                     opacity: isDivingIntoPill ? 0.2 : 1,
                     filter: isDivingIntoPill ? 'blur(10px)' : 'blur(0px)',
                   }}
                   transition={{
-                    duration: isDivingIntoPill ? 0.65 : 0.4,
+                    duration: isDivingIntoPill ? 0.65 : 0.55,
                     ease: isDivingIntoPill ? [0.45, 0, 0.2, 1] : [0.16, 1, 0.3, 1],
                   }}
                 >
@@ -753,11 +785,11 @@ export function EzerVisual() {
                     className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
                     style={{ transformOrigin: 'center center' }}
                     animate={{
-                      scale: isDivingIntoPill ? 36 : 1,
-                      y: isDivingIntoPill ? -110 : 0,
+                      scale: isDivingIntoPill ? 36 : isClimaxZoomed ? 1.15 : isStage4Zoomed ? 1.08 : 1,
+                      y: isDivingIntoPill ? -110 : isClimaxZoomed ? -8 : 0,
                     }}
                     transition={{
-                      duration: isDivingIntoPill ? 0.65 : 0.4,
+                      duration: isDivingIntoPill ? 0.65 : 0.55,
                       ease: isDivingIntoPill ? [0.45, 0, 0.2, 1] : [0.16, 1, 0.3, 1],
                     }}
                   >
@@ -934,11 +966,11 @@ export function EzerVisual() {
             ACT 5 / BRAND OUTRO: PURE BLACK SCREEN -> NINTENDO SWITCH JOY-CON SNAP "EZER"
             - Pure pitch-black screen
             - All White, All Caps: "EZER"
-            - Like Nintendo Switch Joy-Con lock animation:
+            - Nintendo Switch Joy-Con lock animation:
               1. "ZER" is centered in pure bold white
-              2. "E" slides down along the rail
-              3. SNAP! Both pieces jolt down and spring back in a mechanical recoil
-              4. A crisp specular white click gleam flashes at the seam
+              2. "E" starts tilted counterclockwise (-18deg), slides down the rail and rotates into 0deg alignment
+              3. SNAP! Mechanical Joy-Con recoil (dip down 6px & spring back up)
+              4. Crisp specular white flash + expanding subtle shockwave ring + baseline glint
               5. Sits in pure, proud stillness with ZERO descriptions or badges
            ========================================================================= */}
         <AnimatePresence>
@@ -953,7 +985,7 @@ export function EzerVisual() {
             >
               {/* BRAND LOCKUP: ALL WHITE, ALL CAPS, NINTENDO SWITCH JOY-CON SNAP */}
               <div className="relative flex items-center justify-center">
-                {/* Mechanical Recoil Wrapper: Shifts down 6px on snap and bounces back */}
+                {/* Mechanical Recoil Wrapper: Shifts down 6px on snap and springs back */}
                 <motion.div
                   animate={
                     hasSnapOccurred
@@ -969,20 +1001,33 @@ export function EzerVisual() {
                   }}
                   className="relative flex items-baseline tracking-normal font-mono font-black text-6xl sm:text-7xl md:text-8xl select-none leading-none"
                 >
-                  {/* LETTER "E": Slides down the rail from above and locks into place */}
+                  {/* LETTER "E": Starts tilted counterclockwise (-18deg) above, slides down the rail and rotates into 0deg */}
                   <div className="relative overflow-visible">
                     {isESliding ? (
                       <motion.span
-                        initial={{ y: -80, opacity: 0 }}
+                        initial={{
+                          y: -85,
+                          x: -18,
+                          rotate: -18,
+                          scale: 1.15,
+                          opacity: 0,
+                        }}
                         animate={{
-                          y: 0,
+                          y: hasSnapOccurred ? 0 : 0,
+                          x: hasSnapOccurred ? 0 : 0,
+                          rotate: hasSnapOccurred ? 0 : 0,
+                          scale: 1,
                           opacity: 1,
                         }}
                         transition={{
-                          y: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
+                          y: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+                          x: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+                          rotate: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+                          scale: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
                           opacity: { duration: 0.12 },
                         }}
                         className="inline-block text-white"
+                        style={{ transformOrigin: 'bottom right' }}
                       >
                         E
                       </motion.span>
@@ -994,9 +1039,9 @@ export function EzerVisual() {
                   {/* LETTERS "ZER": Waiting in place in pure bold white */}
                   {isZerVisible ? (
                     <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
                       className="inline-block text-white"
                     >
                       ZER
@@ -1005,13 +1050,33 @@ export function EzerVisual() {
                     <span className="inline-block opacity-0">ZER</span>
                   )}
 
-                  {/* THE "CLICK" FLASH: A crisp white specular ping at the joint between E and Z */}
+                  {/* THE "CLICK" FLASH: A crisp white specular ping at the contact joint */}
                   {isSnapFlashActive && (
                     <motion.div
                       initial={{ opacity: 0, scaleY: 0.4 }}
                       animate={{ opacity: [0, 1, 0], scaleY: [0.4, 1.4, 0.8] }}
                       transition={{ duration: 0.18, ease: 'easeOut' }}
-                      className="absolute left-[0.78em] top-0 bottom-0 w-[2px] bg-white pointer-events-none shadow-[0_0_16px_#FFFFFF]"
+                      className="absolute left-[0.74em] top-0 bottom-0 w-[3px] bg-white pointer-events-none shadow-[0_0_16px_#FFFFFF]"
+                    />
+                  )}
+
+                  {/* SUBTLE CONTACT SHOCKWAVE RING */}
+                  {isSnapFlashActive && (
+                    <motion.div
+                      initial={{ opacity: 0.8, scale: 0.2 }}
+                      animate={{ opacity: 0, scale: 2.2 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                      className="absolute left-[0.74em] top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border border-white pointer-events-none shadow-[0_0_12px_#FFFFFF]"
+                    />
+                  )}
+
+                  {/* SUBTLE HORIZONTAL UNDER-RAIL ALIGNMENT GLINT */}
+                  {hasSnapOccurred && (
+                    <motion.div
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: '100%', opacity: [0, 0.8, 0] }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                      className="absolute -bottom-2 inset-x-0 h-[1.5px] bg-white pointer-events-none shadow-[0_0_8px_#FFFFFF]"
                     />
                   )}
                 </motion.div>
