@@ -45,7 +45,7 @@ export const PERSONAL_INFO = {
   github: 'https://github.com/TheLeg336',
   handshake: 'https://cpp.joinhandshake.com/profiles/uwhh2v',
   linkedin: null as string | null, // Slot ready for when LinkedIn URL is available
-  resumePath: '/Youssef_Hanna_Engineering_Resume.pdf',
+  resumePath: '/Youssef_Hanna_Resume.pdf?v=2026',
   internshipGoal: 'Seeking Summer 2027 Engineering Internships',
   headline: 'I design, build, test, and improve complex physical systems.',
   subheadline:

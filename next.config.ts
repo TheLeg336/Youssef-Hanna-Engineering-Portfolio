@@ -21,6 +21,19 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingRoot: process.cwd(),
   transpilePackages: ['motion', 'border-beam', 'thinking-orbs', 'liquid-gooey', 'metal-fx', 'voice-glow'],
+  async headers() {
+    return [
+      {
+        source: '/:path*.pdf',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+    ];
+  },
   webpack: (config, {dev}) => {
     // HMR is disabled in AI Studio via DISABLE_HMR env var.
     // Do not modify—file watching is disabled to prevent flickering during agent edits.

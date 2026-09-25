@@ -47,23 +47,19 @@ export function Navbar() {
   }, [isHomePage]);
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none flex justify-center">
+    <header className="fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-4 pointer-events-none flex justify-center">
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
-        className={`pointer-events-auto transition-all duration-300 rounded-full px-3.5 sm:px-4 py-2 flex items-center justify-between gap-3 sm:gap-6 ${
+        className={`pointer-events-auto h-11 sm:h-12 transition-[background-color,border-color,box-shadow] duration-200 rounded-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-6 w-full max-w-[820px] ${
           isScrolled
-            ? 'glass-dock shadow-xl py-1.5 sm:py-2 border-[#178BFF]/15'
+            ? 'glass-dock shadow-xl border-[#178BFF]/15'
             : 'glass-panel border-black/5 shadow-md'
         }`}
-        style={{
-          maxWidth: '820px',
-          width: '100%',
-        }}
       >
         {/* Left: Brand Monogram & Easter Egg */}
-        <div className="relative">
+        <div className="relative shrink min-w-0">
           <Link
             href="/"
             onClick={() => {
@@ -72,23 +68,23 @@ export function Navbar() {
             }}
             onMouseEnter={() => setShowEasterEgg(true)}
             onMouseLeave={() => setShowEasterEgg(false)}
-            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] rounded-full p-1 -m-1"
+            className="flex items-center gap-2 sm:gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] rounded-full p-1 -m-1 min-w-0"
             aria-label="Youssef Hanna Home"
           >
             {/* Precision Monogram Pill */}
-            <div className="w-8 h-8 rounded-full bg-linear-to-b from-white to-[#F1F5F9] border border-[#CBD5E1] flex items-center justify-center group-hover:border-[#178BFF] group-hover:shadow-xs group-hover:shadow-[#178BFF]/25 transition-all relative overflow-hidden shadow-xs shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-linear-to-b from-white to-[#F1F5F9] border border-[#CBD5E1] flex items-center justify-center group-hover:border-[#178BFF] group-hover:shadow-xs group-hover:shadow-[#178BFF]/25 transition-all relative overflow-hidden shadow-xs shrink-0">
               {/* Precision aerospace crosshair reticle */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
                 <div className="w-full h-px bg-[#0864C7]" />
                 <div className="h-full w-px bg-[#0864C7] absolute" />
               </div>
-              <span className="font-mono text-[11px] font-black tracking-tight text-[#17202A] group-hover:text-[#0864C7] transition-colors relative z-10 select-none">
+              <span className="font-mono text-[10px] sm:text-[11px] font-black tracking-tight text-[#17202A] group-hover:text-[#0864C7] transition-colors relative z-10 select-none">
                 YH
               </span>
             </div>
 
-            <div className="flex flex-col text-left">
-              <span className="text-xs sm:text-sm font-bold tracking-tight text-[#17202A] group-hover:text-[#0864C7] transition-colors whitespace-nowrap">
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-xs sm:text-sm font-bold tracking-tight text-[#17202A] group-hover:text-[#0864C7] transition-colors whitespace-nowrap truncate">
                 Youssef Hanna
               </span>
               <span className="text-[10px] font-mono text-[#647184] hidden lg:inline">
@@ -97,7 +93,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Easter Egg Tooltip on Monogram */}
+          {/* Easter Egg Tooltip on Monogram (desktop only) */}
           <AnimatePresence>
             {showEasterEgg && (
               <motion.div
@@ -105,7 +101,7 @@ export function Navbar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 4, scale: 0.95 }}
                 transition={{ duration: 0.18 }}
-                className="absolute top-11 left-0 z-50 px-3 py-1.5 rounded-lg bg-white text-[10px] font-mono text-[#0864C7] border border-[#178BFF]/30 shadow-xl whitespace-nowrap flex items-center gap-1.5 pointer-events-none"
+                className="absolute top-12 left-0 z-50 px-3 py-1.5 rounded-lg bg-white text-[10px] font-mono text-[#0864C7] border border-[#178BFF]/30 shadow-xl whitespace-nowrap flex items-center gap-1.5 pointer-events-none hidden sm:flex"
               >
                 <Sparkles className="w-3 h-3 text-[#178BFF]" />
                 <span>DESIGN · BUILD · TEST · ITERATE</span>
@@ -115,7 +111,7 @@ export function Navbar() {
         </div>
 
         {/* Center: Fluid Navigation Pills (Desktop & Tablet) */}
-        <nav className="hidden md:flex items-center gap-1 relative" aria-label="Main Navigation">
+        <nav className="hidden md:flex items-center gap-1 relative shrink-0" aria-label="Main Navigation">
           {navLinks.map((link) => {
             const isActive = isHomePage && activeSection === link.id;
 
@@ -145,23 +141,23 @@ export function Navbar() {
         </nav>
 
         {/* Right: Resume Pill & Mobile Menu Toggle */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <a
             href={PERSONAL_INFO.resumePath}
             target="_blank"
             rel="noopener noreferrer"
-            className="glass-pill px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold text-[#17202A] inline-flex items-center gap-1.5 hover:text-[#0864C7] hover:border-[#178BFF]/40 transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF]"
+            className="glass-pill px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold text-[#17202A] inline-flex items-center gap-1 sm:gap-1.5 hover:text-[#0864C7] hover:border-[#178BFF]/40 transition-colors shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] shrink-0"
           >
-            <FileText className="w-3.5 h-3.5 text-[#178BFF]" />
-            <span className="hidden sm:inline">Resume</span>
-            <ArrowUpRight className="w-3 h-3 text-[#647184]" />
+            <FileText className="w-3.5 h-3.5 text-[#178BFF] shrink-0" />
+            <span className="font-semibold text-xs">Resume</span>
+            <ArrowUpRight className="w-3 h-3 text-[#647184] shrink-0 hidden sm:inline" />
           </a>
 
           {/* Mobile Hamburger Toggle */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden glass-pill p-1.5 rounded-full text-[#647184] hover:text-[#17202A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF]"
+            className="md:hidden glass-pill p-1.5 rounded-full text-[#647184] hover:text-[#17202A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178BFF] shrink-0 flex items-center justify-center"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
