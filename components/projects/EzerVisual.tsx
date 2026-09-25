@@ -679,12 +679,12 @@ export function EzerVisual() {
                 {/* Camera Swoosh Wrapper */}
                 <motion.div
                   className="w-full h-full"
-                  style={{ transformOrigin: '50% 86%' }}
+                  style={{ transformOrigin: '50% 88%' }}
                   animate={{
-                    scale: isStage4Zoomed ? 1.24 : 1,
-                    y: isStage4Zoomed ? -20 : 0,
+                    scale: isStage4Zoomed ? 1.85 : 1,
+                    y: isStage4Zoomed ? -36 : 0,
                   }}
-                  transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <DynamicEzerCadViewer
                     filletProgress={liveFilletProgress}
@@ -694,7 +694,15 @@ export function EzerVisual() {
 
                 {/* IN-VIEWPORT COMPACT PILL (WITH MORPHING TO CLIMAX "the possibilities are endless") */}
                 {currentStage === 'fillet_edit' && (
-                  <div className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2">
+                  <motion.div
+                    className="absolute bottom-3 inset-x-0 z-30 pointer-events-auto flex flex-col items-center justify-end px-2"
+                    style={{ transformOrigin: 'bottom center' }}
+                    animate={{
+                      scale: isStage4Zoomed ? 1.28 : 1,
+                      y: isStage4Zoomed ? -10 : 0,
+                    }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  >
                     <motion.div
                       key="iter-pill-motion-container"
                       initial={{ scaleX: 0, opacity: 0 }}
@@ -842,7 +850,7 @@ export function EzerVisual() {
                         </div>
                       </AppBorderBeam>
                     </motion.div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
