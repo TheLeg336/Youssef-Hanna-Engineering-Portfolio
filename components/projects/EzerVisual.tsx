@@ -334,9 +334,8 @@ export function EzerVisual() {
     );
   }, [elapsedMs, endlessProgress]);
 
-  // CAMERA DIVE: Does NOT zoom out, zooms MORE in until 100% fully black
-  const isDivingIntoPill =
-    elapsedMs >= TIMING.DIVE_INTO_PILL_START && elapsedMs < TIMING.OUTRO_FADE_TO_RESTART;
+  // CAMERA DIVE: Does NOT zoom out, stays plunged in until cycle restarts
+  const isDivingIntoPill = elapsedMs >= TIMING.DIVE_INTO_PILL_START;
 
   // OUTRO: Switch Joy-Con animation states with counterclockwise tilt
   const isBlackoutActive = elapsedMs >= TIMING.BLACKOUT_START;
@@ -345,7 +344,6 @@ export function EzerVisual() {
   const hasSnapOccurred = elapsedMs >= TIMING.SNAP_MOMENT;
   const isSnapFlashActive =
     elapsedMs >= TIMING.SNAP_MOMENT && elapsedMs < TIMING.SNAP_FLASH_END;
-  const isOutroFadingOut = elapsedMs >= TIMING.OUTRO_FADE_TO_RESTART;
 
   const cycleProgress = (elapsedMs / TIMING.TOTAL_CYCLE) * 100;
 
@@ -971,9 +969,8 @@ export function EzerVisual() {
             <motion.div
               key="ezer-blackout-outro"
               initial={{ opacity: 1 }}
-              animate={{ opacity: isOutroFadingOut ? 0 : 1 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: isOutroFadingOut ? 0.6 : 0.25, ease: 'easeInOut' }}
               className="absolute inset-0 z-50 rounded-xl overflow-hidden bg-[#000000] flex flex-col items-center justify-center pointer-events-none select-none"
             >
               {/* BRAND LOCKUP: ALL WHITE, ALL CAPS, NINTENDO SWITCH JOY-CON SNAP */}

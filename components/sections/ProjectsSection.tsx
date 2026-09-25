@@ -1,18 +1,80 @@
 'use client';
 
-import React from 'react';
-import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { ExternalLink, Github, ArrowUpRight, Link2, Check } from 'lucide-react';
 import { LauncherVisual } from '@/components/projects/LauncherVisual';
 import { DualSenseVisual } from '@/components/projects/DualSenseVisual';
 import { EzerVisual } from '@/components/projects/EzerVisual';
 import { UniRateVisual } from '@/components/projects/UniRateVisual';
 import { Reveal } from '@/components/motion/Reveal';
 
+function DirectProjectLink({
+  slug,
+  hash,
+  title,
+  align = 'start',
+}: {
+  slug: string;
+  hash: string;
+  title: string;
+  align?: 'start' | 'center';
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.origin}/#${hash}`;
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    }
+  };
+
+  return (
+    <div
+      className={`flex flex-wrap items-center gap-2 pt-2.5 ${
+        align === 'center' ? 'justify-center' : 'justify-start'
+      }`}
+    >
+      <Link
+        href={`/projects/${slug}`}
+        className="px-3.5 py-1.5 rounded-full bg-[#178BFF]/10 hover:bg-[#178BFF]/20 border border-[#178BFF]/25 text-xs font-mono text-[#0864C7] font-semibold inline-flex items-center gap-1.5 transition-all shadow-2xs active:scale-95"
+        title={`View full standalone case study for ${title}`}
+      >
+        <span>Full Case Study</span>
+        <ArrowUpRight className="w-3.5 h-3.5 text-[#178BFF]" />
+      </Link>
+
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="glass-pill px-3 py-1.5 rounded-full text-xs font-mono text-[#475569] hover:text-[#0864C7] inline-flex items-center gap-1.5 shadow-2xs transition-all active:scale-95 cursor-pointer"
+        title={`Copy direct shareable link to #${hash} for recruiters`}
+        aria-label={`Copy direct link to ${title}`}
+      >
+        {copied ? (
+          <>
+            <Check className="w-3.5 h-3.5 text-[#10B981]" />
+            <span className="text-[#10B981] font-semibold">Direct Link Copied!</span>
+          </>
+        ) : (
+          <>
+            <Link2 className="w-3.5 h-3.5 text-[#94A3B8]" />
+            <span>Copy #{hash} Link</span>
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export function ProjectsSection() {
   return (
     <section id="projects" className="my-16 sm:my-24 scroll-mt-28">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header (Section 19) */}
+        {/* Section Header */}
         <Reveal variant="heading">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-black/10 pb-5 mb-14 sm:mb-20">
             <div>
@@ -23,6 +85,27 @@ export function ProjectsSection() {
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#17202A] mt-1.5">
                 Physical Systems, Hardware &amp; Software
               </h2>
+
+              {/* Direct Jump Anchor Selector */}
+              <div className="flex flex-wrap items-center gap-2 pt-3">
+                <span className="text-[11px] font-mono text-[#647184] uppercase mr-1">
+                  Direct Anchors:
+                </span>
+                {[
+                  { name: '01 Launcher', hash: '#launcher' },
+                  { name: '02 Ezer', hash: '#ezer' },
+                  { name: '03 UniRate', hash: '#unirate' },
+                  { name: '04 DualSense', hash: '#dualsense' },
+                ].map((p) => (
+                  <a
+                    key={p.hash}
+                    href={p.hash}
+                    className="glass-pill px-2.5 py-1 rounded-full text-xs font-mono text-[#334155] hover:text-[#0864C7] shadow-2xs transition-all active:scale-95"
+                  >
+                    {p.name}
+                  </a>
+                ))}
+              </div>
             </div>
             <p className="text-xs sm:text-sm font-mono text-[#647184] max-w-md">
               Four projects spanning mechanical design, embedded hardware, engineering automation, and software.
@@ -33,9 +116,12 @@ export function ProjectsSection() {
         <div className="space-y-24 sm:space-y-28 lg:space-y-32">
           {/* =========================================================================
               PROJECT 01: PRECISION TENNIS BALL LAUNCHER (Mechanical & Prototyping)
-              Layout: Desktop Left ~38% text/metrics, Right ~62% visualizer (Sections 21-26)
+              Direct Link: #launcher
              ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#FAFBFD]/60 border border-slate-200/60 shadow-xs">
+          <article
+            id="launcher"
+            className="scroll-mt-24 sm:scroll-mt-28 rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#FAFBFD]/60 border border-slate-200/60 shadow-xs"
+          >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Narrative & Verified Facts (Left ~38%) */}
               <div className="lg:col-span-5 space-y-4">
@@ -71,6 +157,9 @@ export function ProjectsSection() {
                       <span className="text-[#059669] font-bold">1st Place Class Competition Winner</span>
                     </div>
                   </div>
+
+                  {/* Direct Link & Case Study Share Widget */}
+                  <DirectProjectLink slug="launcher" hash="launcher" title="Precision Tennis Ball Launcher" />
                 </Reveal>
               </div>
 
@@ -85,9 +174,12 @@ export function ProjectsSection() {
 
           {/* =========================================================================
               PROJECT 02: EZER (Featured Experimental Project)
-              Layout: Centered Demo ~80% width -> Two Concise Context Columns (Sections 30-35)
+              Direct Link: #ezer
              ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]/80 border border-slate-200/80 shadow-xs">
+          <article
+            id="ezer"
+            className="scroll-mt-24 sm:scroll-mt-28 rounded-3xl p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]/80 border border-slate-200/80 shadow-xs"
+          >
             <Reveal variant="standard">
               <div className="max-w-3xl mx-auto text-center mb-8">
                 <div className="flex items-center justify-center gap-2 text-xs font-mono text-[#647184] mb-1">
@@ -109,6 +201,9 @@ export function ProjectsSection() {
                   CAD engineering workflows. Concept demonstration illustrates natural language geometry synthesis
                   and live parametric modification.
                 </p>
+
+                {/* Direct Link & Case Study Share Widget */}
+                <DirectProjectLink slug="ezer" hash="ezer" title="Ezer CAD Automation" align="center" />
               </div>
             </Reveal>
 
@@ -119,7 +214,7 @@ export function ProjectsSection() {
               </Reveal>
             </div>
 
-            {/* Two Concise Columns Below (Section 30) */}
+            {/* Two Concise Columns Below */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto mt-6 pt-6 border-t border-black/5 text-xs font-mono">
               <div className="p-4 rounded-xl bg-white border border-[#CBD5E1]/60 shadow-2xs">
                 <div className="text-[11px] uppercase text-[#0864C7] font-bold mb-2 flex items-center gap-1.5">
@@ -167,9 +262,12 @@ export function ProjectsSection() {
 
           {/* =========================================================================
               PROJECT 03: UNIRATE (Published Product)
-              Layout: Top Row Header + Real Action Links -> Injected Table Demo (Sections 36-42)
+              Direct Link: #unirate
              ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
+          <article
+            id="unirate"
+            className="scroll-mt-24 sm:scroll-mt-28 rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs"
+          >
             <Reveal variant="standard">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                 <div>
@@ -191,9 +289,12 @@ export function ProjectsSection() {
                     Published Chrome extension that injects Rate My Professors metrics and review sentiment directly
                     into university course registration portals, eliminating manual tab-switching during class enrollment.
                   </p>
+
+                  {/* Direct Link & Case Study Share Widget */}
+                  <DirectProjectLink slug="unirate" hash="unirate" title="UniRate Chrome Extension" />
                 </div>
 
-                {/* Real Verified Links (Section 37) */}
+                {/* Real Verified Links */}
                 <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
                   <a
                     href="https://chromewebstore.google.com/detail/unirate/eeehacjdlohcgmhghnihgbgfmkbopcho"
@@ -201,7 +302,7 @@ export function ProjectsSection() {
                     rel="noopener noreferrer"
                     className="px-4 py-2 rounded-full text-xs font-mono font-bold text-white bg-[#178BFF] hover:bg-[#0864C7] inline-flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
                   >
-                    <span>View UniRate</span>
+                    <span>Chrome Web Store</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </a>
 
@@ -226,7 +327,7 @@ export function ProjectsSection() {
               </Reveal>
             </div>
 
-            {/* Factual Product Breakdown (Section 36) */}
+            {/* Factual Product Breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6 pt-5 border-t border-black/5 text-xs font-mono">
               <div className="p-3.5 rounded-xl bg-[#FAFBFD] border border-[#CBD5E1]/60">
                 <div className="text-[10.5px] uppercase text-[#0864C7] font-bold mb-1">WHY</div>
@@ -255,9 +356,12 @@ export function ProjectsSection() {
 
           {/* =========================================================================
               PROJECT 04: DUALSENSE PC INTERFACE (Embedded Systems)
-              Layout: Centered Header -> Near-Full-Width Signal Architecture (Sections 27-29)
+              Direct Link: #dualsense
              ========================================================================= */}
-          <article className="rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs">
+          <article
+            id="dualsense"
+            className="scroll-mt-24 sm:scroll-mt-28 rounded-3xl p-4 sm:p-6 lg:p-8 bg-white border border-slate-200/80 shadow-xs"
+          >
             <Reveal variant="standard">
               <div className="max-w-3xl mb-6">
                 <div className="flex items-center gap-2 text-xs font-mono text-[#647184] mb-1">
@@ -279,6 +383,9 @@ export function ProjectsSection() {
                   Translates bidirectional communication for controller inputs, dual voice-coil haptic feedback,
                   motorized adaptive trigger resistance curves, and audio streaming.
                 </p>
+
+                {/* Direct Link & Case Study Share Widget */}
+                <DirectProjectLink slug="dualsense" hash="dualsense" title="DualSense PC Interface" />
               </div>
             </Reveal>
 
