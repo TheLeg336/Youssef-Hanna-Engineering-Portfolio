@@ -353,7 +353,7 @@ export function EzerVisual() {
         <div className="flex items-center justify-between border-b border-black/5 pb-3 mb-4">
           <div>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#178BFF]/10 text-[#0864C7] font-semibold">
-              CONCEPT DEMO · EZER IN DEVELOPMENT
+              DEMO · EZER IN DEVELOPMENT
             </span>
             <h3 className="text-base sm:text-lg font-bold text-[#17202A] mt-1">
               Natural Language CAD Synthesis Workflow
@@ -387,7 +387,7 @@ export function EzerVisual() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#178BFF]/10 text-[#0864C7] font-semibold border border-[#178BFF]/20">
-              CONCEPT DEMO · EZER IN DEVELOPMENT
+              DEMO · EZER IN DEVELOPMENT
             </span>
             <span className="text-[11px] font-mono text-[#647184]">
               Local AI / CAD Automation
