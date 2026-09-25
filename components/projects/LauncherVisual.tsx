@@ -12,7 +12,11 @@ import { useElementVisibility } from '@/lib/useVisibility';
 // Illustrative peak: (260, 50)
 const ORIGIN = { x: 55, y: 175 };
 const LANDING = { x: 460, y: 175 };
-const PEAK = { x: 260, y: 50 };
+// For quadratic Bézier with endpoints (55, 175) and (460, 175) to achieve apex at y = 50:
+// B_y(0.5) = (175 + CTRL.y) / 2 = 50  =>  CTRL.y = 2 * 50 - 175 = -75
+// Midpoint CTRL.x = (55 + 460) / 2 = 257.5
+const CTRL = { x: 257.5, y: -75 };
+const PEAK = { x: 257.5, y: 50 };
 const TARGET_100_X = 180;
 
 interface LauncherVisualProps {
@@ -70,12 +74,19 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
     return (progress - 0.12) / 0.76;
   }, [progress]);
 
-  // Parabolic trajectory point
+  // Trajectory calculations via de Casteljau quadratic Bézier evaluation
   const ballX = ORIGIN.x + (LANDING.x - ORIGIN.x) * flightT;
-  const ballY = ORIGIN.y - 4 * (ORIGIN.y - PEAK.y) * flightT * (1 - flightT);
+  const ballY =
+    (1 - flightT) * (1 - flightT) * ORIGIN.y +
+    2 * (1 - flightT) * flightT * CTRL.y +
+    flightT * flightT * LANDING.y;
 
-  const hasPassedTarget = progress >= 0.40;
-  const isLanded = progress >= 0.88;
+  // De Casteljau sub-curve control point for the active drawn segment [0, flightT]
+  const activeCtrlX = ORIGIN.x + (CTRL.x - ORIGIN.x) * flightT;
+  const activeCtrlY = ORIGIN.y + (CTRL.y - ORIGIN.y) * flightT;
+
+  const hasPassedTarget = flightT >= (TARGET_100_X - ORIGIN.x) / (LANDING.x - ORIGIN.x);
+  const isLanded = flightT >= 1;
 
   return (
     <div
@@ -109,14 +120,14 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
-            <linearGradient id={pathGradId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id={pathGradId} gradientUnits="userSpaceOnUse" x1={ORIGIN.x} y1="0" x2={LANDING.x} y2="0">
               <stop offset="0%" stopColor="#178BFF" stopOpacity="0.85" />
-              <stop offset="50%" stopColor="#0864C7" stopOpacity="0.95" />
+              <stop offset="45%" stopColor="#0864C7" stopOpacity="0.95" />
               <stop offset="100%" stopColor="#059669" stopOpacity="1" />
             </linearGradient>
 
             <linearGradient id={fillGradId} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#178BFF" stopOpacity="0.10" />
+              <stop offset="0%" stopColor="#178BFF" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#0864C7" stopOpacity="0" />
             </linearGradient>
           </defs>
@@ -184,19 +195,26 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
           {/* 2. PARABOLIC SCHEMATIC TRAJECTORY ARC */}
           {/* Ghosted Full Trajectory Guide */}
           <path
-            d={`M ${ORIGIN.x} ${ORIGIN.y} Q ${PEAK.x} -40 ${LANDING.x} ${LANDING.y}`}
+            d={`M ${ORIGIN.x} ${ORIGIN.y} Q ${CTRL.x} ${CTRL.y} ${LANDING.x} ${LANDING.y}`}
             fill="none"
             stroke="#CBD5E1"
             strokeWidth="1.5"
             strokeDasharray="3 3"
           />
 
+          {/* Subtle Area Fill Under Trajectory */}
+          {flightT > 0 && (
+            <path
+              d={`M ${ORIGIN.x} ${ORIGIN.y} Q ${activeCtrlX} ${activeCtrlY} ${ballX} ${ballY} L ${ballX} ${ORIGIN.y} Z`}
+              fill={`url(#${fillGradId})`}
+              pointerEvents="none"
+            />
+          )}
+
           {/* Active Drawn Trajectory */}
           {flightT > 0 && (
             <path
-              d={`M ${ORIGIN.x} ${ORIGIN.y} Q ${ORIGIN.x + (PEAK.x - ORIGIN.x) * flightT} ${
-                ORIGIN.y + (-40 - ORIGIN.y) * flightT
-              } ${ballX} ${ballY}`}
+              d={`M ${ORIGIN.x} ${ORIGIN.y} Q ${activeCtrlX} ${activeCtrlY} ${ballX} ${ballY}`}
               fill="none"
               stroke={`url(#${pathGradId})`}
               strokeWidth="3"
@@ -210,10 +228,10 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
             <circle cx="0" cy="0" r="3" fill="#0864C7" stroke="#FFFFFF" strokeWidth="1.5" />
           </g>
 
-          {/* Flying Ball */}
-          {progress >= 0.12 && (
+          {/* Flying Projectile Ball */}
+          {flightT > 0 && !isLanded && (
             <g transform={`translate(${ballX}, ${ballY})`}>
-              <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" stroke="#0864C7" strokeWidth="1.5" />
+              <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" stroke="#0864C7" strokeWidth="1.8" />
             </g>
           )}
 
@@ -227,7 +245,15 @@ export function LauncherVisual({ idPrefix = 'launcher' }: LauncherVisualProps = 
               )
             }
           >
-            <circle cx="0" cy="0" r="4.5" fill="#059669" stroke="#FFFFFF" strokeWidth="1.5" />
+            <circle
+              cx="0"
+              cy="0"
+              r={isLanded ? 4.5 : 3.5}
+              fill={isLanded ? '#059669' : '#94A3B8'}
+              stroke="#FFFFFF"
+              strokeWidth="1.5"
+              className="transition-colors duration-200"
+            />
 
             {isLanded && (
               <>
