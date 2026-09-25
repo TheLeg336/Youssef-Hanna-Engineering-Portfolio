@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useSyncExternalStore } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { motion } from 'motion/react';
 import { Monitor, Cpu, Gamepad2, Zap, Activity, Gauge, Volume2 } from 'lucide-react';
 import { useReducedMotion } from '@/components/motion/Reveal';
@@ -63,6 +63,21 @@ export function DualSenseVisual() {
       icon: Volume2,
     },
   ];
+
+  // Auto-cycle through channels autonomously (3.5s per channel) so it shows off everything non-interactively
+  useEffect(() => {
+    if (prefersReduced || !isVisible) return;
+
+    const channelSequence: ChannelKey[] = ['all', 'inputs', 'haptics', 'triggers', 'audio'];
+    const timer = setInterval(() => {
+      setActiveChannel((prev) => {
+        const nextIdx = (channelSequence.indexOf(prev) + 1) % channelSequence.length;
+        return channelSequence[nextIdx];
+      });
+    }, 3600);
+
+    return () => clearInterval(timer);
+  }, [isVisible, prefersReduced]);
 
   const currentChannelInfo = channels.find((c) => c.id === activeChannel);
 

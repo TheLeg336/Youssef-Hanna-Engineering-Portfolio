@@ -232,14 +232,6 @@ export function UniRateVisual() {
     const tick = (now: number) => {
       if (lastTimeRef.current !== null) {
         const delta = Math.min(100, now - lastTimeRef.current);
-
-        // Desktop user takeover check: pause ticker while desktop user is hovering inside
-        if (!isMobileRef.current && isUserHoveringCard.current) {
-          lastTimeRef.current = now;
-          animId = requestAnimationFrame(tick);
-          return;
-        }
-
         elapsedRef.current = (elapsedRef.current + delta) % TOTAL_CYCLE;
         const t = elapsedRef.current;
 
@@ -390,9 +382,6 @@ export function UniRateVisual() {
   return (
     <div
       ref={containerRef}
-      onPointerEnter={handleDesktopPointerEnter}
-      onPointerMove={handleDesktopPointerEnter}
-      onPointerLeave={handleDesktopPointerLeave}
       className="w-full glass-panel rounded-2xl p-6 sm:p-7 md:p-8 relative select-none min-h-[480px] overflow-visible"
     >
       {/* Refined Simulated Desktop/Mobile Cursor Overlay with Accurate Orientation & Click Ripple */}
